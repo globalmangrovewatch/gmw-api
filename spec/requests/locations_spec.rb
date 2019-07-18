@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 RSpec.describe 'Locations API', type: :request do
   # initialize test data
   let!(:locations) { create_list(:location, 10) }

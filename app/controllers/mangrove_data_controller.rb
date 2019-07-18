@@ -1,46 +1,51 @@
 class MangroveDataController < ApplicationController
-  before_action :set_location
-  before_action :set_location_mangrove_datum, only: [:show, :update, :destroy]
+  before_action :set_mangrove_datum, only: [:show, :update, :destroy]
 
-  # GET /locations/:location_id/mangrove_data
+  # GET /mangrove_data
   def index
-    json_response(@location.mangrove_data)
+    @mangrove_data = MangroveDatum.all
+
+    render json: @mangrove_data
   end
 
-  # GET /locations/:location_id/mangrove_data/:id
+  # GET /mangrove_data/1
   def show
-    json_response(@mangrove_datum)
+    render json: @mangrove_datum
   end
 
-  # POST /locations/:location_id/mangrove_data
+  # POST /mangrove_data
   def create
-    @location.mangrove_data.create!(item_params)
-    json_response(@location, :created)
+    @mangrove_datum = MangroveDatum.new(mangrove_datum_params)
+
+    if @mangrove_datum.save
+      render json: @mangrove_datum, status: :created, location: @mangrove_datum
+    else
+      render json: @mangrove_datum.errors, status: :unprocessable_entity
+    end
   end
 
-  # PUT /locations/:location_id/mangrove_data/:id
+  # PATCH/PUT /mangrove_data/1
   def update
-    @item.update(item_params)
-    head :no_content
+    if @mangrove_datum.update(mangrove_datum_params)
+      render json: @mangrove_datum
+    else
+      render json: @mangrove_datum.errors, status: :unprocessable_entity
+    end
   end
 
-  # DELETE /locations/:location_id/mangrove_data/:id
+  # DELETE /mangrove_data/1
   def destroy
-    @item.destroy
-    head :no_content
+    @mangrove_datum.destroy
   end
 
   private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_mangrove_datum
+      @mangrove_datum = MangroveDatum.find(params[:id])
+    end
 
-  def item_params
-    params.permit(:date)
-  end
-
-  def set_location
-    @location = Location.find(params[:location_id])
-  end
-
-  def set_location_mangrove_datum
-    @mangrove_datum = @location.items.find_by!(id: params[:id]) if @location
-  end
+    # Only allow a trusted parameter "white list" through.
+    def mangrove_datum_params
+      params.require(:mangrove_datum).permit(:date, :location_id)
+    end
 end
