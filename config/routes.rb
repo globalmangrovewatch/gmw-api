@@ -3,9 +3,15 @@ Rails.application.routes.draw do
 
   scope :api, defaults: { format: :json } do
     resources :locations do
-      resources :mangrove_data
+      resources :mangrove_data do
+        # post 'import', to: 'mangrove_data#import'
+      end
+
     end
 
+    post 'locations/import', to: 'locations#import'
+
+    # Widgets
     get 'widget_data/mangrove_coverage', to: 'widget_data#mangrove_coverage'
   end
 end
