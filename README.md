@@ -56,5 +56,11 @@ Mangrove coverage
     curl "https://mangrove-atlas-api.herokuapp.com/api/widget_data/mangrove_coverage"
 ```
 
-You can filter by country `country=[iso]` or by `location_id=[id]`.
+Mangrove net change
+
+```
+    curl "https://mangrove-atlas-api.herokuapp.com/api/widget_data/mangrove_net_change"
+```
+
+NOTE: You can filter by country `country=[iso]` or by `location_id=[id]`.
 
