@@ -7,25 +7,27 @@ class MangroveDatum < ApplicationRecord
   validates_presence_of :date
 
   def self.mangrove_coverage(country = nil, location_id = nil)
-    if country
-      location = Location.find_by(iso: country)
-    elsif location_id
-      location = Location.find(location_id)
+    data = self
+      .select('date, sum(length_m) as value, \'m\' as unit')
+      .group('date')
+      .where.not(length_m: nil)
+      .order('date')
+
+    if (country || location_id)
+      if country
+        location = Location.find_by(iso: country, location_type: 'country')
+      elsif location_id
+        location = Location.find(location_id)
+      end
+
+      if location
+        data = data.where(location_id: location.id)
+      else
+        data = nil
+      end
     end
 
-
-
-    if location
-      data = self
-        .select('id, date, sum(length_m)')
-        .group('id, date')
-        .where.not(length_m: nil)
-        .order('date')
-
-      data = data.where(location_id: location.id)
-    else
-      nil
-    end
+    data
   end
 
   def self.import(import_params)
