@@ -38,6 +38,15 @@ class MangroveDataController < ApplicationController
     @mangrove_datum.destroy
   end
 
+  # Import data from CSV
+  def import
+    if (params[:reset])
+      MangroveDatum.delete_all
+    end
+    MangroveDatum.import(import_params)
+    head :created
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_mangrove_datum
