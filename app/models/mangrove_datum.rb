@@ -30,6 +30,31 @@ class MangroveDatum < ApplicationRecord
     data
   end
 
+  def self.mangrove_net_change(country = nil, location_id = nil)
+    data = self
+      .select('date, sum(loss_m2) as loss, sum(gain_m2) as gain, (sum(gain_m2) - sum(loss_m2)) net_change, \'m2\' as unit')
+      .group('date')
+      .where.not(loss_m2: nil)
+      .where.not(gain_m2: nil)
+      .order('date')
+
+    if (country || location_id)
+      if country
+        location = Location.find_by(iso: country, location_type: 'country')
+      elsif location_id
+        location = Location.find(location_id)
+      end
+
+      if location
+        data = data.where(location_id: location.id)
+      else
+        data = nil
+      end
+    end
+
+    data
+  end
+
   def self.import(import_params)
     CSV.foreach(import_params[:file].path, headers: false, col_sep: ';').with_index do |row, i|
       if (i > 0)

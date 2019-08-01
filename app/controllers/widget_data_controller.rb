@@ -5,4 +5,9 @@ class WidgetDataController < ApplicationController
     json_response(data)
   end
 
+  def mangrove_net_change
+    @data = MangroveDatum.mangrove_net_change(params[:country], params[:location_id])
+    json_response(data)
+  end
+
 end

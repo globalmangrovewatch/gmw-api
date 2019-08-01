@@ -10,5 +10,6 @@ Rails.application.routes.draw do
 
     # Widgets
     get 'widget_data/mangrove_coverage', to: 'widget_data#mangrove_coverage'
+    get 'widget_data/mangrove_net_change', to: 'widget_data#mangrove_net_change'
   end
 end
