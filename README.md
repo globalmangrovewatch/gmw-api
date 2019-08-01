@@ -1,24 +1,18 @@
-# README
+# API documentation
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Get all locations
 
-Things you may want to cover:
+```
+    curl "https://mangrove-atlas-api.herokuapp.com/api/locations"
+```
 
-* Ruby version
+Import locations from CSV
 
-* System dependencies
+```
+    curl -X "POST" "https://mangrove-atlas-api.herokuapp.com/api/locations/import" \
+      -H "Content-Type: multipart/form-data" \
+      -F "file=@[file_path]"
+```
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+You have to replace `[file_path]`.
+If you want to replace all locations, you have to add the param `?reset=true` in the url.
