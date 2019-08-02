@@ -30,11 +30,25 @@ class LocationsController < ApplicationController
     head :no_content
   end
 
+  # Import data from CSV
+  def import
+    if (params[:reset])
+      Location.delete_all
+    end
+    Location.import(import_params)
+    head :created
+  end
+
   private
 
   def location_params
     # whitelist params
     params.permit(:name, :location_type, :iso)
+  end
+
+  def import_params
+    # whitelist params
+    params.permit(:file)
   end
 
   def set_location
