@@ -9,8 +9,13 @@ class LocationsController < ApplicationController
 
   # POST /locations
   def create
-    @location = Location.create!(location_params)
-    json_response(@location, :created)
+    @location = Location.new(location_params)
+
+    if @location.save
+      json_response(@location, :created)
+    else
+      json_response(@location.errors, :unprocessable_entity)
+    end
   end
 
   # GET /locations/:id
@@ -20,8 +25,11 @@ class LocationsController < ApplicationController
 
   # PUT /locations/:id
   def update
-    @location.update(location_params)
-    head :no_content
+    if @location.update(location_params)
+      json_response(@location)
+    else
+      json_response(@location.errors, :unprocessable_entity)
+    end
   end
 
   # DELETE /locations/:id
@@ -41,17 +49,15 @@ class LocationsController < ApplicationController
 
   private
 
-  def location_params
-    # whitelist params
-    params.permit(:name, :location_type, :iso)
-  end
+    def set_location
+      @location = Location.find(params[:id])
+    end
 
-  def import_params
-    # whitelist params
-    params.permit(:file)
-  end
+    def location_params
+      params.permit(:name, :location_type, :iso)
+    end
 
-  def set_location
-    @location = Location.find(params[:id])
-  end
+    def import_params
+      params.permit(:file)
+    end
 end
