@@ -1,6 +1,8 @@
 class Location < ApplicationRecord
   require 'csv'
 
+  before_destroy :destroy_mangrove_data
+
   default_scope { order(name: :asc) }
 
   # model association
@@ -26,4 +28,9 @@ class Location < ApplicationRecord
     end
   end
 
+  private
+
+   def destroy_mangrove_data
+     self.mangrove_datum.destroy_all
+   end
 end
