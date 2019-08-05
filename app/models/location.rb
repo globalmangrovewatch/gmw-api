@@ -20,6 +20,7 @@ class Location < ApplicationRecord
         location_hash.area_m2 = row[5]
         location_hash.perimeter_m = row[6]
         location_hash.coast_length_m = row[7]
+        location_hash.location_id = row[8]
         location_hash.save!
       end
     end
