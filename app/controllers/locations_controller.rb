@@ -41,7 +41,7 @@ class LocationsController < ApplicationController
   # Import data from CSV
   def import
     if (params[:reset])
-      Location.delete_all
+      Location.destroy_all
     end
     Location.import(import_params)
     head :created

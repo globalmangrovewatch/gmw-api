@@ -41,7 +41,7 @@ class MangroveDataController < ApplicationController
   # Import data from CSV
   def import
     if (params[:reset])
-      MangroveDatum.delete_all
+      MangroveDatum.destroy_all
     end
     MangroveDatum.import(import_params)
     head :created

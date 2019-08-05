@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 2019_08_05_095138) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.float "coast_length_m"
-    t.integer "location_id"
+    t.string "location_id"
   end
 
   create_table "mangrove_data", force: :cascade do |t|
