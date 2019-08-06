@@ -9,6 +9,11 @@ class LocationsController < ApplicationController
     json_response(@locations)
   end
 
+  # GET /locations/worldwide
+  def worldwide
+    json_response(Location.worldwide)
+  end
+
   # POST /locations
   def create
     @location = Location.new(location_params)

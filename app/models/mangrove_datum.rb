@@ -7,7 +7,8 @@ class MangroveDatum < ApplicationRecord
   validates_presence_of :date
 
   def self.worldwide
-    self.find_by(location_type: 'worldwide')
+    worldwide = Location.worldwide
+    self.where(location_id: worldwide.id)
   end
 
   def self.import(import_params)

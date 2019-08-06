@@ -1,5 +1,5 @@
 class MangroveDataController < ApplicationController
-  before_action :set_location, except: [:wordlwide, :import]
+  before_action :set_location, except: [:worldwide, :import]
   before_action :set_mangrove_datum, only: [:show, :update, :destroy]
 
   # GET /locations/:location_id/mangrove_data
@@ -9,16 +9,14 @@ class MangroveDataController < ApplicationController
     })
   end
 
+  # GET /locations/worldwide/mangrove_data
+  def worldwide
+    json_response(Location.worldwide.mangrove_datum)
+  end
+
   # GET /locations/:location_id/mangrove_data/1
   def show
     json_response(@mangrove_datum)
-  end
-
-  # GET /locations/worldwide/mangrove_data
-  def wordlwide
-    json_response(MangroveDatum.worldwide, :ok, {
-      # location_coast_length_m: Location.wordlwide.coast_length_m
-    }))
   end
 
   # POST /mangrove_data
