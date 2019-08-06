@@ -58,11 +58,11 @@ class MangroveDatum < ApplicationRecord
   def self.import(import_params)
     CSV.foreach(import_params[:file].path, headers: false, col_sep: ';').with_index do |row, i|
       if (i > 0)
-        location = Location.find(row[8].to_i)
+        location = Location.find_by(location_id: row[8])
 
         if (location)
           mangrove_datum_hash = MangroveDatum.new
-          mangrove_datum_hash.date =  Date.strptime(row[0], '%Y')
+          mangrove_datum_hash.date = Date.strptime(row[0], '%Y')
           mangrove_datum_hash.gain_m2 = row[1]
           mangrove_datum_hash.loss_m2 = row[2]
           mangrove_datum_hash.length_m = row[3]
@@ -70,7 +70,8 @@ class MangroveDatum < ApplicationRecord
           mangrove_datum_hash.hmax_m = row[5]
           mangrove_datum_hash.agb_mgha_1 = row[6]
           mangrove_datum_hash.hba_m = row[7]
-          mangrove_datum_hash.location_id = location.id
+          mangrove_datum_hash.con_hotspot_summary_km2 = row[9]
+          mangrove_datum_hash.location = location
           mangrove_datum_hash.save!
         end
       end
