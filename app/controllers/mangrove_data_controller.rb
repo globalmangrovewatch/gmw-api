@@ -1,10 +1,12 @@
 class MangroveDataController < ApplicationController
+  before_action :set_location, except: [:import]
   before_action :set_mangrove_datum, only: [:show, :update, :destroy]
 
   # GET /mangrove_data
   def index
-    @mangrove_data = MangroveDatum.all
-    json_response(@mangrove_data)
+    json_response(@location.mangrove_datum, :ok, {
+      location_coast_length_m: @location.coast_length_m
+    })
   end
 
   # GET /mangrove_data/1
@@ -49,8 +51,13 @@ class MangroveDataController < ApplicationController
 
   private
 
+    def set_location
+      # TODO: allow to search by ISO
+      @location = Location.find(params[:location_id])
+    end
+
     def set_mangrove_datum
-      @mangrove_datum = MangroveDatum.find(params[:id])
+      @mangrove_datum = @location.mangrove_datum.find_by!(id: params[:id]) if @location
     end
 
     def import_params
