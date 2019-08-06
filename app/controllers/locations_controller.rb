@@ -3,7 +3,9 @@ class LocationsController < ApplicationController
 
   # GET /locations
   def index
-    @locations = Location.all
+    @locations = []
+    @locations << Location.find_by(location_id: 'worldwide')
+    @locations += Location.all.where.not(location_id: 'worldwide').order(name: :asc)
     json_response(@locations)
   end
 

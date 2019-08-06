@@ -3,12 +3,14 @@ class Location < ApplicationRecord
 
   before_destroy :destroy_mangrove_data
 
-  default_scope { order(name: :asc) }
-
   # model association
   has_many :mangrove_datum, dependent: :destroy
   # validations
   validates_presence_of :name, :location_type, :iso
+
+  def self.worldwide
+    self.find_by(location_type: 'worldwide')
+  end
 
   def self.import(import_params)
     CSV.foreach(import_params[:file].path, headers: false, col_sep: ';').with_index do |row, i|

@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   scope :api, defaults: { format: :json } do
     resources :locations do
       resources :mangrove_data
+
+      get '/worldwide/mangrove_data', to: 'mangrove_data#worldwide'
     end
 
     # Import CSV
