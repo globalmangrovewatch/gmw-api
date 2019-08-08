@@ -11,7 +11,9 @@ class MangroveDataController < ApplicationController
 
   # GET /locations/worldwide/mangrove_data
   def worldwide
-    json_response(Location.worldwide.mangrove_datum)
+    json_response(Location.worldwide.mangrove_datum, :ok, {
+      location_coast_length_m: Location.worldwide.coast_length_m
+    })
   end
 
   # GET /locations/:location_id/mangrove_data/1
@@ -57,8 +59,13 @@ class MangroveDataController < ApplicationController
   private
 
     def set_location
-      # TODO: allow to search by ISO
-      @location = Location.find(params[:location_id])
+      next_location = Location.find_by(iso: params[:location_id])
+
+      if next_location
+        @location = next_location
+      else
+        @location = Location.find(params[:location_id])
+      end
     end
 
     def set_mangrove_datum
