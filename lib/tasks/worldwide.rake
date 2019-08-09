@@ -47,12 +47,10 @@ namespace :worldwide do
       'sum(hba_m) as hba_m',
     ]).group('date')
 
-    ap mangrove_datum_result
-
     mangrove_datum_result.each do |m|
       mangrove_datum_item = MangroveDatum.find_by(date: m[:date], location_id: worldwide.id)
 
-      unless mangrove_datum_item 
+      unless mangrove_datum_item
         MangroveDatum.create!(
           date: m[:date],
           gain_m2: m[:gain_m2],
