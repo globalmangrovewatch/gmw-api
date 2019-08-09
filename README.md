@@ -12,7 +12,7 @@ To install run `bundle install`. And start application running `rails s`.
 
 ### Locations
 
-Get all locations
+Get all locations, sorted by name and Worldwide at the top.
 
 ```
     curl "https://mangrove-atlas-api.herokuapp.com/api/locations"
@@ -29,12 +29,13 @@ Import locations from CSV
 You have to replace `[file_path]`.
 If you want to replace all locations, you have to add the param `?reset=true` in the url.
 
-### Mangrove data (raw data for widgets)
 
-Get all mangrove data
+### Mangrove data (data for Widgets)
+
+Get all mangrove data by a location.
 
 ```
-    curl "https://mangrove-atlas-api.herokuapp.com/api/mangrove_data"
+    curl "https://mangrove-atlas-api.herokuapp.com/api/locations/[location_id | iso]/mangrove_data"
 ```
 
 Import mangrove data from CSV
@@ -46,21 +47,32 @@ Import mangrove data from CSV
 ```
 
 You have to replace `[file_path]`.
-If you want to replace all locations, you have to add the param `?reset=true` in the url.
+If you want to replace all mangrove data, you have to add the param `?reset=true` in the url.
 
-### Widgets
 
-Mangrove coverage
+### Generating data for worldwide
 
-```
-    curl "https://mangrove-atlas-api.herokuapp.com/api/widget_data/mangrove_coverage"
-```
-
-Mangrove net change
+To create or update the data for worlwide you can run
 
 ```
-    curl "https://mangrove-atlas-api.herokuapp.com/api/widget_data/mangrove_net_change"
+heroku run rake worldwide:location worldwide:mangrove_datum
 ```
 
-NOTE: You can filter by country `country=[iso]` or by `location_id=[id]`.
+It iterate over all locations and mangrove data tables to calc and sum the values for Worldwide.
 
+
+## Deploy to staging
+
+Merge your code in `develop` branch.
+
+Add heroku site:
+
+```
+heroku git:remote -a mangroves-atlas-api
+```
+
+And deploy:
+
+```
+git push heroku develop:master
+```
