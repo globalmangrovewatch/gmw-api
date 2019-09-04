@@ -12,6 +12,15 @@ class Location < ApplicationRecord
     self.find_by(location_type: 'worldwide')
   end
 
+  def self.rank_by_mangrove_data_column(column_name, limit = 5)
+    result = self.includes(:mangrove_datum)
+      .where.not("mangrove_data.#{column_name} IS NULL")
+      .where.not(location_type: 'worldwide')
+      .order("mangrove_data.#{column_name} DESC")
+
+    result.slice(0, limit)
+  end
+
   def self.import(import_params)
     CSV.foreach(import_params[:file].path, headers: false, col_sep: ';').with_index do |row, i|
       if (i > 0)

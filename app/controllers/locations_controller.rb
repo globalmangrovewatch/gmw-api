@@ -3,10 +3,15 @@ class LocationsController < ApplicationController
 
   # GET /locations
   def index
-    @locations = []
-    worldwide = Location.find_by(location_id: 'worldwide')
-    @locations << worldwide if worldwide
-    @locations += Location.all.where.not(location_id: 'worldwide').order(name: :asc)
+    if params.has_key?(:rank_by)
+      @locations = Location.rank_by_mangrove_data_column(params[:rank_by])
+    else
+      @locations = []
+      worldwide = Location.find_by(location_id: 'worldwide')
+      @locations << worldwide if worldwide
+      @locations += Location.all.where.not(location_id: 'worldwide').order(name: :asc)
+    end
+
     json_response(@locations)
   end
 

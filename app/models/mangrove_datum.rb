@@ -11,6 +11,10 @@ class MangroveDatum < ApplicationRecord
     self.where(location_id: worldwide.id)
   end
 
+  def self.rank_by(column_name, limit = 5)
+    self.where.not("#{column_name} IS NULL").order("#{column_name} DESC").limit(limit)
+  end
+
   def self.import(import_params)
     CSV.foreach(import_params[:file].path, headers: false, col_sep: ';').with_index do |row, i|
       if (i > 0)
