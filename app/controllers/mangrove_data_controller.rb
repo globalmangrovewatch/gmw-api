@@ -4,7 +4,13 @@ class MangroveDataController < ApplicationController
 
   # GET /locations/:location_id/mangrove_data
   def index
-    json_response(@location.mangrove_datum, :ok, {
+    if params.has_key?(:rank_by)
+      mangrove_datum = @location.mangrove_datum.rank_by(params[:rank_by], params[:limit])
+    else
+      mangrove_datum = @location.mangrove_datum
+    end
+
+    json_response(mangrove_datum, :ok, {
       location_coast_length_m: @location.coast_length_m
     })
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_06_092018) do
+ActiveRecord::Schema.define(version: 2019_09_05_074240) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 2019_08_06_092018) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "con_hotspot_summary_km2"
+    t.float "net_change_m2"
     t.index ["location_id"], name: "index_mangrove_data_on_location_id"
   end
 
