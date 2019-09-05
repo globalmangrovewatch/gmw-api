@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   scope :api, defaults: { format: :json } do
     get '/locations/worldwide', to: 'locations#worldwide'
     get '/locations/worldwide/mangrove_data', to: 'mangrove_data#worldwide'
-    
+
     resources :locations, except: [:worldwide] do
       resources :mangrove_data, except: [:worldwide]
     end

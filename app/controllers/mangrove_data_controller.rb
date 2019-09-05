@@ -1,11 +1,11 @@
 class MangroveDataController < ApplicationController
-  before_action :set_location, except: [:worldwide, :import]
+  before_action :set_location, except: [:worldwide, :rank, :import]
   before_action :set_mangrove_datum, only: [:show, :update, :destroy]
 
   # GET /locations/:location_id/mangrove_data
   def index
     if params.has_key?(:rank_by)
-      mangrove_datum = @location.mangrove_datum.rank_by(params[:rank_by], params[:limit])
+      mangrove_datum = @location.mangrove_datum.rank_by(params[:rank_by], params[:start_date] || '1996', params[:end_date] || '2019', params[:limit] || 5)
     else
       mangrove_datum = @location.mangrove_datum
     end

@@ -12,13 +12,14 @@ class Location < ApplicationRecord
     self.find_by(location_type: 'worldwide')
   end
 
-  def self.rank_by_mangrove_data_column(column_name, limit = 5)
+  def self.rank_by_mangrove_data_column(column_name, start_date = '1996', end_date = '2015', limit = '5')
     result = self.includes(:mangrove_datum)
       .where.not("mangrove_data.#{column_name} IS NULL")
       .where.not(location_type: 'worldwide')
+      .where("mangrove_data.date >= ? AND mangrove_data.date <= ?", Date.strptime(start_date, '%Y'), Date.strptime(end_date, '%Y'))
       .order("mangrove_data.#{column_name} DESC")
 
-    result.slice(0, limit)
+    result.slice(0, limit.to_i)
   end
 
   def self.import(import_params)

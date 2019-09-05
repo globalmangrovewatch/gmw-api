@@ -11,8 +11,12 @@ class MangroveDatum < ApplicationRecord
     self.where(location_id: worldwide.id)
   end
 
-  def self.rank_by(column_name, limit = 5)
-    self.where.not("#{column_name} IS NULL").order("#{column_name} DESC").limit(limit)
+  def self.rank_by(column_name, start_date = '1996', end_date = '2015', limit = '5')
+    self
+      .where.not("#{column_name} IS NULL")
+      .where("date >= ? AND date <= ?", Date.strptime(start_date, '%Y'), Date.strptime(end_date, '%Y'))
+      .order("#{column_name} DESC")
+      .limit(limit.to_i)
   end
 
   def self.import(import_params)
