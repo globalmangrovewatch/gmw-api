@@ -11,14 +11,16 @@ class MangroveDataController < ApplicationController
     end
 
     json_response(mangrove_datum, :ok, {
-      location_coast_length_m: @location.coast_length_m
+      location_coast_length_m: @location.coast_length_m,
+      dates: @location.mangrove_datum.dates_with_data(params[:rank_by])
     })
   end
 
   # GET /locations/worldwide/mangrove_data
   def worldwide
     json_response(Location.worldwide.mangrove_datum, :ok, {
-      location_coast_length_m: Location.worldwide.coast_length_m
+      location_coast_length_m: Location.worldwide.coast_length_m,
+      dates: Location.worldwide.mangrove_datum.dates_with_data(nil)
     })
   end
 

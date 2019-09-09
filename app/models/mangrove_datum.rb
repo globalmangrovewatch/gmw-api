@@ -9,6 +9,7 @@ class MangroveDatum < ApplicationRecord
   def self.worldwide
     worldwide = Location.worldwide
     self.where(location_id: worldwide.id)
+    self
   end
 
   def self.rank_by(column_name, start_date = '1996', end_date = '2015', limit = '5')
@@ -17,6 +18,14 @@ class MangroveDatum < ApplicationRecord
       .where("date >= ? AND date <= ?", Date.strptime(start_date, '%Y'), Date.strptime(end_date, '%Y'))
       .order("#{column_name} DESC")
       .limit(limit.to_i)
+  end
+
+  def self.dates_with_data(column_name)
+    if column_name
+      self.select('date').where.not("#{column_name} IS NULL").group('date')
+    else
+      self.select('date').group('date')
+    end    
   end
 
   def self.import(import_params)

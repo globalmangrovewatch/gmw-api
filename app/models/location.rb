@@ -40,6 +40,14 @@ class Location < ApplicationRecord
     end
   end
 
+  def self.dates_with_data(column_name)
+    if column_name
+      self.joins(:mangrove_datum).select('mangrove_data.date').where.not("mangrove_data.#{column_name} IS NULL").group('mangrove_data.date')
+    else
+      self.joins(:mangrove_datum).select('mangrove_data.date').group('mangrove_data.date')
+    end    
+  end
+
   private
 
    def destroy_mangrove_data

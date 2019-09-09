@@ -12,7 +12,9 @@ class LocationsController < ApplicationController
       @locations += Location.all.where.not(location_id: 'worldwide').order(name: :asc)
     end
 
-    json_response(@locations)
+    json_response(@locations, :ok, {
+      dates: Location.dates_with_data(params[:rank_by])
+    })
   end
 
   # GET /locations/worldwide
