@@ -78,8 +78,11 @@ test:
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
+# production:
+#   <<: *default
+#   database: mangrove-atlas-api_production
+#   username: mangrove-atlas-api
+#   password: <%= ENV['MANGROVE-ATLAS-API_DATABASE_PASSWORD'] %>
+
 production:
-  <<: *default
-  database: mangrove-atlas-api_production
-  username: mangrove-atlas-api
-  password: <%= ENV['MANGROVE-ATLAS-API_DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>
