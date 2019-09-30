@@ -4,4 +4,16 @@ class MangroveDatumSerializer < ActiveModel::Serializer
   def con_hotspot_summary_km2
     JSON.parse self.object.con_hotspot_summary_km2 if self.object.con_hotspot_summary_km2
   end
+
+  def agb_hist_mgha_1
+    JSON.parse self.object.agb_hist_mgha_1 if self.object.agb_hist_mgha_1
+  end
+
+  def hba_hist_m
+    JSON.parse self.object.hba_hist_m if self.object.hba_hist_m
+  end
+
+  def hmax_hist_m
+    JSON.parse self.object.hmax_hist_m if self.object.hmax_hist_m
+  end
 end

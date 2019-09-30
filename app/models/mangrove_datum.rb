@@ -25,25 +25,29 @@ class MangroveDatum < ApplicationRecord
       self.select('date').where.not("#{column_name} IS NULL").group('date')
     else
       self.select('date').group('date')
-    end    
+    end
   end
 
   def self.import(import_params)
-    CSV.foreach(import_params[:file].path, headers: false, col_sep: ';').with_index do |row, i|
+    CSV.foreach(import_params[:file].path, headers: true, col_sep: ';').with_index do |row, i|
       if (i > 0)
-        location = Location.find_by(location_id: row[8])
+        location = Location.find_by(location_id: row['location_id'])
 
         if (location)
+          puts location
           mangrove_datum_hash = MangroveDatum.new
-          mangrove_datum_hash.date = Date.strptime(row[0], '%d/%m/%Y')
-          mangrove_datum_hash.gain_m2 = row[1]
-          mangrove_datum_hash.loss_m2 = row[2]
-          mangrove_datum_hash.length_m = row[3]
-          mangrove_datum_hash.area_m2 = row[4]
-          mangrove_datum_hash.hmax_m = row[5]
-          mangrove_datum_hash.agb_mgha_1 = row[6]
-          mangrove_datum_hash.hba_m = row[7]
-          mangrove_datum_hash.con_hotspot_summary_km2 = row[9]
+          mangrove_datum_hash.date = Date.strptime(row['date'], '%Y-%m-%d')
+          mangrove_datum_hash.gain_m2 = row['gain_m2']
+          mangrove_datum_hash.loss_m2 = row['loss_m2']
+          mangrove_datum_hash.length_m = row['length_m']
+          mangrove_datum_hash.area_m2 = row['area_m2']
+          mangrove_datum_hash.hmax_m = row['hmax_m']
+          mangrove_datum_hash.agb_mgha_1 = row['agb_mgha_1']
+          mangrove_datum_hash.hba_m = row['hba_m']
+          mangrove_datum_hash.con_hotspot_summary_km2 = row['con_hotspot_summary_km2']
+          mangrove_datum_hash.agb_hist_mgha_1 = row['agb_hist_mgha_1']
+          mangrove_datum_hash.hba_hist_m = row['hba_hist_m']
+          mangrove_datum_hash.hmax_hist_m = row['hmax_hist_m']
           mangrove_datum_hash.location = location
           mangrove_datum_hash.save!
         end

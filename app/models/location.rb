@@ -23,18 +23,18 @@ class Location < ApplicationRecord
   end
 
   def self.import(import_params)
-    CSV.foreach(import_params[:file].path, headers: false, col_sep: ';').with_index do |row, i|
+    CSV.foreach(import_params[:file].path, headers: true, col_sep: ';').with_index do |row, i|
       if (i > 0)
         location_hash = Location.new
-        location_hash.name = row[0]
-        location_hash.location_type = row[1]
-        location_hash.iso = row[2]
-        location_hash.bounds = row[3]
-        location_hash.geometry = row[4]
-        location_hash.area_m2 = row[5]
-        location_hash.perimeter_m = row[6]
-        location_hash.coast_length_m = row[7]
-        location_hash.location_id = row[8]
+        location_hash.name = row['name']
+        location_hash.location_type = row['location_type']
+        location_hash.iso = row['iso']
+        location_hash.bounds = row['bounds']
+        location_hash.geometry = row['geometry']
+        location_hash.area_m2 = row['area_m2']
+        location_hash.perimeter_m = row['perimeter_m']
+        location_hash.coast_length_m = row['coast_length_m']
+        location_hash.location_id = row['location_id']
         location_hash.save!
       end
     end
@@ -45,7 +45,7 @@ class Location < ApplicationRecord
       self.joins(:mangrove_datum).select('mangrove_data.date').where.not("mangrove_data.#{column_name} IS NULL").group('mangrove_data.date')
     else
       self.joins(:mangrove_datum).select('mangrove_data.date').group('mangrove_data.date')
-    end    
+    end
   end
 
   private
