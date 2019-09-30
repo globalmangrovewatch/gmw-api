@@ -23,20 +23,18 @@ class Location < ApplicationRecord
   end
 
   def self.import(import_params)
-    CSV.foreach(import_params[:file].path, headers: true, col_sep: ';').with_index do |row, i|
-      if (i > 0)
-        location_hash = Location.new
-        location_hash.name = row['name']
-        location_hash.location_type = row['location_type']
-        location_hash.iso = row['iso']
-        location_hash.bounds = row['bounds']
-        location_hash.geometry = row['geometry']
-        location_hash.area_m2 = row['area_m2']
-        location_hash.perimeter_m = row['perimeter_m']
-        location_hash.coast_length_m = row['coast_length_m']
-        location_hash.location_id = row['location_id']
-        location_hash.save!
-      end
+    CSV.foreach(import_params[:file].path, headers: true, col_sep: ';') do |row|
+      location_hash = Location.new
+      location_hash.name = row['name']
+      location_hash.location_type = row['location_type']
+      location_hash.iso = row['iso']
+      location_hash.bounds = row['bounds']
+      location_hash.geometry = row['geometry']
+      location_hash.area_m2 = row['area_m2']
+      location_hash.perimeter_m = row['perimeter_m']
+      location_hash.coast_length_m = row['coast_length_m']
+      location_hash.location_id = row['location_id']
+      location_hash.save!
     end
   end
 
