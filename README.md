@@ -9,6 +9,8 @@ To install run `bundle install`. And start application running `rails s`.
 
 ## API documentation
 
+**NOTE: CSV file should have `;` as separator.**
+
 
 ### Locations
 
