@@ -1,5 +1,9 @@
 class Location < ApplicationRecord
   require 'csv'
+  require 'rake'
+
+  Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mode
+  MangroveAtlasApi::Application.load_tasks
 
   before_destroy :destroy_mangrove_data
 
@@ -35,6 +39,8 @@ class Location < ApplicationRecord
       location_hash.coast_length_m = row['coast_length_m']
       location_hash.location_id = row['location_id']
       location_hash.save!
+
+      Rake::Task['worldwide:location'].invoke
     end
   end
 

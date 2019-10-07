@@ -1,5 +1,9 @@
 class MangroveDatum < ApplicationRecord
   require 'csv'
+  require 'rake'
+
+  Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mode
+  MangroveAtlasApi::Application.load_tasks
 
   # model association
   belongs_to :location
@@ -49,6 +53,9 @@ class MangroveDatum < ApplicationRecord
         mangrove_datum_hash.hmax_hist_m = row['hmax_hist_m']
         mangrove_datum_hash.location = location
         mangrove_datum_hash.save!
+
+        Rake::Task['net_change:populate'].invoke
+        Rake::Task['worldwide:mangrove_datum'].invoke
       end
     end
   end
