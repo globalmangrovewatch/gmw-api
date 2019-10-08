@@ -1,5 +1,6 @@
 class LocationsController < ApplicationController
   before_action :set_location, only: [:show, :update, :destroy]
+  caches_action :index, :worldwide, :show
 
   # GET /locations
   def index
