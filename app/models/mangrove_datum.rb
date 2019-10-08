@@ -37,7 +37,6 @@ class MangroveDatum < ApplicationRecord
       location = Location.find_by(location_id: row['location_id'])
 
       if (location)
-        puts location
         mangrove_datum_hash = MangroveDatum.new
         mangrove_datum_hash.date = Date.strptime(row['date'], '%Y-%m-%d')
         mangrove_datum_hash.gain_m2 = row['gain_m2']
@@ -53,10 +52,10 @@ class MangroveDatum < ApplicationRecord
         mangrove_datum_hash.hmax_hist_m = row['hmax_hist_m']
         mangrove_datum_hash.location = location
         mangrove_datum_hash.save!
-
-        Rake::Task['net_change:populate'].invoke
-        Rake::Task['worldwide:mangrove_datum'].invoke
       end
     end
+
+    Rake::Task['worldwide:mangrove_datum'].invoke
+    Rake::Task['net_change:populate'].invoke
   end
 end

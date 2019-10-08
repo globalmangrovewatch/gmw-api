@@ -39,9 +39,9 @@ class Location < ApplicationRecord
       location_hash.coast_length_m = row['coast_length_m']
       location_hash.location_id = row['location_id']
       location_hash.save!
-
-      Rake::Task['worldwide:location'].invoke
     end
+
+    Rake::Task['worldwide:location'].invoke
   end
 
   def self.dates_with_data(column_name)
