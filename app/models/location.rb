@@ -42,6 +42,8 @@ class Location < ApplicationRecord
     end
 
     Rake::Task['worldwide:location'].invoke
+
+    self
   end
 
   def self.dates_with_data(column_name)
