@@ -42,9 +42,9 @@ namespace :worldwide do
       'sum(loss_m2) as loss_m2',
       'sum(length_m) as length_m',
       'sum(area_m2) as area_m2',
-      'sum(hmax_m) as hmax_m',
-      'sum(agb_mgha_1) as agb_mgha_1',
-      'sum(hba_m) as hba_m',
+      'avg(hmax_m) as hmax_m',
+      'avg(agb_mgha_1) as agb_mgha_1',
+      'avg(hba_m) as hba_m',
     ]).group('date')
 
     mangrove_datum_result.each do |m|

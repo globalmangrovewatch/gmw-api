@@ -43,13 +43,13 @@ class MangroveDatum < ApplicationRecord
         mangrove_datum_hash.loss_m2 = row['loss_m2']
         mangrove_datum_hash.length_m = row['length_m']
         mangrove_datum_hash.area_m2 = row['area_m2']
-        mangrove_datum_hash.hmax_m = row['hmax_m']
-        mangrove_datum_hash.agb_mgha_1 = row['agb_mgha_1']
-        mangrove_datum_hash.hba_m = row['hba_m']
+        mangrove_datum_hash.hmax_m = row['hmax_mangrove_m']
+        mangrove_datum_hash.agb_mgha_1 = row['agb_mangrove_mgha-1']
+        mangrove_datum_hash.hba_m = row['hba_mangrove_m']
         mangrove_datum_hash.con_hotspot_summary_km2 = row['con_hotspot_summary_km2']
-        mangrove_datum_hash.agb_hist_mgha_1 = row['agb_hist_mgha_1']
-        mangrove_datum_hash.hba_hist_m = row['hba_hist_m']
-        mangrove_datum_hash.hmax_hist_m = row['hmax_hist_m']
+        mangrove_datum_hash.agb_hist_mgha_1 = row['agb_mangrove_hist_mgha-1']
+        mangrove_datum_hash.hba_hist_m = row['hba_mangrove_hist_m']
+        mangrove_datum_hash.hmax_hist_m = row['hmax_mangrove_hist_m']
         mangrove_datum_hash.location = location
         mangrove_datum_hash.save!
       end
@@ -58,6 +58,6 @@ class MangroveDatum < ApplicationRecord
     Rake::Task['worldwide:mangrove_datum'].invoke
     Rake::Task['net_change:populate'].invoke
 
-    self
+    return self
   end
 end
