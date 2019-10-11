@@ -1,6 +1,7 @@
 class MangroveDataController < ApplicationController
   before_action :set_location, except: [:worldwide, :rank, :import]
   before_action :set_mangrove_datum, only: [:show, :update, :destroy]
+  # caches_action :index, :worldwide, :show
 
   # GET /locations/:location_id/mangrove_data
   def index
