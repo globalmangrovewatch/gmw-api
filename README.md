@@ -44,6 +44,7 @@ curl "https://mangrove-atlas-api.herokuapp.com/api/locations?rank_by=gain_m2&sta
 | rank_by | yes | - |
 | start_date | no | 1996 |
 | end_date | no | 2017 |
+| location_type | no | - |
 | limit | no | 5 |
 
 
