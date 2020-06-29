@@ -73,7 +73,7 @@ class MangroveDataController < ApplicationController
       if next_location
         @location = next_location
       else
-        @location = Location.find(params[:location_id])
+        @location = Location.find_by(id: params[:location_id].to_i)
       end
     end
 
