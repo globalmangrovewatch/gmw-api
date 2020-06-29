@@ -1,0 +1,48 @@
+version: '3'
+services:
+  api:
+    restart: always
+    build:
+      context: .
+      args:
+        - env=production
+    command: bundle exec puma -C config/puma.rb
+    environment:
+      - PORT=3000
+      - REDIS_HOST=redis
+      - DATABASE_URL=postgres://db
+      - RAILS_SERVE_STATIC_FILES=true
+    ports:
+      - "3000:3000"
+    container_name: mangroves_api
+    volumes:
+      - "./public/uploads:/usr/src/api/public/uploads"
+      - "./public/system:/usr/src/api/public/system"
+    links:
+      - db
+      - redis
+    depends_on:
+      - db
+      - redis
+  redis:
+    image: redis
+    restart: always
+    container_name: mangroves_redis
+    ports:
+      - 6789:6789
+    volumes:
+      - redis-data:/data
+  db:
+    image: postgres:10-alpine
+    container_name: mangroves_db
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mangroves
+volumes:
+  redis-data:
+  postgres-data:
