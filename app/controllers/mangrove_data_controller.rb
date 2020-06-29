@@ -6,7 +6,7 @@ class MangroveDataController < ApplicationController
   # GET /locations/:location_id/mangrove_data
   def index
     if params.has_key?(:rank_by)
-      mangrove_datum = @location.mangrove_datum.rank_by(params[:rank_by], params[:start_date] || '1996', params[:end_date] || '2019', params[:limit] || 5)
+      mangrove_datum = @location.mangrove_datum.rank_by(params[:rank_by], params[:dir], params[:dir], params[:start_date] || '1996', params[:end_date] || '2019', params[:limit] || 5)
     else
       mangrove_datum = @location.mangrove_datum
     end
