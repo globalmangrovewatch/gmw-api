@@ -18,11 +18,11 @@ class MangroveDatum < ApplicationRecord
     self
   end
 
-  def self.rank_by(column_name, start_date = '1996', end_date = '2015', limit = '5')
+  def self.rank_by(column_name, dir = 'DESC', start_date = '1996', end_date = '2015', limit = '5')
     self
       .where.not("#{column_name} IS NULL")
       .where("date >= ? AND date <= ?", Date.strptime(start_date, '%Y'), Date.strptime(end_date, '%Y'))
-      .order("#{column_name} DESC")
+      .order("#{column_name} #{dir}")
       .limit(limit.to_i)
   end
 

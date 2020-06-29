@@ -183,7 +183,7 @@ DEPENDENCIES
   faker
   listen (>= 3.0.5, < 3.2)
   pg (>= 0.18, < 2.0)
-  puma (~> 3.11)
+  puma (~> 3.12)
   rack-cors
   rails (~> 5.2.4.3)
   rspec-rails (~> 3.5)

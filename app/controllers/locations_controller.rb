@@ -5,7 +5,7 @@ class LocationsController < ApplicationController
   # GET /locations
   def index
     if params.has_key?(:rank_by)
-      @locations = Location.rank_by_mangrove_data_column(params[:rank_by], params[:start_date] || '1996', params[:end_date] || '2019', params[:location_type], params[:limit] || 5)
+      @locations = Location.rank_by_mangrove_data_column(params[:rank_by], params[:dir], params[:start_date] || '1996', params[:end_date] || '2019', params[:location_type], params[:limit] || 5)
     else
       @locations = []
       worldwide = Location.find_by(location_id: 'worldwide')
