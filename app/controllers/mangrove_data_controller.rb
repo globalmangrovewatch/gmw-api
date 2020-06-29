@@ -70,7 +70,7 @@ class MangroveDataController < ApplicationController
     def set_location
       next_location = Location.find_by(iso: params[:location_id])
 
-      if next_location
+      if next_location.empty?
         @location = next_location
       else
         @location = Location.find(params[:location_id])
