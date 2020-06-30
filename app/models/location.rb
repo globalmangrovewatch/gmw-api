@@ -24,11 +24,14 @@ class Location < ApplicationRecord
       .order("#{column_name} #{dir}")
       .limit(limit)
     
-    data = data.where(location_type: location_type) if location_type
-
+      
     location_ids = data.map { |m| m.location_id }
     
-    self.where(id: location_ids).includes(:mangrove_datum)
+    result = self.where(id: location_ids).includes(:mangrove_datum)
+
+    result = result.where(location_type: location_type) if location_type
+
+    result
   end
 
   def self.import(import_params)
