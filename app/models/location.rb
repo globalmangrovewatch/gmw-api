@@ -24,7 +24,7 @@ class Location < ApplicationRecord
       .order("#{column_name} #{dir}")
       .limit(limit)
     
-    data = result.where(location_type: location_type) if location_type
+    data = data.where(location_type: location_type) if location_type
 
     location_ids = data.map { |m| m.location_id }
     
