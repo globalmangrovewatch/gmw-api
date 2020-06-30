@@ -20,11 +20,10 @@ class Location < ApplicationRecord
     data = MangroveDatum.select("location_id, sum(#{column_name}) as #{column_name}")
       .where.not(gain_m2: nil, location_id: Location.worldwide.id)
       .where("date >= ? AND date <= ?", Date.strptime(start_date, '%Y'), Date.strptime(end_date, '%Y'))
-      .group(column_name)
+      .group('location_id')
       .order("#{column_name} #{dir}")
       .limit(limit)
     
-      
     location_ids = data.map { |m| m.location_id }
     
     result = self.where(id: location_ids).includes(:mangrove_datum)
