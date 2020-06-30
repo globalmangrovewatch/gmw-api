@@ -17,15 +17,18 @@ class Location < ApplicationRecord
   end
 
   def self.rank_by_mangrove_data_column(column_name, dir = 'DESC', start_date = '1996', end_date = '2015', location_type = nil, limit = '5')
-    result = self.includes(:mangrove_datum)
-      .where.not("mangrove_data.#{column_name} IS NULL")
-      .where.not(location_type: 'worldwide')
-      .where("mangrove_data.date >= ? AND mangrove_data.date <= ?", Date.strptime(start_date, '%Y'), Date.strptime(end_date, '%Y'))
-      .order("mangrove_data.#{column_name} #{dir}")
+    data = MangroveDatum.select("location_id, sum(#{column_name}) as #{column_name}")
+      .where.not(gain_m2: nil, location_id: Location.worldwide.id)
+      .where("date >= ? AND date <= ?", Date.strptime(start_date, '%Y'), Date.strptime(end_date, '%Y'))
+      .group(column_name)
+      .order("#{column_name} #{dir}")
+      .limit(limit)
+    
+    data = result.where(location_type: location_type) if location_type
 
-    result = result.where(location_type: location_type) if location_type
-
-    result.slice(0, limit.to_i)
+    location_ids = data.map { |m| m.location_id }
+    
+    self.where(id: location_ids).includes(:mangrove_datum)
   end
 
   def self.import(import_params)
