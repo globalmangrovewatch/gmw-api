@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_30_101841) do
+ActiveRecord::Schema.define(version: 2020_06_29_090508) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 2019_09_30_101841) do
     t.text "agb_hist_mgha_1"
     t.text "hba_hist_m"
     t.text "hmax_hist_m"
+    t.float "total_co2e_tha"
     t.index ["location_id"], name: "index_mangrove_data_on_location_id"
   end
 

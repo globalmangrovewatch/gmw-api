@@ -16,19 +16,19 @@ class Location < ApplicationRecord
     self.find_by(location_type: 'worldwide')
   end
 
-  def self.rank_by_mangrove_data_column(column_name, dir = 'DESC', start_date = '1996', end_date = '2015', location_type = nil, limit = '5')
-    data = MangroveDatum.select("location_id, sum(#{column_name}) as #{column_name}")
+  def self.rank_by_mangrove_data_column(column_name, dir = 'DESC', start_date = '1996-01-01', end_date = '2015-01-01', location_type = nil, limit = '5')
+    data = MangroveDatum.joins('INNER JOIN locations on locations.id = mangrove_data.location_id')
+      .select("mangrove_data.location_id, sum(#{column_name}) as #{column_name}, locations.location_type")
       .where.not(gain_m2: nil, location_id: Location.worldwide.id)
-      .where("date >= ? AND date <= ?", Date.strptime(start_date, '%Y'), Date.strptime(end_date, '%Y'))
-      .group('location_id')
+      .where("date::date >= ? AND date::date <= ?", Date.strptime(start_date, '%Y'), Date.strptime(end_date, '%Y'))
+      .where('locations.location_type = ?', location_type)
+      .group('mangrove_data.location_id, locations.location_type')
       .order("#{column_name} #{dir}")
       .limit(limit)
     
     location_ids = data.map { |m| m.location_id }
     
     result = self.where(id: location_ids).includes(:mangrove_datum)
-
-    result = result.where(location_type: location_type) if location_type
 
     result
   end
