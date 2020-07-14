@@ -108,8 +108,8 @@ class MangroveDatum < ApplicationRecord
       end
     end
 
-    Rake::Task['worldwide:mangrove_datum'].invoke
-    Rake::Task['net_change:populate'].invoke
+    # Rake::Task['worldwide:mangrove_datum'].invoke
+    # Rake::Task['net_change:populate'].invoke
 
     return self
   end
