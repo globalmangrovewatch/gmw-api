@@ -70,8 +70,6 @@ class MangroveDatum < ApplicationRecord
       row = mangrove_data['properties']
       location = Location.find_by(location_type: row['type'], iso: row['iso'])
 
-      ap row
-
       if location
         # Extracting years
         complex_rows = [
@@ -89,8 +87,6 @@ class MangroveDatum < ApplicationRecord
         years = years.flatten
         years = years.uniq
         
-        ap years
-        
         years.each do |year|
           mangrove_datum_hash = MangroveDatum.new
           mangrove_datum_hash.date = Date.strptime("#{year}-01-01", '%Y-%m-%d')
@@ -107,10 +103,14 @@ class MangroveDatum < ApplicationRecord
           mangrove_datum_hash.hmax_hist_m = row['hmax_mangrove_hist_m'][year]
           mangrove_datum_hash.total_carbon = row['total_mangrove_carbon'][year]
           mangrove_datum_hash.location = location
-          ap mangrove_datum_hash
           mangrove_datum_hash.save!
         end
       end
     end
+
+    Rake::Task['worldwide:mangrove_datum'].invoke
+    Rake::Task['net_change:populate'].invoke
+
+    return self
   end
 end

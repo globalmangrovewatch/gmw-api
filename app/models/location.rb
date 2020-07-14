@@ -57,7 +57,6 @@ class Location < ApplicationRecord
     mangrove_datum = JSON.parse(File.read(import_params[:file].path))
 
     mangrove_datum['features'].each do |mangrove_data|
-      ap mangrove_data['properties']['name']
       row = mangrove_data['properties']
       location = Location.find_by(iso: row['iso'], location_type: row['type'])
       unless location
