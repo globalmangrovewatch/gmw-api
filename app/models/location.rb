@@ -58,7 +58,8 @@ class Location < ApplicationRecord
 
     mangrove_datum['features'].each do |mangrove_data|
       row = mangrove_data['properties']
-      location = Location.find_by(iso: row['iso'], location_type: row['type'])
+      location = Location.find_by(location_id: row['id'])
+
       unless location
         location_hash = Location.new
         location_hash.name = row['name']
