@@ -17,8 +17,7 @@ class LocationsController < ApplicationController
       status: :ok,
       adapter: :json,
       root: 'data',
-      meta: { dates: Location.dates_with_data(params[:rank_by]) },
-      each_serializer: ActiveModel::Serializer::LocationListSerializer
+      meta: { dates: Location.dates_with_data(params[:rank_by]) }
   end
 
   # GET /locations/worldwide
