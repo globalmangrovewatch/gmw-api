@@ -13,9 +13,12 @@ class LocationsController < ApplicationController
       @locations += Location.all.where.not(location_id: 'worldwide').order(name: :asc)
     end
 
-    json_response(@locations, :ok, {
-      dates: Location.dates_with_data(params[:rank_by])
-    })
+    render json: @locations,
+      status: :ok,
+      adapter: :json,
+      root: 'data',
+      meta: { dates: Location.dates_with_data(params[:rank_by]) },
+      each_serializer: ActiveModel::LocationListSerializer
   end
 
   # GET /locations/worldwide
@@ -60,6 +63,14 @@ class LocationsController < ApplicationController
       Location.destroy_all
     end
     Location.import(import_params)
+    head :created
+  end
+
+  def import_geojson
+    if (params[:reset])
+      Location.destroy_all
+    end
+    Location.import_geojson(import_params)
     head :created
   end
 

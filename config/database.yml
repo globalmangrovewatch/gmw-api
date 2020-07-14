@@ -20,11 +20,14 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: postgres
+  password: postgres
+  host: 127.0.0.1
 
 development:
   <<: *default
-  url: <%= ENV['DATABASE_URL'] %> 
-  # database: mangrove-atlas-api_development
+  # url: <%= ENV['DATABASE_URL'] %> 
+  database: mangrove-atlas-api_development
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.

@@ -62,4 +62,55 @@ class MangroveDatum < ApplicationRecord
 
     return self
   end
+
+  def self.import_geojson(import_params)
+    mangrove_datum = JSON.parse(File.read(import_params[:file].path))
+
+    mangrove_datum['features'].each do |mangrove_data|
+      row = mangrove_data['properties']
+      location = Location.find_by(location_type: row['type'], iso: row['iso'])
+
+      ap row
+
+      if location
+        # Extracting years
+        complex_rows = [
+          'area_mangrove_gain_m2',
+          'area_mangrove_loss_m2',
+          'area_mangrove_m2',
+          'agb_mangrove_hist_mgha-1',
+          'agb_mangrove_mgha-1',
+          'hmax_mangrove_hist_m',
+          'hmax_mangrove_m',
+          'total_mangrove_carbon',
+          'length_mangrove_m'
+        ]
+        years = complex_rows.map { |r| row[r].keys }
+        years = years.flatten
+        years = years.uniq
+        
+        ap years
+        
+        years.each do |year|
+          mangrove_datum_hash = MangroveDatum.new
+          mangrove_datum_hash.date = Date.strptime("#{year}-01-01", '%Y-%m-%d')
+          mangrove_datum_hash.gain_m2 = self.comma_conversion(row['area_mangrove_gain_m2'][year])
+          mangrove_datum_hash.loss_m2 = self.comma_conversion(row['area_mangrove_loss_m2'][year])
+          mangrove_datum_hash.length_m = self.comma_conversion(row['length_mangrove_m'][year])
+          mangrove_datum_hash.area_m2 = self.comma_conversion(row['area_mangrove_m2'][year])
+          mangrove_datum_hash.hmax_m = self.comma_conversion(row['hmax_mangrove_m'][year])
+          mangrove_datum_hash.agb_mgha_1 = self.comma_conversion(row['agb_mangrove_mgha-1'][year])
+          mangrove_datum_hash.hba_m = self.comma_conversion(row['hba_mangrove_m'])
+          mangrove_datum_hash.con_hotspot_summary_km2 = row['con_hotspot_summary_km2']
+          mangrove_datum_hash.agb_hist_mgha_1 = row['agb_mangrove_hist_mgha-1'][year]
+          mangrove_datum_hash.hba_hist_m = row['hba_mangrove_hist_m']
+          mangrove_datum_hash.hmax_hist_m = row['hmax_mangrove_hist_m'][year]
+          mangrove_datum_hash.total_carbon = row['total_mangrove_carbon'][year]
+          mangrove_datum_hash.location = location
+          ap mangrove_datum_hash
+          mangrove_datum_hash.save!
+        end
+      end
+    end
+  end
 end

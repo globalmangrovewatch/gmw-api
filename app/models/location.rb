@@ -53,6 +53,33 @@ class Location < ApplicationRecord
     return self
   end
 
+  def self.import_geojson(import_params)
+    mangrove_datum = JSON.parse(File.read(import_params[:file].path))
+
+    mangrove_datum['features'].each do |mangrove_data|
+      ap mangrove_data['properties']['name']
+      row = mangrove_data['properties']
+      location = Location.find_by(iso: row['iso'], location_type: row['type'])
+      unless location
+        location_hash = Location.new
+        location_hash.name = row['name']
+        location_hash.location_type = row['type']
+        location_hash.iso = row['iso']
+        location_hash.bounds = row['bounds']
+        location_hash.geometry = mangrove_data['geometry']
+        location_hash.area_m2 = row['area_m2']
+        location_hash.perimeter_m = row['perimeter_m']
+        location_hash.coast_length_m = row['coast_length_m']
+        location_hash.location_id = row['id']
+        location_hash.save!
+      end
+    end
+
+    Rake::Task['worldwide:location'].invoke
+
+    return self
+  end
+
   def self.dates_with_data(column_name)
     if column_name
       self.joins(:mangrove_datum).select('mangrove_data.date').where.not("mangrove_data.#{column_name} IS NULL").group('mangrove_data.date')

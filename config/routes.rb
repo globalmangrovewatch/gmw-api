@@ -11,6 +11,8 @@ Rails.application.routes.draw do
 
     # Import CSV
     post 'locations/import', to: 'locations#import'
+    post 'locations/import_geojson', to: 'locations#import_geojson'
     post 'mangrove_data/import', to: 'mangrove_data#import'
+    post 'mangrove_data/import_geojson', to: 'mangrove_data#import_geojson'
   end
 end

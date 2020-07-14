@@ -65,6 +65,15 @@ class MangroveDataController < ApplicationController
     head :created
   end
 
+  # Import data from CSV
+  def import_geojson
+    if (params[:reset])
+      MangroveDatum.destroy_all
+    end
+    MangroveDatum.import_geojson(import_params)
+    head :created
+  end
+
   private
 
     # Find location by iso by default, but in case it's a number find a country
