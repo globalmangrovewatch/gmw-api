@@ -47,6 +47,13 @@ namespace :worldwide do
       'avg(hba_m) as hba_m',
     ]).group('date')
 
+    total_carbon_query = MangroveDatum.select(['total_carbon']).where.not(total_carbon: nil).pluck('total_carbon')
+    total_carbon_result = {
+      "agb_co2e": total_carbon_query.map { |t| t['agb_co2e'] }.reduce(:+),
+      "bgb_co2e": total_carbon_query.map { |t| t['bgb_co2e'] }.reduce(:+),
+      "soc_co2e": total_carbon_query.map { |t| t['soc_co2e'] }.reduce(:+),
+    }
+
     mangrove_datum_result.each do |m|
       mangrove_datum_item = MangroveDatum.find_by(date: m[:date], location_id: worldwide.id)
 
@@ -60,6 +67,7 @@ namespace :worldwide do
           hmax_m: m[:hmax_m],
           agb_mgha_1: m[:agb_mgha_1],
           hba_m: m[:hba_m],
+          total_carbon: total_carbon_result,
           location_id: worldwide.id,
         )
 
@@ -74,6 +82,7 @@ namespace :worldwide do
           hmax_m: m[:hmax_m],
           agb_mgha_1: m[:agb_mgha_1],
           hba_m: m[:hba_m],
+          total_carbon: total_carbon_result,
         )
 
         puts 'MangroveDatum Worldwide updated'
