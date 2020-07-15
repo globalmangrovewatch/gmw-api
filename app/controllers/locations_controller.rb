@@ -77,7 +77,13 @@ class LocationsController < ApplicationController
   private
 
     def set_location
-      @location = Location.find(params[:id])
+      next_location = Location.find_by(iso: params[:id], location_type: 'country')
+
+      if next_location
+        @location = next_location
+      else
+        @location = Location.find(params[:id].to_i)
+      end
     end
 
     def location_params
