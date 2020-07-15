@@ -69,6 +69,23 @@ curl -X "POST" "https://mangrove-atlas-api.herokuapp.com/api/mangrove_data/impor
 You have to replace `[file_path]`.
 If you want to replace all mangrove data, you have to add the param `?reset=true` in the url.
 
+Import mangrove data from GeoJSON
+
+```
+curl -X "POST" "https://mangrove-atlas-api.herokuapp.com/api/locations/import_geojson" \
+    -H "Content-Type: multipart/form-data" \
+    -F "file=@[file_path]"
+```
+
+```
+curl -X "POST" "https://mangrove-atlas-api.herokuapp.com/api/mangrove_data/import_geojson" \
+    -H "Content-Type: multipart/form-data" \
+    -F "file=@[file_path]"
+```
+
+You have to replace `[file_path]`.
+If you want to replace all mangrove data, you have to add the param `?reset=true` in the url.
+
 
 ### Generating data for worldwide
 
