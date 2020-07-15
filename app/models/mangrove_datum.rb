@@ -90,13 +90,13 @@ class MangroveDatum < ApplicationRecord
         years.each do |year|
           mangrove_datum_hash = MangroveDatum.new
           mangrove_datum_hash.date = Date.strptime("#{year}-01-01", '%Y-%m-%d')
-          mangrove_datum_hash.gain_m2 = self.comma_conversion(row['area_mangrove_gain_m2'][year])
-          mangrove_datum_hash.loss_m2 = self.comma_conversion(row['area_mangrove_loss_m2'][year])
-          mangrove_datum_hash.length_m = self.comma_conversion(row['length_mangrove_m'][year])
-          mangrove_datum_hash.area_m2 = self.comma_conversion(row['area_mangrove_m2'][year])
-          mangrove_datum_hash.hmax_m = self.comma_conversion(row['hmax_mangrove_m'][year])
-          mangrove_datum_hash.agb_mgha_1 = self.comma_conversion(row['agb_mangrove_mgha-1'][year])
-          mangrove_datum_hash.hba_m = self.comma_conversion(row['hba_mangrove_m'])
+          mangrove_datum_hash.gain_m2 = row['area_mangrove_gain_m2'][year]
+          mangrove_datum_hash.loss_m2 = row['area_mangrove_loss_m2'][year]
+          mangrove_datum_hash.length_m = row['length_mangrove_m'][year]
+          mangrove_datum_hash.area_m2 = row['area_mangrove_m2'][year]
+          mangrove_datum_hash.hmax_m = row['hmax_mangrove_m'][year]
+          mangrove_datum_hash.agb_mgha_1 = row['agb_mangrove_mgha-1'][year]
+          mangrove_datum_hash.hba_m = row['hba_mangrove_m']
           mangrove_datum_hash.con_hotspot_summary_km2 = row['con_hotspot_summary_km2']
           mangrove_datum_hash.agb_hist_mgha_1 = row['agb_mangrove_hist_mgha-1'][year]
           mangrove_datum_hash.hba_hist_m = row['hba_mangrove_hist_m']

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_14_141703) do
+ActiveRecord::Schema.define(version: 2020_07_15_111240) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,8 +25,8 @@ ActiveRecord::Schema.define(version: 2020_07_14_141703) do
     t.float "perimeter_m"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.float "coast_length_m"
     t.string "location_id"
+    t.float "coast_length_m"
   end
 
   create_table "mangrove_data", force: :cascade do |t|
@@ -46,7 +46,6 @@ ActiveRecord::Schema.define(version: 2020_07_14_141703) do
     t.text "agb_hist_mgha_1"
     t.text "hba_hist_m"
     t.text "hmax_hist_m"
-    t.float "total_co2e_tha"
     t.json "total_carbon"
     t.index ["location_id"], name: "index_mangrove_data_on_location_id"
   end
