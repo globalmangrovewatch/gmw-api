@@ -87,8 +87,7 @@ class MangroveDatum < ApplicationRecord
           'toc_tco2e',
           'toc_hist_tco2eha-1',
         ]
-        
-        complex_rows.each { |e| ap row[e] }
+
         years = complex_rows.map { |r| !row[r].nil? ? row[r].keys : nil }
         years = years.select { |y| y != nil }.flatten.uniq
         
