@@ -7,7 +7,7 @@ namespace :worldwide do
     worlwide_result = Location.select([
       'sum(area_m2) as area_m2',
       'sum(perimeter_m) as perimeter_m',
-      'sum(coast_length_m) as coast_length_m',
+      '1634701000 as coast_length_m', # Data from https://en.wikipedia.org/wiki/List_of_countries_by_length_of_coastline
     ])
 
     unless worlwide
@@ -45,14 +45,36 @@ namespace :worldwide do
       'avg(hmax_m) as hmax_m',
       'avg(agb_mgha_1) as agb_mgha_1',
       'avg(hba_m) as hba_m',
+      'sum(agb_tco2e) as agb_tco2e',
+      'sum(bgb_tco2e) as bgb_tco2e',
+      'sum(soc_tco2) as soc_tco2',
+      'sum(toc_tco2e) as toc_tco2e',
     ]).group('date')
 
-    total_carbon_query = MangroveDatum.select(['total_carbon']).where.not(total_carbon: nil).pluck('total_carbon')
-    total_carbon_result = {
-      "agb_co2e": total_carbon_query.map { |t| t['agb_co2e'] }.reduce(:+),
-      "bgb_co2e": total_carbon_query.map { |t| t['bgb_co2e'] }.reduce(:+),
-      "soc_co2e": total_carbon_query.map { |t| t['soc_co2e'] }.reduce(:+),
-    }
+    # mangrove_datum_hash.agb_tco2e = row['agb_tco2e'].nil? ? nil : row['agb_tco2e'][year]
+    #       mangrove_datum_hash.bgb_tco2e = row['bgb_tco2e'].nil? ? nil : row['bgb_tco2e'][year]
+    #       mangrove_datum_hash.soc_tco2 = row['soc_tco2'].nil? ? nil : row['soc_tco2'][year]
+    #       mangrove_datum_hash.toc_tco2e = row['toc_tco2e'].nil? ? nil : row['toc_tco2e'][year]
+    #       mangrove_datum_hash.toc_hist_tco2eha = row['toc_hist_tco2eha'].nil? ? nil : row['toc_hist_tco2eha'][year]
+
+    # total_carbon_query = MangroveDatum.select(['total_carbon']).where.not(total_carbon: nil).pluck('total_carbon')
+    # total_carbon_result = {
+    #   "agb_tco2e": {
+    #     "2016": total_carbon_query.map { |t| t['agb_tco2e']['2016'] }.reduce(:+),
+    #   },
+    #   "bgb_tco2e": {
+    #     "2016": total_carbon_query.map { |t| t['bgb_tco2e'] }.reduce(:+),
+    #   },
+    #   "soc_tco2e": {
+    #     "2016": total_carbon_query.map { |t| t['soc_tco2e'] }.reduce(:+),
+    #   },
+    #   "toc_hist_tco2eha-1": {
+
+    #   },
+    #   "toc_tco2e": {
+    #     "2016": total_carbon_query.map { |t| t['toc_tco2e'] }.reduce(:+),
+    #   }
+    # }
 
     mangrove_datum_result.each do |m|
       mangrove_datum_item = MangroveDatum.find_by(date: m[:date], location_id: worldwide.id)
@@ -67,7 +89,10 @@ namespace :worldwide do
           hmax_m: m[:hmax_m],
           agb_mgha_1: m[:agb_mgha_1],
           hba_m: m[:hba_m],
-          total_carbon: total_carbon_result,
+          agb_tco2e: m[:agb_tco2e],
+          bgb_tco2e: m[:bgb_tco2e],
+          soc_tco2: m[:soc_tco2],
+          toc_tco2e: m[:toc_tco2e],
           location_id: worldwide.id,
         )
 
@@ -82,7 +107,10 @@ namespace :worldwide do
           hmax_m: m[:hmax_m],
           agb_mgha_1: m[:agb_mgha_1],
           hba_m: m[:hba_m],
-          total_carbon: total_carbon_result,
+          agb_tco2e: m[:agb_tco2e],
+          bgb_tco2e: m[:bgb_tco2e],
+          soc_tco2: m[:soc_tco2],
+          toc_tco2e: m[:toc_tco2e],
         )
 
         puts 'MangroveDatum Worldwide updated'

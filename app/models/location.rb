@@ -69,7 +69,7 @@ class Location < ApplicationRecord
         location_hash.geometry = mangrove_data['geometry']
         location_hash.area_m2 = row['area_m2']
         location_hash.perimeter_m = row['perimeter_m']
-        location_hash.coast_length_m = row['length_coast_m']
+        location_hash.coast_length_m = row['coast_length_m']
         location_hash.location_id = row['id']
         location_hash.save!
       end

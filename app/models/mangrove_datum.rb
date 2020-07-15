@@ -80,9 +80,10 @@ class MangroveDatum < ApplicationRecord
           'agb_mangrove_mgha-1',
           'hmax_mangrove_hist_m',
           'hmax_mangrove_m',
-          'total_mangrove_carbon',
-          'length_mangrove_m'
+          # 'length_mangrove_m',
         ]
+        ap row
+        ap complex_rows
         years = complex_rows.map { |r| row[r].keys }
         years = years.flatten
         years = years.uniq
@@ -92,7 +93,8 @@ class MangroveDatum < ApplicationRecord
           mangrove_datum_hash.date = Date.strptime("#{year}-01-01", '%Y-%m-%d')
           mangrove_datum_hash.gain_m2 = row['area_mangrove_gain_m2'][year]
           mangrove_datum_hash.loss_m2 = row['area_mangrove_loss_m2'][year]
-          mangrove_datum_hash.length_m = row['length_mangrove_m'][year]
+          # TO-DO: lenght_m is missing from data
+          # mangrove_datum_hash.length_m = row['length_mangrove_m'][year]
           mangrove_datum_hash.area_m2 = row['area_mangrove_m2'][year]
           mangrove_datum_hash.hmax_m = row['hmax_mangrove_m'][year]
           mangrove_datum_hash.agb_mgha_1 = row['agb_mangrove_mgha-1'][year]
@@ -101,7 +103,12 @@ class MangroveDatum < ApplicationRecord
           mangrove_datum_hash.agb_hist_mgha_1 = row['agb_mangrove_hist_mgha-1'][year]
           mangrove_datum_hash.hba_hist_m = row['hba_mangrove_hist_m']
           mangrove_datum_hash.hmax_hist_m = row['hmax_mangrove_hist_m'][year]
-          mangrove_datum_hash.total_carbon = row['total_mangrove_carbon'][year]
+          mangrove_datum_hash.agb_tco2e = row['agb_tco2e'].nil? ? nil : row['agb_tco2e'][year]
+          mangrove_datum_hash.bgb_tco2e = row['bgb_tco2e'].nil? ? nil : row['bgb_tco2e'][year]
+          mangrove_datum_hash.soc_tco2 = row['soc_tco2'].nil? ? nil : row['soc_tco2'][year]
+          mangrove_datum_hash.toc_tco2e = row['toc_tco2e'].nil? ? nil : row['toc_tco2e'][year]
+          mangrove_datum_hash.toc_hist_tco2eha = row['toc_hist_tco2eha'].nil? ? nil : row['toc_hist_tco2eha'][year]
+          # TO-DO: toc_hist_tco2eha column is missing
           mangrove_datum_hash.location = location
           mangrove_datum_hash.save!
         end
