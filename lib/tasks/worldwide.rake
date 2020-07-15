@@ -52,25 +52,6 @@ namespace :worldwide do
     ])
       .group('date')
 
-    # 
-    # total_carbon_result = {
-    #   "agb_tco2e": {
-    #     "2016": total_carbon_query.map { |t| t['agb_tco2e']['2016'] }.reduce(:+),
-    #   },
-    #   "bgb_tco2e": {
-    #     "2016": total_carbon_query.map { |t| t['bgb_tco2e'] }.reduce(:+),
-    #   },
-    #   "soc_tco2e": {
-    #     "2016": total_carbon_query.map { |t| t['soc_tco2e'] }.reduce(:+),
-    #   },
-    #   "toc_hist_tco2eha-1": {
-
-    #   },
-    #   "toc_tco2e": {
-    #     "2016": total_carbon_query.map { |t| t['toc_tco2e'] }.reduce(:+),
-    #   }
-    # }
-
     mangrove_datum_result.each do |m|
       mangrove_datum_item = MangroveDatum.find_by(date: m[:date], location_id: worldwide.id)
 
