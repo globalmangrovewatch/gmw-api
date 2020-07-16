@@ -60,14 +60,14 @@ namespace :worldwide do
         .where(date: m[:date])
         .pluck(:toc_hist_tco2eha)
 
-      total_carbon_result = {
+      total_carbon_result = total_carbon_query ? {
         "1000--1300": total_carbon_query.map { |t| t['1000--1300'] }.reduce(:+),
         "1300--1600": total_carbon_query.map { |t| t['1300--1600'] }.reduce(:+),
         "1600--1900": total_carbon_query.map { |t| t['1600--1900'] }.reduce(:+),
         "1900--2200": total_carbon_query.map { |t| t['1900--2200'] }.reduce(:+),
         "400--700": total_carbon_query.map { |t| t['400--700'] }.reduce(:+),
         "700--1000": total_carbon_query.map { |t| t['700--1000'] }.reduce(:+),
-      }
+      } : nil
 
       unless mangrove_datum_item
         MangroveDatum.create!(
