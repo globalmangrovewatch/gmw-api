@@ -13,5 +13,9 @@ class MangroveDatumSerializer < ActiveModel::Serializer
     :agb_hist_mgha_1,
     :hba_hist_m,
     :hmax_hist_m,
-    :total_carbon
+    :agb_tco2e,
+    :bgb_tco2e,
+    :soc_tco2e,
+    :toc_tco2e,
+    :toc_hist_tco2eha
 end
