@@ -65,9 +65,9 @@ namespace :worldwide do
         "1300--1600": total_carbon_query.map { |t| t['1300--1600'] }.reduce(:+),
         "1600--1900": total_carbon_query.map { |t| t['1600--1900'] }.reduce(:+),
         "1900--2200": total_carbon_query.map { |t| t['1900--2200'] }.reduce(:+),
-        "400--700": total_carbon_query.map { |t| t['400--700'] }.reduce(:+),
-        "700--1000": total_carbon_query.map { |t| t['700--1000'] }.reduce(:+),
-      } : nil
+        "400--700":   total_carbon_query.map { |t| t['400--700'] }.reduce(:+),
+        "700--1000":  total_carbon_query.map { |t| t['700--1000'] }.reduce(:+),
+      }.to_json : nil
 
       unless mangrove_datum_item
         MangroveDatum.create!(
@@ -83,7 +83,7 @@ namespace :worldwide do
           bgb_tco2e: m[:bgb_tco2e],
           soc_tco2e: m[:soc_tco2e],
           toc_tco2e: m[:toc_tco2e],
-          toc_hist_tco2eha: total_carbon_result.to_json,
+          toc_hist_tco2eha: total_carbon_result,
           location_id: worldwide.id,
         )
 
@@ -102,7 +102,7 @@ namespace :worldwide do
           bgb_tco2e: m[:bgb_tco2e],
           soc_tco2e: m[:soc_tco2e],
           toc_tco2e: m[:toc_tco2e],
-          toc_hist_tco2eha: total_carbon_result.to_json,
+          toc_hist_tco2eha: total_carbon_result,
         )
 
         puts 'MangroveDatum Worldwide updated'
