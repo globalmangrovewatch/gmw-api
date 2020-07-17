@@ -68,7 +68,7 @@ class MangroveDatum < ApplicationRecord
 
     mangrove_datum['features'].each do |mangrove_data|
       row = mangrove_data['properties']
-      location = Location.find_by(location_type: row['type'], iso: row['iso'])
+      location = Location.find_by(location_id: row['id'])
 
       if location
         # Extracting years
