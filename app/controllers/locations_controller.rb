@@ -78,6 +78,7 @@ class LocationsController < ApplicationController
 
     def set_location
       next_location = Location.find_by(iso: params[:id], location_type: 'country')
+      next_location = Location.find_by(location_id: params[:id]) unless next_location
 
       if next_location
         @location = next_location
