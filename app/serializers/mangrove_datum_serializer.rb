@@ -9,8 +9,8 @@ class MangroveDatumSerializer < ActiveModel::Serializer
     :hmax_m,
     :agb_mgha_1,
     :hba_m,
-    :con_hotspot_summary_km2,
     :agb_hist_mgha_1,
+    :con_hotspot_summary_km2,
     :hba_hist_m,
     :hmax_hist_m,
     :agb_tco2e,
@@ -18,4 +18,16 @@ class MangroveDatumSerializer < ActiveModel::Serializer
     :soc_tco2e,
     :toc_tco2e,
     :toc_hist_tco2eha
+
+  def con_hotspot_summary_km2
+    JSON.parse(object.con_hotspot_summary_km2) if object.con_hotspot_summary_km2
+  end
+
+  def agb_hist_mgha_1
+    JSON.parse(object.agb_hist_mgha_1) if object.agb_hist_mgha_1
+  end
+
+  def hmax_hist_m
+    JSON.parse(object.hmax_hist_m) if object.hmax_hist_m
+  end
 end

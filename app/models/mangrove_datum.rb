@@ -101,10 +101,10 @@ class MangroveDatum < ApplicationRecord
           mangrove_datum_hash.hmax_m = row['hmax_mangrove_m'].nil? ? nil : row['hmax_mangrove_m'][year]
           mangrove_datum_hash.agb_mgha_1 = row['agb_mangrove_mgha-1'].nil? ? nil : row['agb_mangrove_mgha-1'][year]
           mangrove_datum_hash.hba_m = row['hba_mangrove_m']
-          mangrove_datum_hash.con_hotspot_summary_km2 = row['con_hotspot_summary_km2']
-          mangrove_datum_hash.agb_hist_mgha_1 = row['agb_mangrove_hist_mgha-1'].nil? ? nil : row['agb_mangrove_hist_mgha-1'][year]
+          mangrove_datum_hash.con_hotspot_summary_km2 = row['con_hotspot_summary_km2'].to_json
+          mangrove_datum_hash.agb_hist_mgha_1 = row['agb_mangrove_hist_mgha-1'].nil? ? nil : row['agb_mangrove_hist_mgha-1'][year].to_json
           mangrove_datum_hash.hba_hist_m = row['hba_mangrove_hist_m']
-          mangrove_datum_hash.hmax_hist_m = row['hmax_mangrove_hist_m'].nil? ? nil : row['hmax_mangrove_hist_m'][year]
+          mangrove_datum_hash.hmax_hist_m = row['hmax_mangrove_hist_m'].nil? ? nil : row['hmax_mangrove_hist_m'][year].to_json
           mangrove_datum_hash.agb_tco2e = row['agb_tco2e'].nil? ? nil : row['agb_tco2e'][year]
           mangrove_datum_hash.bgb_tco2e = row['bgb_tco2e'].nil? ? nil : row['bgb_tco2e'][year]
           mangrove_datum_hash.soc_tco2e = row['soc_tco2e'].nil? ? nil : row['soc_tco2e'][year]

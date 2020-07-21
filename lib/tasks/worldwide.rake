@@ -4,6 +4,9 @@ namespace :worldwide do
   task :location => [:environment] do
     worlwide = Location.find_by(location_id: 'worldwide')
 
+    # delete previous data
+    worldwide.mangrove_datum.delete_all if worldwide
+
     worlwide_result = Location.select([
       'sum(area_m2) as area_m2',
       'sum(perimeter_m) as perimeter_m',
@@ -60,14 +63,19 @@ namespace :worldwide do
         .where(date: m[:date])
         .pluck(:toc_hist_tco2eha)
 
-      total_carbon_result = total_carbon_query ? {
-        "1000--1300": total_carbon_query.map { |t| t['1000--1300'] }.reduce(:+),
-        "1300--1600": total_carbon_query.map { |t| t['1300--1600'] }.reduce(:+),
-        "1600--1900": total_carbon_query.map { |t| t['1600--1900'] }.reduce(:+),
-        "1900--2200": total_carbon_query.map { |t| t['1900--2200'] }.reduce(:+),
-        "400--700":   total_carbon_query.map { |t| t['400--700'] }.reduce(:+),
-        "700--1000":  total_carbon_query.map { |t| t['700--1000'] }.reduce(:+),
-      }.to_json : nil
+      total_carbon_result = nil
+
+      if total_carbon_query
+        total_carbon_result = Hash.new
+        total_carbon_result["1000--1300"] = total_carbon_query.map { |t| t['1000--1300'] }.reduce(:+)
+        total_carbon_result["1300--1600"] = total_carbon_query.map { |t| t['1300--1600'] }.reduce(:+)
+        total_carbon_result["1600--1900"] = total_carbon_query.map { |t| t['1600--1900'] }.reduce(:+)
+        total_carbon_result["1900--2200"] = total_carbon_query.map { |t| t['1900--2200'] }.reduce(:+)
+        total_carbon_result["400--700"]   = total_carbon_query.map { |t| t['400--700'] }.reduce(:+)
+        total_carbon_result["700--1000"]  = total_carbon_query.map { |t| t['700--1000'] }.reduce(:+)
+      end
+
+      ap total_carbon_result
 
       unless mangrove_datum_item
         MangroveDatum.create!(
