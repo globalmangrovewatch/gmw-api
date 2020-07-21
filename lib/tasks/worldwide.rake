@@ -4,9 +4,6 @@ namespace :worldwide do
   task :location => [:environment] do
     worlwide = Location.find_by(location_id: 'worldwide')
 
-    # delete previous data
-    worldwide.mangrove_datum.delete_all if worldwide
-
     worlwide_result = Location.select([
       'sum(area_m2) as area_m2',
       'sum(perimeter_m) as perimeter_m',
@@ -38,6 +35,11 @@ namespace :worldwide do
 
   task :mangrove_datum => [:environment] do
     worldwide = Location.find_by(location_id: 'worldwide')
+
+    # delete previous data
+    if worldwide and worldwide.mangrove_datum
+      worldwide.mangrove_datum.delete_all
+    end
 
     mangrove_datum_result = MangroveDatum.select([
       'date',
