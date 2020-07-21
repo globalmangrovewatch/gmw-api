@@ -75,8 +75,6 @@ namespace :worldwide do
         total_carbon_result["700--1000"]  = total_carbon_query.map { |t| t['700--1000'] }.reduce(:+)
       end
 
-      ap total_carbon_result
-
       unless mangrove_datum_item
         MangroveDatum.create!(
           date: m[:date],
