@@ -2,9 +2,7 @@ class MangroveDatum < ApplicationRecord
   include ::NumberFormat
 
   require 'csv'
-  require 'rake'
 
-  Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mode
   MangroveAtlasApi::Application.load_tasks
 
   # model association
@@ -56,8 +54,6 @@ class MangroveDatum < ApplicationRecord
         mangrove_datum_hash.save!
       end
     end
-
-    Rake::Task['net_change:populate'].invoke
 
     return self
   end
@@ -114,8 +110,6 @@ class MangroveDatum < ApplicationRecord
         end
       end
     end
-
-    Rake::Task['net_change:populate'].invoke
 
     return self
   end

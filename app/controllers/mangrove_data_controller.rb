@@ -1,7 +1,9 @@
 class MangroveDataController < ApplicationController
   before_action :set_location, except: [:worldwide, :rank, :import]
   before_action :set_mangrove_datum, only: [:show, :update, :destroy]
-  # caches_action :index, :worldwide, :show
+  
+  require 'rake'
+  Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mode
 
   # GET /locations/:location_id/mangrove_data
   def index
@@ -62,6 +64,7 @@ class MangroveDataController < ApplicationController
       MangroveDatum.destroy_all
     end
     MangroveDatum.import(import_params)
+    Rake::Task['net_change:populate'].invoke
     head :created
   end
 
@@ -71,6 +74,7 @@ class MangroveDataController < ApplicationController
       MangroveDatum.destroy_all
     end
     MangroveDatum.import_geojson(import_params)
+    Rake::Task['net_change:populate'].invoke
     head :created
   end
 

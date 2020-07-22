@@ -1,8 +1,6 @@
 class Location < ApplicationRecord
   require 'csv'
-  require 'rake'
 
-  Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mode
   MangroveAtlasApi::Application.load_tasks
 
   before_destroy :destroy_mangrove_data
