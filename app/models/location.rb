@@ -48,8 +48,6 @@ class Location < ApplicationRecord
       location_hash.save!
     end
 
-    Rake::Task['worldwide:location'].invoke
-
     return self
   end
 
