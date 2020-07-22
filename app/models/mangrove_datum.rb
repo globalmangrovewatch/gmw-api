@@ -91,6 +91,9 @@ class MangroveDatum < ApplicationRecord
           mangrove_datum_hash.date = Date.strptime("#{year}-01-01", '%Y-%m-%d')
           mangrove_datum_hash.gain_m2 = row['area_mangrove_gain_m2'].nil? ? nil : row['area_mangrove_gain_m2'][year]
           mangrove_datum_hash.loss_m2 = row['area_mangrove_loss_m2'].nil? ? nil : row['area_mangrove_loss_m2'][year]
+          if !row['area_mangrove_gain_m2'].nil? and !row['area_mangrove_loss_m2'].nil?
+            mangrove_datum_hash.net_change_m2 = row['area_mangrove_gain_m2'][year].to_f - row['area_mangrove_loss_m2'][year].to_f
+          end
           mangrove_datum_hash.length_m = row['length_mangrove_m'].nil? ? nil : row['length_mangrove_m'][year]
           mangrove_datum_hash.area_m2 = row['area_mangrove_m2'].nil? ? nil : row['area_mangrove_m2'][year]
           mangrove_datum_hash.hmax_m = row['hmax_mangrove_m'].nil? ? nil : row['hmax_mangrove_m'][year]
