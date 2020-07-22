@@ -75,8 +75,6 @@ class Location < ApplicationRecord
       end
     end
 
-    Rake::Task['worldwide:location'].invoke
-
     return self
   end
 
