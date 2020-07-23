@@ -7,7 +7,7 @@ namespace :worldwide do
     worlwide_result = Location.select([
       'sum(area_m2) as area_m2',
       'sum(perimeter_m) as perimeter_m',
-      'sum(coast_length_m) as coast_length_m',
+      '1634701000 as coast_length_m', # Data from https://en.wikipedia.org/wiki/List_of_countries_by_length_of_coastline
     ])
 
     unless worlwide
@@ -36,6 +36,11 @@ namespace :worldwide do
   task :mangrove_datum => [:environment] do
     worldwide = Location.find_by(location_id: 'worldwide')
 
+    # delete previous data
+    if worldwide and worldwide.mangrove_datum
+      worldwide.mangrove_datum.delete_all
+    end
+
     mangrove_datum_result = MangroveDatum.select([
       'date',
       'sum(gain_m2) as gain_m2',
@@ -45,10 +50,32 @@ namespace :worldwide do
       'avg(hmax_m) as hmax_m',
       'avg(agb_mgha_1) as agb_mgha_1',
       'avg(hba_m) as hba_m',
-    ]).group('date')
+      'sum(agb_tco2e) as agb_tco2e',
+      'sum(bgb_tco2e) as bgb_tco2e',
+      'sum(soc_tco2e) as soc_tco2e',
+      'sum(toc_tco2e) as toc_tco2e',
+    ])
+      .group('date')
 
     mangrove_datum_result.each do |m|
       mangrove_datum_item = MangroveDatum.find_by(date: m[:date], location_id: worldwide.id)
+
+      total_carbon_query = MangroveDatum.select(['toc_hist_tco2eha'])
+        .where.not(toc_hist_tco2eha: nil)
+        .where(date: m[:date])
+        .pluck(:toc_hist_tco2eha)
+
+      total_carbon_result = nil
+
+      if total_carbon_query
+        total_carbon_result = Hash.new
+        total_carbon_result["1000--1300"] = total_carbon_query.map { |t| t['1000--1300'] }.reduce(:+)
+        total_carbon_result["1300--1600"] = total_carbon_query.map { |t| t['1300--1600'] }.reduce(:+)
+        total_carbon_result["1600--1900"] = total_carbon_query.map { |t| t['1600--1900'] }.reduce(:+)
+        total_carbon_result["1900--2200"] = total_carbon_query.map { |t| t['1900--2200'] }.reduce(:+)
+        total_carbon_result["400--700"]   = total_carbon_query.map { |t| t['400--700'] }.reduce(:+)
+        total_carbon_result["700--1000"]  = total_carbon_query.map { |t| t['700--1000'] }.reduce(:+)
+      end
 
       unless mangrove_datum_item
         MangroveDatum.create!(
@@ -60,6 +87,11 @@ namespace :worldwide do
           hmax_m: m[:hmax_m],
           agb_mgha_1: m[:agb_mgha_1],
           hba_m: m[:hba_m],
+          agb_tco2e: m[:agb_tco2e],
+          bgb_tco2e: m[:bgb_tco2e],
+          soc_tco2e: m[:soc_tco2e],
+          toc_tco2e: m[:toc_tco2e],
+          toc_hist_tco2eha: total_carbon_result,
           location_id: worldwide.id,
         )
 
@@ -74,6 +106,11 @@ namespace :worldwide do
           hmax_m: m[:hmax_m],
           agb_mgha_1: m[:agb_mgha_1],
           hba_m: m[:hba_m],
+          agb_tco2e: m[:agb_tco2e],
+          bgb_tco2e: m[:bgb_tco2e],
+          soc_tco2e: m[:soc_tco2e],
+          toc_tco2e: m[:toc_tco2e],
+          toc_hist_tco2eha: total_carbon_result,
         )
 
         puts 'MangroveDatum Worldwide updated'

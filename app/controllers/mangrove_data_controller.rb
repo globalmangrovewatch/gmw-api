@@ -1,12 +1,11 @@
 class MangroveDataController < ApplicationController
   before_action :set_location, except: [:worldwide, :rank, :import]
   before_action :set_mangrove_datum, only: [:show, :update, :destroy]
-  # caches_action :index, :worldwide, :show
 
   # GET /locations/:location_id/mangrove_data
   def index
     if params.has_key?(:rank_by)
-      mangrove_datum = @location.mangrove_datum.rank_by(params[:rank_by], params[:start_date] || '1996', params[:end_date] || '2019', params[:limit] || 5)
+      mangrove_datum = @location.mangrove_datum.rank_by(params[:rank_by], params[:dir], params[:dir], params[:start_date] || '1996', params[:end_date] || '2019', params[:limit] || 5)
     else
       mangrove_datum = @location.mangrove_datum
     end
@@ -65,15 +64,26 @@ class MangroveDataController < ApplicationController
     head :created
   end
 
+  # Import data from CSV
+  def import_geojson
+    if (params[:reset])
+      MangroveDatum.destroy_all
+    end
+    MangroveDatum.import_geojson(import_params)
+    head :created
+  end
+
   private
 
+    # Find location by iso by default, but in case it's a number find a country
     def set_location
-      next_location = Location.find_by(iso: params[:location_id])
+      next_location = Location.find_by(iso: params[:location_id], location_type: 'country')
+      next_location = Location.find_by(location_id: params[:id]) unless next_location
 
       if next_location
         @location = next_location
       else
-        @location = Location.find(params[:location_id])
+        @location = Location.find_by(id: params[:location_id].to_i)
       end
     end
 

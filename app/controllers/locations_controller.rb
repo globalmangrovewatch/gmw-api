@@ -5,7 +5,7 @@ class LocationsController < ApplicationController
   # GET /locations
   def index
     if params.has_key?(:rank_by)
-      @locations = Location.rank_by_mangrove_data_column(params[:rank_by], params[:start_date] || '1996', params[:end_date] || '2019', params[:location_type], params[:limit] || 5)
+      @locations = Location.rank_by_mangrove_data_column(params[:rank_by], params[:dir], params[:start_date] || '1996', params[:end_date] || '2019', params[:location_type], params[:limit] || 5)
     else
       @locations = []
       worldwide = Location.find_by(location_id: 'worldwide')
@@ -13,9 +13,12 @@ class LocationsController < ApplicationController
       @locations += Location.all.where.not(location_id: 'worldwide').order(name: :asc)
     end
 
-    json_response(@locations, :ok, {
-      dates: Location.dates_with_data(params[:rank_by])
-    })
+    render json: @locations,
+      status: :ok,
+      adapter: :json,
+      root: 'data',
+      meta: { dates: Location.dates_with_data(params[:rank_by]) },
+      each_serializer: LocationListSerializer
   end
 
   # GET /locations/worldwide
@@ -63,10 +66,25 @@ class LocationsController < ApplicationController
     head :created
   end
 
+  def import_geojson
+    if (params[:reset])
+      Location.destroy_all
+    end
+    Location.import_geojson(import_params)
+    head :created
+  end
+
   private
 
     def set_location
-      @location = Location.find(params[:id])
+      next_location = Location.find_by(iso: params[:id], location_type: 'country')
+      next_location = Location.find_by(location_id: params[:id]) unless next_location
+
+      if next_location
+        @location = next_location
+      else
+        @location = Location.find(params[:id].to_i)
+      end
     end
 
     def location_params

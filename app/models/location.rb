@@ -1,8 +1,6 @@
 class Location < ApplicationRecord
   require 'csv'
-  require 'rake'
 
-  Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mode
   MangroveAtlasApi::Application.load_tasks
 
   before_destroy :destroy_mangrove_data
@@ -16,16 +14,21 @@ class Location < ApplicationRecord
     self.find_by(location_type: 'worldwide')
   end
 
-  def self.rank_by_mangrove_data_column(column_name, start_date = '1996', end_date = '2015', location_type = nil, limit = '5')
-    result = self.includes(:mangrove_datum)
-      .where.not("mangrove_data.#{column_name} IS NULL")
-      .where.not(location_type: 'worldwide')
-      .where("mangrove_data.date >= ? AND mangrove_data.date <= ?", Date.strptime(start_date, '%Y'), Date.strptime(end_date, '%Y'))
-      .order("mangrove_data.#{column_name} DESC")
+  def self.rank_by_mangrove_data_column(column_name, dir = 'DESC', start_date = '1996-01-01', end_date = '2015-01-01', location_type = nil, limit = '5')
+    data = MangroveDatum.joins('INNER JOIN locations on locations.id = mangrove_data.location_id')
+      .select("mangrove_data.location_id, sum(#{column_name}) as #{column_name}, locations.location_type")
+      .where.not(gain_m2: nil, location_id: Location.worldwide.id)
+      .where("date::date >= ? AND date::date <= ?", Date.strptime(start_date, '%Y'), Date.strptime(end_date, '%Y'))
+      .where('locations.location_type = ?', location_type)
+      .group('mangrove_data.location_id, locations.location_type')
+      .order("#{column_name} #{dir}")
+      .limit(limit)
+    
+    location_ids = data.map { |m| m.location_id }
+    
+    result = self.where(id: location_ids).includes(:mangrove_datum)
 
-    result = result.where(location_type: location_type) if location_type
-
-    result.slice(0, limit.to_i)
+    result
   end
 
   def self.import(import_params)
@@ -43,7 +46,30 @@ class Location < ApplicationRecord
       location_hash.save!
     end
 
-    Rake::Task['worldwide:location'].invoke
+    return self
+  end
+
+  def self.import_geojson(import_params)
+    mangrove_datum = JSON.parse(File.read(import_params[:file].path))
+
+    mangrove_datum['features'].each do |mangrove_data|
+      row = mangrove_data['properties']
+      location = Location.find_by(location_id: row['id'])
+
+      unless location
+        location_hash = Location.new
+        location_hash.name = row['name']
+        location_hash.location_type = row['type']
+        location_hash.iso = row['iso']
+        location_hash.bounds = row['bounds']
+        location_hash.geometry = mangrove_data['geometry']
+        location_hash.area_m2 = row['area_m2']
+        location_hash.perimeter_m = row['perimeter_m']
+        location_hash.coast_length_m = row['coast_length_m']
+        location_hash.location_id = row['id']
+        location_hash.save!
+      end
+    end
 
     return self
   end

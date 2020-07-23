@@ -42,6 +42,7 @@ curl "https://mangrove-atlas-api.herokuapp.com/api/locations?rank_by=gain_m2&sta
 | param | required | default value
 |---|---|---|
 | rank_by | yes | - |
+| dir | no | desc |
 | start_date | no | 1996 |
 | end_date | no | 2017 |
 | location_type | no | - |
@@ -61,6 +62,23 @@ Import mangrove data from CSV
 
 ```
 curl -X "POST" "https://mangrove-atlas-api.herokuapp.com/api/mangrove_data/import" \
+    -H "Content-Type: multipart/form-data" \
+    -F "file=@[file_path]"
+```
+
+You have to replace `[file_path]`.
+If you want to replace all mangrove data, you have to add the param `?reset=true` in the url.
+
+Import mangrove data from GeoJSON
+
+```
+curl -X "POST" "https://mangrove-atlas-api.herokuapp.com/api/locations/import_geojson" \
+    -H "Content-Type: multipart/form-data" \
+    -F "file=@[file_path]"
+```
+
+```
+curl -X "POST" "https://mangrove-atlas-api.herokuapp.com/api/mangrove_data/import_geojson" \
     -H "Content-Type: multipart/form-data" \
     -F "file=@[file_path]"
 ```
