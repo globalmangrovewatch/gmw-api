@@ -77,8 +77,9 @@ class MangroveDataController < ApplicationController
 
     # Find location by iso by default, but in case it's a number find a country
     def set_location
+      ap params[:id]
       next_location = Location.find_by(iso: params[:location_id], location_type: 'country')
-      next_location = Location.find_by(location_id: params[:id]) unless next_location
+      next_location = Location.find_by(location_id: params[:location_id]) if next_location.nil?
 
       if next_location
         @location = next_location
