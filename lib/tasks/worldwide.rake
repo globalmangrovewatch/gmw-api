@@ -69,12 +69,11 @@ namespace :worldwide do
 
       if total_carbon_query
         total_carbon_result = Hash.new
-        total_carbon_result["1000--1300"] = total_carbon_query.map { |t| t['1000--1300'] }.reduce(:+)
-        total_carbon_result["1300--1600"] = total_carbon_query.map { |t| t['1300--1600'] }.reduce(:+)
-        total_carbon_result["1600--1900"] = total_carbon_query.map { |t| t['1600--1900'] }.reduce(:+)
-        total_carbon_result["1900--2200"] = total_carbon_query.map { |t| t['1900--2200'] }.reduce(:+)
-        total_carbon_result["400--700"]   = total_carbon_query.map { |t| t['400--700'] }.reduce(:+)
-        total_carbon_result["700--1000"]  = total_carbon_query.map { |t| t['700--1000'] }.reduce(:+)
+        total_carbon_result["0--700"] = total_carbon_query.map { |t| t['0--700'] }.reduce(:+)
+        total_carbon_result["1400--2100"] = total_carbon_query.map { |t| t['1400--2100'] }.reduce(:+)
+        total_carbon_result["2100--2800"] = total_carbon_query.map { |t| t['2100--2800'] }.reduce(:+)
+        total_carbon_result["2800--3500"] = total_carbon_query.map { |t| t['2800--3500'] }.reduce(:+)
+        total_carbon_result["700--1400"]   = total_carbon_query.map { |t| t['700--1400'] }.reduce(:+)
       end
 
       unless mangrove_datum_item
