@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       resources :locations
 
       get '/widgets/protected-areas', to: 'widgets#protected_areas'
+      post '/widgets/protected-areas/import', to: 'widgets#protected_areas_import'
     end
   end
 end
