@@ -19,6 +19,8 @@ Rails.application.routes.draw do
 
     namespace :v2, defaults: { format: :json } do
       resources :locations
+
+      get '/widgets/protected-areas', to: 'widgets#protected_areas'
     end
   end
 end
