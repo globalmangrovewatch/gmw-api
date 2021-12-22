@@ -1,4 +1,4 @@
-class CreateMangroveData < ActiveRecord::Migration[5.2]
+class CreateMangroveData < ActiveRecord::Migration[7.0]
   def change
     create_table :mangrove_data do |t|
       t.date :date
