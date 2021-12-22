@@ -1,6 +1,5 @@
 class LocationsController < ApplicationController
   before_action :set_location, only: [:show, :update, :destroy]
-  # caches_action :index, :worldwide, :show
 
   # GET /locations
   def index
@@ -17,8 +16,8 @@ class LocationsController < ApplicationController
       status: :ok,
       adapter: :json,
       root: 'data',
-      meta: { dates: Location.dates_with_data(params[:rank_by]) },
-      each_serializer: params.has_key?(:rank_by) ? LocationRankingSerializer : LocationListSerializer
+      meta: { dates: Location.dates_with_data(params[:rank_by]) }
+      # each_serializer: params.has_key?(:rank_by) ? LocationRankingSerializer : LocationListSerializer
   end
 
   # GET /locations/worldwide
