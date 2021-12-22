@@ -1,4 +1,5 @@
-class LocationsController < ApplicationController
+class V1::LocationsController < ApplicationController
+  # deserializable_resource :location
   before_action :set_location, only: [:show, :update, :destroy]
 
   # GET /locations
@@ -12,17 +13,18 @@ class LocationsController < ApplicationController
       @locations += Location.all.where.not(location_id: 'worldwide').order(name: :asc)
     end
 
-    render json: @locations,
-      status: :ok,
-      adapter: :json,
-      root: 'data',
-      meta: { dates: Location.dates_with_data(params[:rank_by]) }
-      # each_serializer: params.has_key?(:rank_by) ? LocationRankingSerializer : LocationListSerializer
+    @meta = Location.dates_with_data(params[:rank_by])
+
+    if params.has_key?(:rank_by)
+      render :rank
+    else
+      render :index
+    end
   end
 
   # GET /locations/worldwide
   def worldwide
-    json_response(Location.worldwide)
+    @location = Location.worldwide
   end
 
   # POST /locations
@@ -30,23 +32,23 @@ class LocationsController < ApplicationController
     @location = Location.new(location_params)
 
     if @location.save
-      json_response(@location, :created)
+      render :create, :created
     else
-      json_response(@location.errors, :unprocessable_entity)
+      # json_response(@location.errors, :unprocessable_entity)
+      render :create, :unprocessable_entity
     end
   end
 
   # GET /locations/:id
   def show
-    json_response(@location)
   end
 
   # PUT /locations/:id
   def update
     if @location.update(location_params)
-      json_response(@location)
+      render :update
     else
-      json_response(@location.errors, :unprocessable_entity)
+      render :update, status: :unprocessable_entity
     end
   end
 
