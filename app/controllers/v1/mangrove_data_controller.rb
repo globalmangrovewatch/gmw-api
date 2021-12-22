@@ -1,32 +1,29 @@
-class MangroveDataController < ApplicationController
+class V1::MangroveDataController < ApplicationController
   before_action :set_location, except: [:worldwide, :rank, :import]
   before_action :set_mangrove_datum, only: [:show, :update, :destroy]
 
   # GET /locations/:location_id/mangrove_data
   def index
     if params.has_key?(:rank_by)
-      mangrove_datum = @location.mangrove_datum.rank_by(params[:rank_by], params[:dir], params[:dir], params[:start_date] || '1996', params[:end_date] || '2019', params[:limit] || 5)
+      @mangrove_datum = @location.mangrove_datum.rank_by(params[:rank_by], params[:dir], params[:dir], params[:start_date] || '1996', params[:end_date] || '2019', params[:limit] || 5)
     else
-      mangrove_datum = @location.mangrove_datum
+      @mangrove_datum = @location.mangrove_datum
     end
 
-    json_response(mangrove_datum, :ok, {
-      location_coast_length_m: @location.coast_length_m,
-      dates: @location.mangrove_datum.dates_with_data(params[:rank_by])
-    })
+    @location_coast_length_m = @location.coast_length_m
+    @dates = @location.mangrove_datum.dates_with_data(params[:rank_by])
   end
 
   # GET /locations/worldwide/mangrove_data
   def worldwide
-    json_response(Location.worldwide.mangrove_datum, :ok, {
-      location_coast_length_m: Location.worldwide.coast_length_m,
-      dates: Location.worldwide.mangrove_datum.dates_with_data(nil)
-    })
+    @mangrove_datum = Location.worldwide.mangrove_datum
+
+    @location_coast_length_m = Location.worldwide.coast_length_m,
+    @dates = Location.worldwide.mangrove_datum.dates_with_data(nil)
   end
 
   # GET /locations/:location_id/mangrove_data/1
   def show
-    json_response(@mangrove_datum)
   end
 
   # POST /mangrove_data
@@ -34,18 +31,19 @@ class MangroveDataController < ApplicationController
     @mangrove_datum = MangroveDatum.new(mangrove_datum_params)
 
     if @mangrove_datum.save
-      json_response(@mangrove_datum, :created)
+      render :create, :created
     else
-      json_response(@mangrove_datum.errors, :unprocessable_entity)
+      # json_response(@mangrove_datum.errors, :unprocessable_entity)
     end
   end
 
   # PATCH/PUT /mangrove_data/1
   def update
     if @mangrove_datum.update(mangrove_datum_params)
-      json_response(@mangrove_datum)
+      # json_response(@mangrove_datum)
+      render :update
     else
-      json_response(@mangrove_datum.errors, :unprocessable_entity)
+      # json_response(@mangrove_datum.errors, :unprocessable_entity)
     end
   end
 

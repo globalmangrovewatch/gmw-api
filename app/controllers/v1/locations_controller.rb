@@ -35,7 +35,6 @@ class V1::LocationsController < ApplicationController
       render :create, :created
     else
       # json_response(@location.errors, :unprocessable_entity)
-      render :create, :unprocessable_entity
     end
   end
 
@@ -48,7 +47,7 @@ class V1::LocationsController < ApplicationController
     if @location.update(location_params)
       render :update
     else
-      render :update, status: :unprocessable_entity
+      # render :update, status: :unprocessable_entity
     end
   end
 
