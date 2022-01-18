@@ -7,4 +7,11 @@ class V2::WidgetsController < ApplicationController
     WidgetProtectedAreas.destroy_all
     WidgetProtectedAreas.import(params[:file])
   end
+
+  def species
+    @species = Specie.all
+  end
+
+  def species_import
+  end
 end

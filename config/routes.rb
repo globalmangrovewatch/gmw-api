@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'widgets/species'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   scope :api do
@@ -22,6 +23,9 @@ Rails.application.routes.draw do
 
       get '/widgets/protected-areas', to: 'widgets#protected_areas'
       post '/widgets/protected-areas/import', to: 'widgets#protected_areas_import'
+
+      get '/widgets/species', to: 'widgets#species'
+      post '/widgets/species/import', to: 'widgets#species_import'
     end
   end
 end

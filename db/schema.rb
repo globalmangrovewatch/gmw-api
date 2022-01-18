@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_22_152454) do
+ActiveRecord::Schema.define(version: 2022_01_18_092339) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,6 +53,12 @@ ActiveRecord::Schema.define(version: 2021_12_22_152454) do
     t.float "toc_tco2e"
     t.json "toc_hist_tco2eha"
     t.index ["location_id"], name: "index_mangrove_data_on_location_id"
+  end
+
+  create_table "species", force: :cascade do |t|
+    t.float "value"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "widget_protected_areas", force: :cascade do |t|

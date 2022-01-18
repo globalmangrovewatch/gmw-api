@@ -1,13 +1,8 @@
 require "test_helper"
 
 class WidgetsControllerTest < ActionDispatch::IntegrationTest
-  test "should get index" do
-    get widgets_index_url
-    assert_response :success
-  end
-
-  test "should get import" do
-    get widgets_import_url
+  test "should get species" do
+    get widgets_species_url
     assert_response :success
   end
 end
