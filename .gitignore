@@ -28,3 +28,5 @@
 # Env files
 .env
 *.env
+
+*.sql
