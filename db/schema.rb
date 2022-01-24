@@ -23,10 +23,11 @@ ActiveRecord::Schema.define(version: 2022_01_18_092339) do
     t.json "geometry"
     t.float "area_m2"
     t.float "perimeter_m"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.float "coast_length_m"
     t.string "location_id"
+    t.index ["location_id"], name: "index_locations_on_location_id", unique: true
   end
 
   create_table "mangrove_data", force: :cascade do |t|
@@ -39,8 +40,8 @@ ActiveRecord::Schema.define(version: 2022_01_18_092339) do
     t.float "agb_mgha_1"
     t.float "hba_m"
     t.bigint "location_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.string "con_hotspot_summary_km2"
     t.float "net_change_m2"
     t.text "agb_hist_mgha_1"
@@ -65,12 +66,11 @@ ActiveRecord::Schema.define(version: 2022_01_18_092339) do
     t.integer "year"
     t.float "total_area"
     t.float "protected_area"
+    t.string "location_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "location_id"
-    t.index ["location_id"], name: "index_widget_protected_areas_on_location_id"
   end
 
   add_foreign_key "mangrove_data", "locations"
-  add_foreign_key "widget_protected_areas", "locations"
+  add_foreign_key "widget_protected_areas", "locations", primary_key: "location_id", on_delete: :cascade
 end

@@ -6,3 +6,4 @@ json.name obj.name
 json.area_m2 obj.area_m2
 json.perimeter_m obj.perimeter_m
 json.coast_length_m obj.coast_length_m
+json.location_id obj.location_id
