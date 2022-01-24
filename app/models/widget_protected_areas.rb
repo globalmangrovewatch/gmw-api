@@ -6,7 +6,7 @@ class WidgetProtectedAreas < ApplicationRecord
   MangroveAtlasApi::Application.load_tasks
 
   # model association
-  belongs_to :location
+  # belongs_to :location
   # validations
   validates_presence_of :location_id
   validates_presence_of :year
@@ -16,11 +16,6 @@ class WidgetProtectedAreas < ApplicationRecord
 
   def self.import(file)
     CSV.foreach(file.path, headers: true) do |row|
-      
-      location = Location.find_by(location_id: row['location_id'])
-
-      if (location)
-        
         widget_protected_areas_hash = WidgetProtectedAreas.new
 
         widget_protected_areas_hash.year = row['year']
@@ -29,7 +24,6 @@ class WidgetProtectedAreas < ApplicationRecord
         widget_protected_areas_hash.location_id = row['location_id']
 
         widget_protected_areas_hash.save!
-      end
     end
     return self
   end
