@@ -19,6 +19,8 @@ Database configuration:
 
 Set database username `postres` and password `postgres`
 
+and init postgres:
+
 First running:
 
 ```
@@ -49,4 +51,17 @@ Running:
 
 ```
 bundle exec rails s
+```
+
+
+## Docker
+
+```
+docker compose up
+```
+In a separate terminal:
+
+
+```
+docker-compose run web rake db:create RAILS_ENV=development db:migrate
 ```
