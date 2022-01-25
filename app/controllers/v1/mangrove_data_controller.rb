@@ -18,7 +18,7 @@ class V1::MangroveDataController < ApplicationController
   def worldwide
     @mangrove_datum = Location.worldwide.mangrove_datum
 
-    @location_coast_length_m = Location.worldwide.coast_length_m,
+    @location_coast_length_m = Location.worldwide.coast_length_m
     @dates = Location.worldwide.mangrove_datum.dates_with_data(nil)
   end
 

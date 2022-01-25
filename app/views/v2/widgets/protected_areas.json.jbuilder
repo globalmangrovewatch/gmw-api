@@ -1,3 +1,11 @@
+json.meta do
+  json.year do
+    json.array! @year do |year|
+      json.year date.year
+    end 
+  end
+end
+
 json.data do
   json.array! @protected_areas do |protected_areas|
     json.id protected_areas.id
