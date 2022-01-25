@@ -63,5 +63,5 @@ In a separate terminal:
 
 
 ```
-docker-compose run web rake db:create db:migrate
+docker-compose run web rake db:create RAILS_ENV=development db:migrate
 ```
