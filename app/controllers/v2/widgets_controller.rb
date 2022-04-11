@@ -1,4 +1,4 @@
-class V2::WidgetsController < ApplicationController
+class V2::WidgetsController < ApiController
   def protected_areas
     @protected_areas = WidgetProtectedAreas.where(location_id: params[:location_id])
   end

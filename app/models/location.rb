@@ -7,7 +7,8 @@ class Location < ApplicationRecord
 
   # model association
   has_many :mangrove_datum, dependent: :destroy
-  has_and_belongs_to_many :species
+  has_and_belongs_to_many :species, join_table: 'locations_species'
+  accepts_nested_attributes_for :species
 
   # validations
   validates_presence_of :name, :location_type, :iso
