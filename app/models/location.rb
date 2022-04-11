@@ -7,6 +7,7 @@ class Location < ApplicationRecord
 
   # model association
   has_many :mangrove_datum, dependent: :destroy
+  has_and_belongs_to_many :species
 
   # validations
   validates_presence_of :name, :location_type, :iso

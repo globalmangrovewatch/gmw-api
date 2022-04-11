@@ -10,10 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_25_083643) do
+ActiveRecord::Schema.define(version: 2022_04_11_151056) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  # Custom types defined in this database.
+  # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "red_list_cat", ["ex", "ew", "re", "cr", "en", "vu", "lr", "nt", "lc", "dd"]
 
   create_table "locations", force: :cascade do |t|
     t.string "name"
@@ -57,9 +61,21 @@ ActiveRecord::Schema.define(version: 2022_01_25_083643) do
   end
 
   create_table "species", force: :cascade do |t|
-    t.float "value"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "scientific_name"
+    t.string "common_name"
+    t.string "iucn_url"
+    t.enum "red_list_cat", default: "ex", null: false, enum_type: "red_list_cat"
+  end
+
+  create_table "species_locations", force: :cascade do |t|
+    t.bigint "specie_id"
+    t.bigint "location_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["location_id"], name: "index_species_locations_on_location_id"
+    t.index ["specie_id"], name: "index_species_locations_on_specie_id"
   end
 
   create_table "widget_protected_areas", force: :cascade do |t|
