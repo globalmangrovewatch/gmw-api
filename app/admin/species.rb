@@ -15,6 +15,8 @@ ActiveAdmin.register Specie do
   #   permitted
   # end
 
+  active_admin_import
+
   permit_params :scientific_name, :common_name, :iucn_url, :red_list_cat, location_ids: []
 
   form do |f|

@@ -2,7 +2,6 @@ Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
-  get 'widgets/species'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   scope :api do
@@ -28,7 +27,8 @@ Rails.application.routes.draw do
       post '/widgets/protected-areas/import', to: 'widgets#protected_areas_import'
 
       get '/widgets/species', to: 'widgets#species'
-      post '/widgets/species/import', to: 'widgets#species_import'
+
+      get '/widgets/biodiversity', to: 'widgets#biodiversity'
     end
   end
 end

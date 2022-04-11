@@ -10,9 +10,10 @@ class V2::WidgetsController < ApiController
   end
 
   def species
-    @species = Specie.all
+    @species = Specie.joins(:locations).where(locations: [params[:location_id]])
   end
 
-  def species_import
+  def biodiversity
+    @locations = Location.joins(:species).where(id: params[:location_id])
   end
 end
