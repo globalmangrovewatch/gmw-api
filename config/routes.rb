@@ -22,12 +22,11 @@ Rails.application.routes.draw do
 
     namespace :v2, defaults: { format: :json } do
       resources :locations
+      resources :species, only: [:index]
 
       get '/widgets/protected-areas', to: 'widgets#protected_areas'
       post '/widgets/protected-areas/import', to: 'widgets#protected_areas_import'
-
-      get '/widgets/species', to: 'widgets#species'
-
+      
       get '/widgets/biodiversity', to: 'widgets#biodiversity'
     end
   end
