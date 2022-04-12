@@ -1,0 +1,2 @@
+class RestorationPotential < ApplicationRecord
+end
