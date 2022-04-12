@@ -1,18 +1,30 @@
 ActiveAdmin.register Location do
 
-  # See permitted parameters documentation:
-  # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
-  #
-  # Uncomment all parameters which should be permitted for assignment
-  #
-  # permit_params :name, :location_type, :iso, :bounds, :geometry, :area_m2, :perimeter_m, :coast_length_m, :location_id
-  #
-  # or
-  #
-  # permit_params do
-  #   permitted = [:name, :location_type, :iso, :bounds, :geometry, :area_m2, :perimeter_m, :coast_length_m, :location_id]
-  #   permitted << :other if params[:action] == 'create' && current_user.admin?
-  #   permitted
-  # end
+  active_admin_import
+
+  permit_params :name, :location_type, :iso, :bounds, :geometry, :area_m2,
+    :perimeter_m, :coast_length_m, :location_id,
+    specie_ids: []
+
+  index do
+    selectable_column
+    id_column
+    column :location_id
+    column :name
+    column :location_type
+    column :iso
+    column :created_at
+    actions
+  end
+
+  form do |f|
+    f.inputs 'Details'
+
+    f.inputs 'Species' do
+      f.input :species, collection: Specie.all.pluck(:common_name, :id)
+    end
+
+    actions
+  end
   
 end

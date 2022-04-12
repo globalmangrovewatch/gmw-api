@@ -21,8 +21,18 @@ ActiveAdmin.register Specie do
 
   permit_params :scientific_name, :common_name, :iucn_url, :red_list_cat, location_ids: []
 
+  index do
+    selectable_column
+    id_column
+    column :scientific_name
+    column :common_name
+    column :red_list_cat
+    column :created_at
+    actions
+  end
+
   form do |f|
-    f.inputs do
+    f.inputs 'Details' do
       f.input :scientific_name, required: true
       f.input :common_name
       f.input :iucn_url, label: 'IUCN URL'
@@ -31,6 +41,9 @@ ActiveAdmin.register Specie do
         default: 'ex', 
         include_blank: false,
         required: true
+    end
+
+    f.inputs 'Locations' do
       f.input :locations, as: :select, input_html: { multiple: true }
     end
 

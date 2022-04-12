@@ -15,6 +15,27 @@ ActiveAdmin.register WidgetProtectedAreas do
   #   permitted
   # end
 
+  active_admin_import
+
+  permit_params :year, :total_area, :protected_area, :location_id
+
   menu label: 'Proteted areas', parent: 'Widgets'
+
+  index do
+    selectable_column
+    id_column
+    column :year
+    column :total_area
+    column :protected_area
+    column :location_id
+    column :updated_at
+    actions
+  end
+
+  form do |f|
+    f.inputs 'Details'
+
+    actions
+  end
   
 end
