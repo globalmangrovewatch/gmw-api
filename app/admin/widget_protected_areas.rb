@@ -14,5 +14,7 @@ ActiveAdmin.register WidgetProtectedAreas do
   #   permitted << :other if params[:action] == 'create' && current_user.admin?
   #   permitted
   # end
+
+  menu label: 'Proteted areas', parent: 'Widgets'
   
 end

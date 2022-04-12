@@ -17,6 +17,8 @@ ActiveAdmin.register Specie do
 
   active_admin_import
 
+  menu parent: "Widgets"
+
   permit_params :scientific_name, :common_name, :iucn_url, :red_list_cat, location_ids: []
 
   form do |f|

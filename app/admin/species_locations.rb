@@ -15,6 +15,8 @@ ActiveAdmin.register SpeciesLocation do
   #   permitted
   # end
 
+  menu parent: "Widgets"
+
   active_admin_import
 
   permit_params :specie_id, :location_id
