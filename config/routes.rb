@@ -28,6 +28,8 @@ Rails.application.routes.draw do
       post '/widgets/protected-areas/import', to: 'widgets#protected_areas_import'
       
       get '/widgets/biodiversity', to: 'widgets#biodiversity'
+      get '/widgets/restoration-potential', to: 'widgets#restoration_potential'
+      get '/widgets/degradation-and-loss', to: 'widgets#degradation_and_loss'
     end
   end
 end

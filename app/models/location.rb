@@ -9,6 +9,7 @@ class Location < ApplicationRecord
   has_many :mangrove_datum, dependent: :destroy
   has_many :species_locations
   has_many :species, through: :species_locations, source: :specie
+  has_many :restoration_potentials
   accepts_nested_attributes_for :species
 
   # validations

@@ -30,6 +30,7 @@ ActiveAdmin.register RestorationPotential do
         required: true
       f.input :value
       f.input :unit, as: :select, collection: ["ha", "%"], include_blank: false, default: 'ha'
+      f.input :year, default: 2016
     end
 
     f.inputs 'Location' do

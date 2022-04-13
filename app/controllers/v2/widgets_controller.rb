@@ -12,4 +12,12 @@ class V2::WidgetsController < ApiController
   def biodiversity
     @locations = Location.joins(:species).where(id: params[:location_id])
   end
+
+  def restoration_potential
+    @data = RestorationPotential.where(location_id: params[:location_id], year: params[:year] || 2016)
+  end
+
+  def degradation_and_loss
+    @data = DegradationTreemap.where(location_id: params[:location_id], year: params[:year] || 2016)
+  end
 end
