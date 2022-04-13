@@ -1,4 +1,4 @@
-class V1::MangroveDataController < ApplicationController
+class V1::MangroveDataController < ApiController
   before_action :set_location, except: [:worldwide, :rank, :import]
   before_action :set_mangrove_datum, only: [:show, :update, :destroy]
 

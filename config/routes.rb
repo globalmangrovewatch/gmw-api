@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  get 'widgets/species'
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   scope :api do
@@ -20,12 +22,17 @@ Rails.application.routes.draw do
 
     namespace :v2, defaults: { format: :json } do
       resources :locations
+      resources :species, only: [:index]
 
       get '/widgets/protected-areas', to: 'widgets#protected_areas'
       post '/widgets/protected-areas/import', to: 'widgets#protected_areas_import'
-
-      get '/widgets/species', to: 'widgets#species'
-      post '/widgets/species/import', to: 'widgets#species_import'
+      
+      get '/widgets/biodiversity', to: 'widgets#biodiversity'
+      get '/widgets/restoration-potential', to: 'widgets#restoration_potential'
+      get '/widgets/degradation-and-loss', to: 'widgets#degradation_and_loss'
+      get '/widgets/blue-carbon-investment', to: 'widgets#blue_carbon_investment'
     end
   end
 end
+
+

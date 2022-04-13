@@ -1,4 +1,4 @@
-class V2::WidgetsController < ApplicationController
+class V2::WidgetsController < ApiController
   def protected_areas
     @protected_areas = WidgetProtectedAreas.where(location_id: params[:location_id])
   end
@@ -9,10 +9,19 @@ class V2::WidgetsController < ApplicationController
     head :created
   end
 
-  def species
-    @species = Specie.all
+  def biodiversity
+    @locations = Location.joins(:species).where(id: params[:location_id])
   end
 
-  def species_import
+  def restoration_potential
+    @data = RestorationPotential.where(location_id: params[:location_id], year: params[:year] || 2016)
+  end
+
+  def degradation_and_loss
+    @data = DegradationTreemap.where(location_id: params[:location_id], year: params[:year] || 2016)
+  end
+
+  def blue_carbon_investment
+    @data = BlueCarbonInvestment.where(location_id: params[:location_id])
   end
 end

@@ -10,10 +10,53 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_25_083643) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_04_13_140332) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  # Custom types defined in this database.
+  # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "degradation_indicators", ["degraded_area", "lost_area", "main_loss_driver"]
+  create_enum "degradation_units", ["ha", "%"]
+  create_enum "mangrove_types", ["estuary", "delta", "lagoon", "fringe"]
+  create_enum "new_degradation_indicators", ["degraded_area", "lost_area", "mangrove_area"]
+  create_enum "red_list_cat", ["ex", "ew", "re", "cr", "en", "vu", "lr", "nt", "lc", "dd"]
+  create_enum "restoration_indicators", ["restorable_area", "mangrove_area", "restoration_potential_score"]
+  create_enum "restoration_units", ["ha", "%"]
+
+  create_table "admin_users", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_admin_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
+  end
+
+  create_table "blue_carbon_investments", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "category"
+    t.float "area"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_blue_carbon_investments_on_location_id"
+  end
+
+  create_table "degradation_treemaps", force: :cascade do |t|
+    t.float "value"
+    t.enum "unit", default: "ha", null: false, enum_type: "degradation_units"
+    t.bigint "location_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "year", default: 2016
+    t.enum "indicator", default: "degraded_area", null: false, enum_type: "new_degradation_indicators"
+    t.text "main_loss_driver"
+    t.index ["location_id"], name: "index_degradation_treemaps_on_location_id"
+  end
 
   create_table "locations", force: :cascade do |t|
     t.string "name"
@@ -23,8 +66,8 @@ ActiveRecord::Schema.define(version: 2022_01_25_083643) do
     t.json "geometry"
     t.float "area_m2"
     t.float "perimeter_m"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.float "coast_length_m"
     t.string "location_id"
     t.index ["location_id"], name: "index_locations_on_location_id", unique: true
@@ -40,8 +83,8 @@ ActiveRecord::Schema.define(version: 2022_01_25_083643) do
     t.float "agb_mgha_1"
     t.float "hba_m"
     t.bigint "location_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "con_hotspot_summary_km2"
     t.float "net_change_m2"
     t.text "agb_hist_mgha_1"
@@ -56,10 +99,43 @@ ActiveRecord::Schema.define(version: 2022_01_25_083643) do
     t.index ["location_id"], name: "index_mangrove_data_on_location_id"
   end
 
-  create_table "species", force: :cascade do |t|
+  create_table "restoration_potentials", force: :cascade do |t|
+    t.enum "indicator", default: "restorable_area", null: false, enum_type: "restoration_indicators"
     t.float "value"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.enum "unit", default: "ha", null: false, enum_type: "restoration_units"
+    t.bigint "location_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "year", default: 2016
+    t.index ["location_id"], name: "index_restoration_potentials_on_location_id"
+  end
+
+  create_table "species", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "scientific_name"
+    t.string "common_name"
+    t.string "iucn_url"
+    t.enum "red_list_cat", default: "ex", null: false, enum_type: "red_list_cat"
+  end
+
+  create_table "species_locations", force: :cascade do |t|
+    t.bigint "specie_id"
+    t.bigint "location_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_species_locations_on_location_id"
+    t.index ["specie_id"], name: "index_species_locations_on_specie_id"
+  end
+
+  create_table "typologies", force: :cascade do |t|
+    t.integer "value"
+    t.string "unit", default: "ha"
+    t.enum "mangrove_types", default: "estuary", null: false, enum_type: "mangrove_types"
+    t.bigint "location_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_typologies_on_location_id"
   end
 
   create_table "widget_protected_areas", force: :cascade do |t|
@@ -67,10 +143,14 @@ ActiveRecord::Schema.define(version: 2022_01_25_083643) do
     t.float "total_area"
     t.float "protected_area"
     t.string "location_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "blue_carbon_investments", "locations"
+  add_foreign_key "degradation_treemaps", "locations"
   add_foreign_key "mangrove_data", "locations"
+  add_foreign_key "restoration_potentials", "locations"
+  add_foreign_key "typologies", "locations"
   add_foreign_key "widget_protected_areas", "locations", primary_key: "location_id", on_delete: :cascade
 end
