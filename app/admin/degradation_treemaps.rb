@@ -24,13 +24,14 @@ ActiveAdmin.register DegradationTreemap do
   form do |f|
     f.inputs 'Details' do
       f.input :indicator, as: :select, 
-        collection: ["degraded_area", "lost_area", "main_loss_driver"],
+        collection: ["degraded_area", "lost_area", "mangrove_area"],
         default: 'degraded_area',
         include_blank: false,
         required: true
       f.input :value
       f.input :unit, as: :select, collection: ["ha", "%"], include_blank: false, default: 'ha'
       f.input :year, default: 2016
+      f.input :main_loss_driver
     end
 
     f.inputs 'Location' do

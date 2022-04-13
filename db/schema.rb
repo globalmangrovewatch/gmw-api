@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_04_13_113852) do
+ActiveRecord::Schema[7.0].define(version: 2022_04_13_140332) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,6 +19,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_13_113852) do
   create_enum "degradation_indicators", ["degraded_area", "lost_area", "main_loss_driver"]
   create_enum "degradation_units", ["ha", "%"]
   create_enum "mangrove_types", ["estuary", "delta", "lagoon", "fringe"]
+  create_enum "new_degradation_indicators", ["degraded_area", "lost_area", "mangrove_area"]
   create_enum "red_list_cat", ["ex", "ew", "re", "cr", "en", "vu", "lr", "nt", "lc", "dd"]
   create_enum "restoration_indicators", ["restorable_area", "mangrove_area", "restoration_potential_score"]
   create_enum "restoration_units", ["ha", "%"]
@@ -46,13 +47,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_13_113852) do
   end
 
   create_table "degradation_treemaps", force: :cascade do |t|
-    t.enum "indicator", default: "degraded_area", null: false, enum_type: "degradation_indicators"
     t.float "value"
     t.enum "unit", default: "ha", null: false, enum_type: "degradation_units"
     t.bigint "location_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "year", default: 2016
+    t.enum "indicator", default: "degraded_area", null: false, enum_type: "new_degradation_indicators"
+    t.text "main_loss_driver"
     t.index ["location_id"], name: "index_degradation_treemaps_on_location_id"
   end
 
