@@ -20,4 +20,8 @@ class V2::WidgetsController < ApiController
   def degradation_and_loss
     @data = DegradationTreemap.where(location_id: params[:location_id], year: params[:year] || 2016)
   end
+
+  def blue_carbon_investment
+    @data = BlueCarbonInvestment.where(location_id: params[:location_id])
+  end
 end
