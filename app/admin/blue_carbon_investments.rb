@@ -34,5 +34,18 @@ ActiveAdmin.register BlueCarbonInvestment do
 
     actions
   end
+
+  csv do
+    column :category
+    column :area
+    column :description
+    column(:location_id) { |blue_carbon_investments| blue_carbon_investments.location.id }
+  end
+
+  controller do
+    def csv_filename
+      'blue_carbon_investments.csv'
+    end
+  end
   
 end

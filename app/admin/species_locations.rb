@@ -40,5 +40,16 @@ ActiveAdmin.register SpeciesLocation do
 
     actions
   end
+
+  csv do
+    column(:specie_id) { |location_specie| location_specie.specie.id }
+    column(:location_id) { |location_specie| location_specie.location.id }
+  end
+
+  controller do
+    def csv_filename
+      'species_locations.csv'
+    end
+  end
   
 end

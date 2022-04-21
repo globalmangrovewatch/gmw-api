@@ -19,7 +19,7 @@ ActiveAdmin.register DegradationTreemap do
 
   active_admin_import
 
-  permit_params :indicator, :value, :unit, :location_id
+  permit_params :indicator, :value, :unit, :location_id, :main_loss_driver
  
   form do |f|
     f.inputs 'Details' do
@@ -39,6 +39,21 @@ ActiveAdmin.register DegradationTreemap do
     end
 
     actions
+  end
+
+  csv do
+    column :indicator
+    column :value
+    column :unit
+    column :year
+    column :main_loss_driver
+    column(:location_id) { |degradation_treemap| degradation_treemap.location.id }
+  end
+
+  controller do
+    def csv_filename
+      'degradation_and_loss.csv'
+    end
   end
   
 end

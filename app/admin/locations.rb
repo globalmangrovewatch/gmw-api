@@ -26,5 +26,11 @@ ActiveAdmin.register Location do
 
     actions
   end
+
+  controller do
+    def csv_filename
+      'locations.csv'
+    end
+  end
   
 end

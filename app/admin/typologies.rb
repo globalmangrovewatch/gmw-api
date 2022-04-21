@@ -38,5 +38,18 @@ ActiveAdmin.register Typology do
 
     actions
   end
+
+  csv do
+    column :mangrove_types
+    column :value
+    column :unit
+    column(:location_id) { |typology| typology.location.id }
+  end
+
+  controller do
+    def csv_filename
+      'restoration_potentials.csv'
+    end
+  end
   
 end

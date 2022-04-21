@@ -40,4 +40,17 @@ ActiveAdmin.register RestorationPotential do
     actions
   end
 
+  csv do
+    column :indicator
+    column :value
+    column :unit
+    column(:location_id) { |restoration_potential| restoration_potential.location.id }
+  end
+
+  controller do
+    def csv_filename
+      'restoration_potentials.csv'
+    end
+  end
+
 end

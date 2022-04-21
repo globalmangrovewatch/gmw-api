@@ -14,9 +14,9 @@ end
 
 json.metadata do
   json.units do
-    json.restoration_potential_score restoration_potential_score.unit
-    json.restorable_area restorable_area.unit
-    json.mangrove_area mangrove_area.unit
+    json.restoration_potential_score restoration_potential_score ? restoration_potential_score.unit : nil
+    json.restorable_area restorable_area ? restorable_area.unit : nil
+    json.mangrove_area mangrove_area ? mangrove_area.unit : nil
   end
   json.note nil
 end

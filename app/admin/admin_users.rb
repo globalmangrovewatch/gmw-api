@@ -25,4 +25,15 @@ ActiveAdmin.register AdminUser do
     f.actions
   end
 
+  csv do
+    column :email
+    column :created_at
+  end
+
+  controller do
+    def csv_filename
+      'AdminUsers.csv'
+    end
+  end
+
 end

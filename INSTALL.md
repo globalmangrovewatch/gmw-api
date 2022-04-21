@@ -55,6 +55,11 @@ bundle exec rails s
 
 
 ## Docker (only first time)
+ENV variables:
+```
+RAILS_ENV=development
+POSTGRES_HOST=
+```
 
 ```
 docker-compose up --build
@@ -68,7 +73,7 @@ docker-compose run web rake db:create RAILS_ENV=development
 Download dump:
 
 ```
-docker-compose run db pg_dump -O -x -d postgres://username:password@hostname/database > database.sql
+[docker-compose run db] pg_dump -O -x -d postgres://username:password@hostname/database > database.sql
 ```
 
 Restore from dump file:
