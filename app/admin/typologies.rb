@@ -17,7 +17,11 @@ ActiveAdmin.register Typology do
 
   menu parent: "Widgets"
 
-  active_admin_import
+  active_admin_import({
+    before_batch_import: ->(importer) {
+      Typology.delete_all
+    }
+  })
 
   permit_params :mangrove_types, :value, :unit, :location_id
  
@@ -48,7 +52,7 @@ ActiveAdmin.register Typology do
 
   controller do
     def csv_filename
-      'restoration_potentials.csv'
+      'typology.csv'
     end
   end
   

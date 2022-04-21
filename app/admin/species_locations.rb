@@ -17,7 +17,11 @@ ActiveAdmin.register SpeciesLocation do
 
   menu parent: "Widgets"
 
-  active_admin_import
+  active_admin_import({
+    before_batch_import: ->(importer) {
+      SpeciesLocation.delete_all
+    }
+  })
 
   permit_params :specie_id, :location_id
 

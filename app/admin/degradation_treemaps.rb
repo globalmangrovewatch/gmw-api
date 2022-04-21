@@ -17,7 +17,11 @@ ActiveAdmin.register DegradationTreemap do
 
   menu parent: "Widgets"
 
-  active_admin_import
+  active_admin_import({
+    before_batch_import: ->(importer) {
+      DegradationTreemap.delete_all
+    }
+  })
 
   permit_params :indicator, :value, :unit, :location_id, :main_loss_driver
  

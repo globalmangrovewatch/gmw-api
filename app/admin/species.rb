@@ -15,7 +15,11 @@ ActiveAdmin.register Specie do
   #   permitted
   # end
 
-  active_admin_import
+  active_admin_import({
+    before_batch_import: ->(importer) {
+      Specie.delete_all
+    }
+  })
 
   menu parent: "Widgets"
 

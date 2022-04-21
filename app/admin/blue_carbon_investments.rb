@@ -17,7 +17,11 @@ ActiveAdmin.register BlueCarbonInvestment do
 
   menu parent: "Widgets"
 
-  active_admin_import
+  active_admin_import({
+    before_batch_import: ->(importer) {
+      BlueCarbonInvestment.delete_all
+    }
+  })
 
   permit_params :location_id, :category, :area, :description
  
