@@ -1,6 +1,7 @@
 json.id obj.id
 json.date obj.date
 json.gain_m2 obj.gain_m2
+json.loss_m2 obj.loss_m2
 json.net_change_m2 obj.net_change_m2
 json.length_m obj.length_m
 json.area_m2 obj.area_m2
