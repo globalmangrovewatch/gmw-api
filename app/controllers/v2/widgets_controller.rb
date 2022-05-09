@@ -38,19 +38,31 @@ class V2::WidgetsController < ApiController
   end
 
   def restoration_potential
+    @year = RestorationPotential.pluck(:year).uniq.sort.reverse
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
+      @location_id = params[:location_id]
       @data = RestorationPotential.where(location_id: params[:location_id], year: params[:year] || 2016)
     else
-      @data = RestorationPotential.where(year: params[:year] || 2016)
+      @location_id = 'worldwide'
+      @data = RestorationPotential.select('indicator, sum(value) as value, unit').where(year: params[:year] || 2016).group(:indicator, :unit)
     end
+    
   end
 
   def degradation_and_loss
+    @year = DegradationTreemap.pluck(:year).uniq.sort.reverse
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
+      @location_id = params[:location_id]
       @data = DegradationTreemap.where(location_id: params[:location_id], year: params[:year] || 2016)
+      @lost_driver = @data.first
     else
-      @data = DegradationTreemap.where(year: params[:year] || 2016)
+      @location_id = 'worldwide'
+      @data = DegradationTreemap.select('a.*').from(DegradationTreemap.where(year: params[:year] || 2016).select('indicator, sum(value) as value').group('indicator'), :a)
     end
+
+    @degraded_area = DegradationTreemap.find_by(indicator: 'degraded_area')
+    @lost_area = DegradationTreemap.find_by(indicator: 'lost_area')
+    @mangrove_area = DegradationTreemap.find_by(indicator: 'mangrove_area')
   end
 
   def blue_carbon_investment
