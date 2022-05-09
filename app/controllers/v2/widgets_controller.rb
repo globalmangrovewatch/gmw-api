@@ -10,11 +10,19 @@ class V2::WidgetsController < ApiController
   end
 
   def biodiversity
-    @locations = Location.joins(:species).where(id: params[:location_id])
+    if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
+      @data = Location.joins(:species).includes(:species).where(id: params[:location_id])
+    else
+      @data = Location.joins(:species).includes(:species)
+    end
   end
 
   def restoration_potential
-    @data = RestorationPotential.where(location_id: params[:location_id], year: params[:year] || 2016)
+    if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
+      @data = RestorationPotential.where(location_id: params[:location_id], year: params[:year] || 2016)
+    else
+      @data = RestorationPotential.where(year: params[:year] || 2016)
+    end
   end
 
   def degradation_and_loss
