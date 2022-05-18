@@ -15,7 +15,7 @@ services:
     env_file:
       - .env
     environment:
-      - RAIS_ENV=development
+      - RAILS_ENV=development
     volumes:
       - .:/mangroveAtlasApi
     ports:

@@ -31,6 +31,13 @@ Rails.application.routes.draw do
       get '/widgets/restoration-potential', to: 'widgets#restoration_potential'
       get '/widgets/degradation-and-loss', to: 'widgets#degradation_and_loss'
       get '/widgets/blue-carbon-investment', to: 'widgets#blue_carbon_investment'
+
+      # MRTT
+      resources :sites, only: [:index, :show, :create, :update, :destroy]
+      get '/sites/:site_id/registration_answers', to: 'registration_answers#index'
+      put '/sites/:site_id/registration_answers', to: 'registration_answers#update'
+      patch '/sites/:site_id/registration_answers', to: 'registration_answers#partial_update'
+
     end
   end
 end
