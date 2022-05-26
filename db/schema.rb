@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_04_13_140332) do
+ActiveRecord::Schema[7.0].define(version: 2022_05_17_194551) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -99,6 +99,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_13_140332) do
     t.index ["location_id"], name: "index_mangrove_data_on_location_id"
   end
 
+  create_table "registration_answers", force: :cascade do |t|
+    t.bigint "site_id", null: false
+    t.string "question_id"
+    t.json "answer_value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["site_id"], name: "index_registration_answers_on_site_id"
+  end
+
   create_table "restoration_potentials", force: :cascade do |t|
     t.enum "indicator", default: "restorable_area", null: false, enum_type: "restoration_indicators"
     t.float "value"
@@ -108,6 +117,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_13_140332) do
     t.datetime "updated_at", null: false
     t.integer "year", default: 2016
     t.index ["location_id"], name: "index_restoration_potentials_on_location_id"
+  end
+
+  create_table "sites", force: :cascade do |t|
+    t.string "site_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "species", force: :cascade do |t|
@@ -150,6 +165,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_13_140332) do
   add_foreign_key "blue_carbon_investments", "locations"
   add_foreign_key "degradation_treemaps", "locations"
   add_foreign_key "mangrove_data", "locations"
+  add_foreign_key "registration_answers", "sites"
   add_foreign_key "restoration_potentials", "locations"
   add_foreign_key "typologies", "locations"
   add_foreign_key "widget_protected_areas", "locations", primary_key: "location_id", on_delete: :cascade
