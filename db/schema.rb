@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_05_17_194551) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_10_203635) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -58,6 +58,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_17_194551) do
     t.index ["location_id"], name: "index_degradation_treemaps_on_location_id"
   end
 
+  create_table "landscapes", force: :cascade do |t|
+    t.string "landscape_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.string "location_type"
@@ -99,6 +105,21 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_17_194551) do
     t.index ["location_id"], name: "index_mangrove_data_on_location_id"
   end
 
+  create_table "organizations", force: :cascade do |t|
+    t.string "organization_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "organizations_landscapes", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "landscape_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["landscape_id"], name: "index_organizations_landscapes_on_landscape_id"
+    t.index ["organization_id"], name: "index_organizations_landscapes_on_organization_id"
+  end
+
   create_table "registration_answers", force: :cascade do |t|
     t.bigint "site_id", null: false
     t.string "question_id"
@@ -123,6 +144,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_17_194551) do
     t.string "site_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "landscape_id", null: false
+    t.index ["landscape_id"], name: "index_sites_on_landscape_id"
   end
 
   create_table "species", force: :cascade do |t|
@@ -165,8 +188,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_17_194551) do
   add_foreign_key "blue_carbon_investments", "locations"
   add_foreign_key "degradation_treemaps", "locations"
   add_foreign_key "mangrove_data", "locations"
+  add_foreign_key "organizations_landscapes", "landscapes"
+  add_foreign_key "organizations_landscapes", "organizations"
   add_foreign_key "registration_answers", "sites"
   add_foreign_key "restoration_potentials", "locations"
+  add_foreign_key "sites", "landscapes"
   add_foreign_key "typologies", "locations"
   add_foreign_key "widget_protected_areas", "locations", primary_key: "location_id", on_delete: :cascade
 end
