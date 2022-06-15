@@ -65,6 +65,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_10_214509) do
     t.index ["landscape_name"], name: "index_landscapes_on_landscape_name", unique: true
   end
 
+  create_table "landscapes_organizations", force: :cascade do |t|
+    t.bigint "landscape_id", null: false
+    t.bigint "organization_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["landscape_id"], name: "index_landscapes_organizations_on_landscape_id"
+    t.index ["organization_id"], name: "index_landscapes_organizations_on_organization_id"
+  end
+
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.string "location_type"
@@ -111,15 +120,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_10_214509) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["organization_name"], name: "index_organizations_on_organization_name", unique: true
-  end
-
-  create_table "organizations_landscapes", force: :cascade do |t|
-    t.bigint "organization_id", null: false
-    t.bigint "landscape_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["landscape_id"], name: "index_organizations_landscapes_on_landscape_id"
-    t.index ["organization_id"], name: "index_organizations_landscapes_on_organization_id"
   end
 
   create_table "registration_answers", force: :cascade do |t|
@@ -190,9 +190,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_10_214509) do
 
   add_foreign_key "blue_carbon_investments", "locations"
   add_foreign_key "degradation_treemaps", "locations"
+  add_foreign_key "landscapes_organizations", "landscapes"
+  add_foreign_key "landscapes_organizations", "organizations"
   add_foreign_key "mangrove_data", "locations"
-  add_foreign_key "organizations_landscapes", "landscapes"
-  add_foreign_key "organizations_landscapes", "organizations"
   add_foreign_key "registration_answers", "sites"
   add_foreign_key "restoration_potentials", "locations"
   add_foreign_key "sites", "landscapes"
