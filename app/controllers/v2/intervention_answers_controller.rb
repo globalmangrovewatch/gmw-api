@@ -1,4 +1,4 @@
-class V2::RegistrationAnswersController < MrttApiController
+class V2::InterventionAnswersController < MrttApiController
     def index
         site = Site.find_by_id(params[:site_id])
         if not site
@@ -6,7 +6,7 @@ class V2::RegistrationAnswersController < MrttApiController
                 "message": "Site %s not found" % params[:site_id]
             }, :status => :not_found
         else
-            @answers = site.registration_answers.order(question_id: :asc)
+            @answers = site.intervention_answers.order(question_id: :asc)
         end
     end
 
@@ -15,7 +15,7 @@ class V2::RegistrationAnswersController < MrttApiController
         ensure_unique(payload)
 
         site = Site.find(params[:site_id])
-        @answers = site.registration_answers
+        @answers = site.intervention_answers
         @answers.delete_all
 
         payload.each do |item|
@@ -32,7 +32,7 @@ class V2::RegistrationAnswersController < MrttApiController
         ensure_unique(payload)
 
         site = Site.find(params[:site_id])
-        @answers = site.registration_answers
+        @answers = site.intervention_answers
 
         payload.each do |item|
             existing_answer = @answers.where(question_id: item[:question_id]).first

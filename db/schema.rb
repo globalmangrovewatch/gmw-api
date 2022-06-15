@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_10_214509) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_15_212700) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -56,6 +56,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_10_214509) do
     t.enum "indicator", default: "degraded_area", null: false, enum_type: "new_degradation_indicators"
     t.text "main_loss_driver"
     t.index ["location_id"], name: "index_degradation_treemaps_on_location_id"
+  end
+
+  create_table "intervention_answers", force: :cascade do |t|
+    t.bigint "site_id", null: false
+    t.string "question_id"
+    t.json "answer_value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["site_id"], name: "index_intervention_answers_on_site_id"
   end
 
   create_table "landscapes", force: :cascade do |t|
@@ -190,6 +199,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_10_214509) do
 
   add_foreign_key "blue_carbon_investments", "locations"
   add_foreign_key "degradation_treemaps", "locations"
+  add_foreign_key "intervention_answers", "sites"
   add_foreign_key "landscapes_organizations", "landscapes"
   add_foreign_key "landscapes_organizations", "organizations"
   add_foreign_key "mangrove_data", "locations"
