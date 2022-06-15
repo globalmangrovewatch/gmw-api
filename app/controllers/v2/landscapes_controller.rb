@@ -38,11 +38,10 @@ class V2::LandscapesController < MrttApiController
     end
 
     def associate_organizations(landscape, organizations)
-        @landscapes_organizations_by_landscape_id = LandscapesOrganizations.find_by(landscape_id: landscape.id)
+        @landscapes_organizations_by_landscape_id = LandscapesOrganizations.where("landscape_id = ?", landscape.id)
         if @landscapes_organizations_by_landscape_id
             @landscapes_organizations_by_landscape_id.delete_all
         end
-
         organizations.each do |org|
             LandscapesOrganizations.create(landscape_id: landscape.id, organization_id: org)
         end
