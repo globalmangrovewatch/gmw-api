@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_10_203635) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_10_214509) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -62,6 +62,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_10_203635) do
     t.string "landscape_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["landscape_name"], name: "index_landscapes_on_landscape_name", unique: true
   end
 
   create_table "locations", force: :cascade do |t|
@@ -109,6 +110,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_10_203635) do
     t.string "organization_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["organization_name"], name: "index_organizations_on_organization_name", unique: true
   end
 
   create_table "organizations_landscapes", force: :cascade do |t|
@@ -146,6 +148,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_10_203635) do
     t.datetime "updated_at", null: false
     t.bigint "landscape_id", null: false
     t.index ["landscape_id"], name: "index_sites_on_landscape_id"
+    t.index ["site_name"], name: "index_sites_on_site_name", unique: true
   end
 
   create_table "species", force: :cascade do |t|

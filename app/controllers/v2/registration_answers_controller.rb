@@ -1,4 +1,4 @@
-class V2::RegistrationAnswersController < ApiController
+class V2::RegistrationAnswersController < MrttApiController
     def index
         site = Site.find_by_id(params[:site_id])
         if not site
