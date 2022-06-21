@@ -1,4 +1,4 @@
-class V2::SitesController < ApiController
+class V2::SitesController < MrttApiController
     def index
         @sites = Site.all
     end
@@ -8,12 +8,12 @@ class V2::SitesController < ApiController
     end
 
     def create
-        @site = Site.create(site_params)
+        @site = Site.create!(site_params)
     end
 
     def update
         @site = Site.find(params[:id])
-        @site.update(site_params)
+        @site.update!(site_params)
     end
 
     def destroy
@@ -22,6 +22,6 @@ class V2::SitesController < ApiController
     end
 
     def site_params
-        params.require(:site).permit(:site_name)
+        params.require(:site).permit(:site_name, :landscape_id)
     end
 end

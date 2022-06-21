@@ -34,9 +34,14 @@ Rails.application.routes.draw do
 
       # MRTT
       resources :sites, only: [:index, :show, :create, :update, :destroy]
+      resources :landscapes, only: [:index, :show, :create, :update, :destroy]
+      resources :organizations, only: [:index, :show, :create, :update, :destroy]
       get '/sites/:site_id/registration_answers', to: 'registration_answers#index'
       put '/sites/:site_id/registration_answers', to: 'registration_answers#update'
       patch '/sites/:site_id/registration_answers', to: 'registration_answers#partial_update'
+      get '/sites/:site_id/intervention_answers', to: 'intervention_answers#index'
+      put '/sites/:site_id/intervention_answers', to: 'intervention_answers#update'
+      patch '/sites/:site_id/intervention_answers', to: 'intervention_answers#partial_update'
 
     end
   end
