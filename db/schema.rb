@@ -10,15 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-ActiveRecord::Schema[7.0].define(version: 2022_06_15_212700) do
-=======
-ActiveRecord::Schema[7.0].define(version: 2022_06_21_080018) do
->>>>>>> added new endpoint legal status widget, as well as data entrypoint in the admin panel
-=======
 ActiveRecord::Schema[7.0].define(version: 2022_06_22_100746) do
->>>>>>> Also included ecosystem services
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -66,6 +58,24 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_22_100746) do
     t.index ["location_id"], name: "index_degradation_treemaps_on_location_id"
   end
 
+  create_table "ecosystem_services", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "indicator"
+    t.float "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_ecosystem_services_on_location_id"
+  end
+
+  create_table "international_statuses", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "indicator"
+    t.float "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_international_statuses_on_location_id"
+  end
+
   create_table "intervention_answers", force: :cascade do |t|
     t.bigint "site_id", null: false
     t.string "question_id"
@@ -89,23 +99,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_22_100746) do
     t.datetime "updated_at", null: false
     t.index ["landscape_id"], name: "index_landscapes_organizations_on_landscape_id"
     t.index ["organization_id"], name: "index_landscapes_organizations_on_organization_id"
-
-  create_table "ecosystem_services", force: :cascade do |t|
-    t.bigint "location_id", null: false
-    t.string "indicator"
-    t.float "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["location_id"], name: "index_ecosystem_services_on_location_id"
-  end
-
-  create_table "international_statuses", force: :cascade do |t|
-    t.bigint "location_id", null: false
-    t.string "indicator"
-    t.float "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["location_id"], name: "index_international_statuses_on_location_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -224,11 +217,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_22_100746) do
 
   add_foreign_key "blue_carbon_investments", "locations"
   add_foreign_key "degradation_treemaps", "locations"
+  add_foreign_key "ecosystem_services", "locations"
+  add_foreign_key "international_statuses", "locations"
   add_foreign_key "intervention_answers", "sites"
   add_foreign_key "landscapes_organizations", "landscapes"
   add_foreign_key "landscapes_organizations", "organizations"
-  add_foreign_key "ecosystem_services", "locations"
-  add_foreign_key "international_statuses", "locations"
   add_foreign_key "mangrove_data", "locations"
   add_foreign_key "registration_answers", "sites"
   add_foreign_key "restoration_potentials", "locations"
