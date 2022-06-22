@@ -77,7 +77,11 @@ class V2::WidgetsController < ApiController
       @location_id = params[:location_id]
       @data = BlueCarbonInvestment.select('category, description, location_id, area, sum(area) over () as total_area').where(location_id: params[:location_id])
     else
-      @data = BlueCarbonInvestment.select('category, description, area, sum(area) over () as total_area').from(BlueCarbonInvestment.select('category, description, sum("blue_carbon_investments".area) as area').group('category, description'), :a)
+      @data = BlueCarbonInvestment.select("category, CASE WHEN category = 'remaining' THEN '' \
+              WHEN category  = 'carbon_10' THEN 'Global extent of investible blue carbon (ha) is '||area||' (at $10/ton)' \
+              WHEN category  = 'protected' THEN '' \
+              WHEN category  = 'carbon_5' THEN 'Global extent of investible blue carbon (ha) is '||area||' (at $5/ton)' \
+              END description, area, sum(area) over () as total_area").from(BlueCarbonInvestment.select('category, sum("blue_carbon_investments".area) as area').group('category'), :a)
       @location_id = 'worldwide'
     end
   end
@@ -86,7 +90,7 @@ class V2::WidgetsController < ApiController
   def international_status
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = InternationalStatus.select('indicator, description, location_id, area, sum(area) over () as total_area').where(location_id: params[:location_id])
+      @data = InternationalStatus.select('indicator, location_id, value, sum(value) over () as total_value').where(location_id: params[:location_id])
     else
       @data = InternationalStatus.select('indicator, sum(value) as value').group('indicator')
       @location_id = 'worldwide'
@@ -97,7 +101,7 @@ class V2::WidgetsController < ApiController
     def ecosystem_service
       if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
         @location_id = params[:location_id]
-        @data = EcosystemService.select('indicator, description, location_id, area, sum(area) over () as total_area').where(location_id: params[:location_id])
+        @data = EcosystemService.select('indicator, location_id, value, sum(value) over () as total_value').where(location_id: params[:location_id])
       else
         @data = EcosystemService.select('indicator, sum(value) as value').group('indicator')
         @location_id = 'worldwide'
