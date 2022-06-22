@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_15_212700) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_22_100746) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -58,6 +58,24 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_15_212700) do
     t.index ["location_id"], name: "index_degradation_treemaps_on_location_id"
   end
 
+  create_table "ecosystem_services", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "indicator"
+    t.float "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_ecosystem_services_on_location_id"
+  end
+
+  create_table "international_statuses", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "indicator"
+    t.float "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_international_statuses_on_location_id"
+  end
+
   create_table "intervention_answers", force: :cascade do |t|
     t.bigint "site_id", null: false
     t.string "question_id"
@@ -91,8 +109,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_15_212700) do
     t.json "geometry"
     t.float "area_m2"
     t.float "perimeter_m"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.float "coast_length_m"
     t.string "location_id"
     t.index ["location_id"], name: "index_locations_on_location_id", unique: true
@@ -108,8 +126,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_15_212700) do
     t.float "agb_mgha_1"
     t.float "hba_m"
     t.bigint "location_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "con_hotspot_summary_km2"
     t.float "net_change_m2"
     t.text "agb_hist_mgha_1"
@@ -199,6 +217,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_15_212700) do
 
   add_foreign_key "blue_carbon_investments", "locations"
   add_foreign_key "degradation_treemaps", "locations"
+  add_foreign_key "ecosystem_services", "locations"
+  add_foreign_key "international_statuses", "locations"
   add_foreign_key "intervention_answers", "sites"
   add_foreign_key "landscapes_organizations", "landscapes"
   add_foreign_key "landscapes_organizations", "organizations"
