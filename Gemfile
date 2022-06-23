@@ -78,4 +78,5 @@ group :test do
   gem "webdrivers"
 end
 
-
+# Token auth
+gem 'devise-jwt'
