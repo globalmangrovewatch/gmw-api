@@ -32,7 +32,7 @@ ActiveAdmin.register InternationalStatus do
         default: 'nationally_determined_contributions',
         include_blank: false,
         required: true
-      f.input :value, as: :number, required: true
+      f.input :value, as: :string, required: true
     end
 
     f.inputs 'Location' do
