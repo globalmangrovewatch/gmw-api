@@ -90,9 +90,9 @@ class V2::WidgetsController < ApiController
   def international_status
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = InternationalStatus.select('indicator, location_id, value, sum(value) over () as total_value').where(location_id: params[:location_id])
+      @data = InternationalStatus.select('indicator, location_id, value').where(location_id: params[:location_id])
     else
-      @data = InternationalStatus.select('indicator, sum(value) as value').group('indicator')
+      @data = InternationalStatus.select("indicator, '-' as value").group('indicator')
       @location_id = 'worldwide'
     end
   end
