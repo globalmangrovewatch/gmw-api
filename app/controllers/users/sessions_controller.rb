@@ -5,7 +5,10 @@ class Users::SessionsController < Devise::SessionsController
   private
 
   def respond_with(resource, _opts = {})
-    render json: { message: "You are logged in." }, status: :ok
+    render json: {
+        message: "You are logged in.",
+        token: request.env["warden-jwt_auth.token"]
+      }, status: :ok
   end
 
   def respond_to_on_destroy
