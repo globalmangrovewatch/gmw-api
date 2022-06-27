@@ -1,4 +1,5 @@
 class MrttApiController < ActionController::API
+    before_action :authenticate_user!
     rescue_from Exception, with: :exception
     rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
     rescue_from ActiveRecord::RecordNotUnique, with: :record_not_unique
