@@ -5,6 +5,8 @@ json.array! @landscapes do |landscape|
     json.id organization.id
     json.organization_name organization.organization_name
   end
-  json.site_id landscape.site.id unless landscape.site.nil?
-  json.site_name landscape.site.site_name unless landscape.site.nil?
+  json.sites landscape.sites do |site|
+    json.site_id site.id unless
+    json.site_name site.site_name
+  end
 end
