@@ -6,3 +6,5 @@ json.organizations do
     json.organization_name organization.organization_name
     end
 end
+json.site_id @landscape.site.id unless @landscape.site.nil?
+json.site_name @landscape.site.site_name unless @landscape.site.nil?
