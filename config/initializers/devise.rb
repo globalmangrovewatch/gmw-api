@@ -312,6 +312,6 @@ Devise.setup do |config|
   # Token auth
   config.jwt do |jwt|
     jwt.secret = ENV["SECRET_KEY_BASE"]
-    jwt.expiration_time = 8.hours.to_i
+    jwt.expiration_time = 30.days.to_i
   end
 end
