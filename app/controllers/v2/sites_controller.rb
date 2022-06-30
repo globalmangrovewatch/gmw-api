@@ -1,6 +1,9 @@
 class V2::SitesController < MrttApiController
     def index
-        @sites = Site.all
+        @sites = Site.left_joins(:registration_answers, :intervention_answers)
+                    .select("sites.*, " \
+                            "greatest(max(registration_answers.updated_at), " \
+                                "max(intervention_answers.updated_at)) as section_last_updated").group(:id)
     end
 
     def show
