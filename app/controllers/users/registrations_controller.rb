@@ -1,4 +1,5 @@
 class Users::RegistrationsController < Devise::RegistrationsController
+  before_action :configure_permitted_parameters
   skip_before_action :verify_authenticity_token
   respond_to :json
 
@@ -26,4 +27,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
       message: "#{resource.errors.full_messages.to_sentence}"
     }, status: :unprocessable_entity
   end
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up) { |u| u.permit(:name, :email, :password)}
+    devise_parameter_sanitizer.permit(:account_update) { |u| u.permit(:name, :email, :password, :current_password)}
+  end
+
 end
