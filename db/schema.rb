@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_03_065135) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_05_104229) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -155,6 +155,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_03_065135) do
     t.index ["organization_name"], name: "index_organizations_on_organization_name", unique: true
   end
 
+  create_table "organizations_users", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "user_id", null: false
+    t.string "role"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "user_id"], name: "index_organizations_users_on_organization_id_and_user_id", unique: true
+    t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
+    t.index ["user_id"], name: "index_organizations_users_on_user_id"
+  end
+
   create_table "registration_answers", force: :cascade do |t|
     t.bigint "site_id", null: false
     t.string "question_id"
@@ -243,6 +254,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_03_065135) do
   add_foreign_key "landscapes_organizations", "landscapes"
   add_foreign_key "landscapes_organizations", "organizations"
   add_foreign_key "mangrove_data", "locations"
+  add_foreign_key "organizations_users", "organizations"
+  add_foreign_key "organizations_users", "users"
   add_foreign_key "registration_answers", "sites"
   add_foreign_key "restoration_potentials", "locations"
   add_foreign_key "sites", "landscapes"
