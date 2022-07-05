@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_23_091833) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_03_065135) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -85,6 +85,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_23_091833) do
     t.index ["site_id"], name: "index_intervention_answers_on_site_id"
   end
 
+  create_table "jwt_denylist", force: :cascade do |t|
+    t.string "jti", null: false
+    t.datetime "exp", null: false
+    t.index ["jti"], name: "index_jwt_denylist_on_jti"
+  end
+
   create_table "landscapes", force: :cascade do |t|
     t.string "landscape_name"
     t.datetime "created_at", null: false
@@ -109,8 +115,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_23_091833) do
     t.json "geometry"
     t.float "area_m2"
     t.float "perimeter_m"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.float "coast_length_m"
     t.string "location_id"
     t.index ["location_id"], name: "index_locations_on_location_id", unique: true
@@ -126,8 +132,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_23_091833) do
     t.float "agb_mgha_1"
     t.float "hba_m"
     t.bigint "location_id"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "con_hotspot_summary_km2"
     t.float "net_change_m2"
     t.text "agb_hist_mgha_1"
@@ -204,6 +210,20 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_23_091833) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_typologies_on_location_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name"
+    t.boolean "admin", default: false, null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   create_table "widget_protected_areas", force: :cascade do |t|

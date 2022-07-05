@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  # Token auth
+  devise_for :users,
+  controllers: {
+      sessions: 'users/sessions',
+      registrations: 'users/registrations',
+
+  }
+  get '/users/current_user', to: 'users/current_user#show'
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
