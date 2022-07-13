@@ -56,6 +56,10 @@ Rails.application.routes.draw do
       put '/sites/:site_id/intervention_answers', to: 'intervention_answers#update'
       patch '/sites/:site_id/intervention_answers', to: 'intervention_answers#partial_update'
 
+      get '/organizations/:organization_id/users', to: 'organizations#get_users'
+      put '/organizations/:organization_id/users/:user_id', to: 'organizations#add_or_update_user'
+      delete '/organizations/:organization_id/users/:user_id', to: 'organizations#remove_user'
+
     end
   end
 end
