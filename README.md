@@ -11,7 +11,6 @@ To install run `bundle install`. And start application running `rails s`.
 
 **NOTE: CSV file should have `;` as separator.**
 
-
 ### Locations
 
 Get all locations, sorted by name and Worldwide at the top.
@@ -47,8 +46,6 @@ curl "https://mangrove-atlas-api.herokuapp.com/api/locations?rank_by=gain_m2&sta
 | end_date | no | 2017 |
 | location_type | no | - |
 | limit | no | 5 |
-
-
 
 ### Mangrove data (data for Widgets)
 
@@ -86,7 +83,6 @@ curl -X "POST" "https://mangrove-atlas-api.herokuapp.com/api/mangrove_data/impor
 You have to replace `[file_path]`.
 If you want to replace all mangrove data, you have to add the param `?reset=true` in the url.
 
-
 ### Generating data for worldwide
 
 To create or update the data for worlwide you can run
@@ -96,7 +92,6 @@ heroku run rake worldwide:location worldwide:mangrove_datum
 ```
 
 It iterate over all locations and mangrove data tables to calc and sum the values for Worldwide.
-
 
 ## Deploy to staging
 
@@ -112,4 +107,10 @@ And deploy:
 
 ```
 git push heroku develop:master
+```
+
+## Generating the documentation
+
+```
+rails rswag
 ```
