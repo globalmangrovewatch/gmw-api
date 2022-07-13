@@ -19,7 +19,7 @@ class MrttApiController < ActionController::API
       end
 
       def insufficient_privilege
-        render json: {message: "Insufficient privilege" }, status: :unauthorized
+        render json: {message: "Insufficient privilege" }, status: :forbidden
       end
 
       def log_current_user

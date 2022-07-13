@@ -17,15 +17,32 @@ class User < ApplicationRecord
   end
 
   def is_member(organization_id)
-    return get_organization_user(organization_id).present?
+    return self.organization_ids.include?(organization_id)
+  end
+
+  def is_member_of_any(organization_ids)
+    return !(self.organization_ids & organization_ids).empty?
+  end
+
+  def is_member_of_all(organization_ids)
+    common = (self.organization_ids & organization_ids)
+    return organization_ids.sort == common.sort
   end
 
   def is_org_user(organization_id)
-    return (get_organization_user(organization_id)&.role).to_s == 'org-user'
+    return (get_one_organization_user(organization_id)&.role).to_s == 'org-user'
   end
 
   def is_org_admin(organization_id)
-    return (get_organization_user(organization_id)&.role).to_s == 'org-admin'
+    return (get_one_organization_user(organization_id)&.role).to_s == 'org-admin'
+  end
+
+  def is_org_admin_of_all(organization_ids)
+    result = get_many_organization_user(organization_ids)
+    result.each do |item|
+      return false if item.role != 'org-admin'
+    end
+    result.present?
   end
 
   def is_admin
@@ -38,9 +55,18 @@ class User < ApplicationRecord
 
   private
 
-  def get_organization_user(organization_id)
+  def get_one_organization_user(organization_id)
     self.organizations.joins(:organizations_users)
-      .select("organizations_users.role").find_by_id(organization_id)
+      .select("organizations_users.*").find_by_id(organization_id)
+  end
+
+  def get_any_organization_user(organization_ids)
+    # where_clause = "organizations_users.organization_id in (%s)" % organization_ids.join(",")
+    # self.organizations.joins(:organizations_users)
+    #   .select("organizations_users.*").where(where_clause)
+
+    self.organization_ids
+
   end
 
   def get_all_org_roles
