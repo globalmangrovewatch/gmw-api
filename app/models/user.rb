@@ -60,13 +60,10 @@ class User < ApplicationRecord
       .select("organizations_users.*").find_by_id(organization_id)
   end
 
-  def get_any_organization_user(organization_ids)
-    # where_clause = "organizations_users.organization_id in (%s)" % organization_ids.join(",")
-    # self.organizations.joins(:organizations_users)
-    #   .select("organizations_users.*").where(where_clause)
-
-    self.organization_ids
-
+  def get_many_organization_user(organization_ids)
+    where_clause = "organizations_users.organization_id in (%s)" % organization_ids.join(",")
+    self.organizations.joins(:organizations_users)
+      .select("organizations_users.*").where(where_clause)
   end
 
   def get_all_org_roles

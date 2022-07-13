@@ -10,12 +10,11 @@ class V2::LandscapesController < MrttApiController
     end
 
     def show
-        landscape = Landscape.find(params[:id])
+        @landscape = Landscape.find(params[:id])
         organization_ids = landscape.organization_ids
 
         # admin and any org member can show landscape record
         if current_user.is_admin || current_user.is_member_of_any(organization_ids)
-            @landscape = Landscape.find(params[:id])
             where_clause = "landscapes_organizations.landscape_id = %s" % @landscape.id.to_s
             @organizations = Organization.joins(:landscapes_organizations).where(where_clause)
         else
