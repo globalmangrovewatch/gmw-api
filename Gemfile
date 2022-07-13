@@ -57,7 +57,8 @@ gem 'cancancan'
 gem 'draper'
 gem 'pundit'
 gem 'active_admin_import'
-
+gem 'rswag-api'
+gem 'rswag-ui'
 #Gemfiles to add Swagger to the api
 
 
@@ -65,6 +66,10 @@ gem 'active_admin_import'
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+  gem 'rspec-rails'
+  gem 'rswag-specs'
+  gem 'database_cleaner'
+  gem 'factory_bot'
 end
 
 group :development do
@@ -73,6 +78,7 @@ end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+  gem 'shoulda-matchers', '~> 5.0'
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
