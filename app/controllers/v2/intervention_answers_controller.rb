@@ -1,6 +1,17 @@
 class V2::InterventionAnswersController < MrttApiController
     def index
         site = Site.find_by_id(params[:site_id])
+        landscape = site.landscape
+        organization_ids = landscape.organization_ids
+
+        # admin can show any answer record
+        # org member can only show answer under site that belongs to landscape
+        #   that is associated to the org they are member of
+        if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
+            insufficient_privilege && return
+        end
+        # proceed
+    
         if not site
             render json: {
                 "message": "Site %s not found" % params[:site_id]
@@ -15,6 +26,17 @@ class V2::InterventionAnswersController < MrttApiController
         ensure_unique(payload)
 
         site = Site.find(params[:site_id])
+        landscape = site.landscape
+        organization_ids = landscape.organization_ids
+
+        # admin can update any answer record
+        # org member can only update answer under site that belongs to landscape
+        #   that is associated to the org they are member of
+        if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
+            insufficient_privilege && return
+        end
+        # proceed
+
         @answers = site.intervention_answers
         @answers.delete_all
 
@@ -32,8 +54,18 @@ class V2::InterventionAnswersController < MrttApiController
         ensure_unique(payload)
 
         site = Site.find(params[:site_id])
-        @answers = site.intervention_answers
+        landscape = site.landscape
+        organization_ids = landscape.organization_ids
 
+        # admin can update any answer record
+        # org member can only update answer under site that belongs to landscape
+        #   that is associated to the org they are member of
+        if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
+            insufficient_privilege && return
+        end
+        # proceed
+
+        @answers = site.intervention_answers
         payload.each do |item|
             existing_answer = @answers.where(question_id: item[:question_id]).first
             if existing_answer
@@ -47,6 +79,8 @@ class V2::InterventionAnswersController < MrttApiController
         end
         @answers = @answers.order(question_id: :asc)
     end
+
+    private
 
     def ensure_unique(payload)
         counts = Hash.new 0
