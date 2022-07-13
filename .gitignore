@@ -19,8 +19,6 @@
 /tmp/pids/*
 !/tmp/pids
 !/tmp/pids/.keep
-#Ignore swagger
-/swagger
 
 # Ignore uploaded files in development
 /storage/*
