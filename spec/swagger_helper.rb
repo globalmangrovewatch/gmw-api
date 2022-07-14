@@ -132,6 +132,19 @@ RSpec.configure do |config|
                   lc: {type: :string, nullable: true}
                 },
               },
+              species: {
+                type: :array,
+                items: {
+                  type: :object,
+                  properties: {
+                    id: {type: :number},
+                    scientific_name: {type: :string},
+                    name: {type: :string, nullable: true},
+                    iucn_url: {type: :string, nullable: true},
+                    red_list_cat: {type: :string},
+                  },
+                },
+              },
             },
             required: [:total, :threatened, :categories]
           },
