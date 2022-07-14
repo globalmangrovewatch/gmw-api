@@ -13,15 +13,14 @@ class V2::SitesController < MrttApiController
             ) :
             (
                 organization_ids = current_user.organization_ids
-                organization_ids.append(0)
                 landscape_ids = Landscape.joins(:organizations)
                                     .select("landscapes_organizations.*")
-                                    .where("organization_id in (%s)" % organization_ids.join(","))
+                                    .where("organization_id in (%s)" % (organization_ids + [0]).join(","))
                                     .map { |i| [i.landscape_id] }
                 @sites = Site.left_joins(:landscape, :registration_answers, :intervention_answers)
                     .select(select_clause)
                     .group(:id, "landscapes.id")
-                    .where("landscape_id in (%s)" % landscape_ids.join(","))
+                    .where("landscape_id in (%s)" % (landscape_ids + [0]).join(","))
             )
     end
 

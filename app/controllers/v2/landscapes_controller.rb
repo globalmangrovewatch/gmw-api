@@ -7,7 +7,7 @@ class V2::LandscapesController < MrttApiController
                 organization_ids = current_user.organization_ids
                 Landscape.joins(:organizations)
                     .select("distinct landscapes.*")
-                    .where("organization_id in (%s)" % organization_ids.join(","))
+                    .where("organization_id in (%s)" % (organization_ids + [0]).join(","))
             )
     end
 
