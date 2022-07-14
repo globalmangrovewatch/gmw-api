@@ -6,7 +6,8 @@ class MrttApiController < ActionController::API
   
     protected
       def exception(exception)
-        render json: { "error": exception }, status: :bad_request
+        puts exception
+        render json: { "error": "Unknown error occured" }, status: :bad_request
       end
       
       def record_not_unique(exception)
