@@ -13,6 +13,7 @@ class V2::SitesController < MrttApiController
             ) :
             (
                 organization_ids = current_user.organization_ids
+                organization_ids.append(0)
                 landscape_ids = Landscape.joins(:organizations)
                                     .select("landscapes_organizations.*")
                                     .where("organization_id in (%s)" % organization_ids.join(","))
