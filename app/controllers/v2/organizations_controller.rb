@@ -1,17 +1,10 @@
 class V2::OrganizationsController < MrttApiController
     def index
-        @organizations = current_user.is_admin ? Organization.all : current_user.organizations
+        @organizations = Organization.left_joins(:organizations_users).select("organizations.*, organizations_users.role")
     end
 
     def show
-        organization_id = params[:id]
-        if current_user.is_admin
-            @organization = Organization.find(organization_id)
-        elsif current_user.is_member(organization_id)
-            @organization = current_user.organizations.find(organization_id)
-        else
-            Organization.find(organization_id) && insufficient_privilege && return
-        end
+        @organization = Organization.find(params[:id])
     end
 
     def create
@@ -25,59 +18,45 @@ class V2::OrganizationsController < MrttApiController
     end
 
     def update
-        organization_id = params[:id]
-        if current_user.is_admin
-            @organization = Organization.find(organization_id)
-        elsif current_user.is_org_admin(organization_id)
-            @organization = current_user.organizations.find(organization_id)
-        else 
-            Organization.find(organization_id) && insufficient_privilege && return
+        @organization = Organization.find(params[:id])
+        if not (current_user.is_admin || current_user.is_org_admin(@organization.id))
+            insufficient_privilege && return
         end
         @organization.update(organization_params)
     end
 
     def destroy
-        organization_id = params[:id]
-        if current_user.is_admin
-            @organization = Organization.find(organization_id)
-        elsif current_user.is_org_admin(organization_id)
-            @organization = current_user.organizations.find(organization_id)
-        else 
-            Organization.find(organization_id) && insufficient_privilege && return
+        @organization = Organization.find(params[:id])
+        if not (current_user.is_admin || current_user.is_org_admin(@organization.id))
+            insufficient_privilege && return
         end
         @organization.destroy
     end
 
     def get_users
-        organization_id = params[:organization_id]
-        if current_user.is_admin
-            @users = Organization.find(organization_id).users.select("users.*, organizations_users.role")
-        elsif current_user.is_org_admin(organization_id)
-            @users = current_user.organizations.find(organization_id).users.select("users.*, organizations_users.role")
-        else 
-            Organization.find(organization_id) && insufficient_privilege && return
+        organization = Organization.find(params[:organization_id])
+        if not (current_user.is_admin || current_user.is_org_admin(organization.id))
+            insufficient_privilege && return
         end
+        @users = organization.users.select("users.*, organizations_users.role")
     end
 
     def add_or_update_user
-        params = organization_user_params
-        organization_id = params[:organization_id]
-        if current_user.is_admin || current_user.is_org_admin(organization_id)
-            add_or_update_user_helper(params)
-        else 
-            Organization.find(organization_id) && insufficient_privilege && return
+        organization = Organization.find(params[:organization_id])
+        if not (current_user.is_admin || current_user.is_org_admin(organization.id))
+            insufficient_privilege && return
         end
+        add_or_update_user_helper(params)
     end
 
     def remove_user
-        organization_id = params[:organization_id]
-        user_id = params[:user_id]
-        if current_user.is_admin || current_user.is_org_admin(organization_id)
-            @organization_user = OrganizationsUsers.where(organization_id: organization_id, user_id: user_id).first
-            @organization_user.destroy
-        else 
-            Organization.find(organization_id) && insufficient_privilege && return
+        organization = Organization.find(params[:organization_id])
+        if not (current_user.is_admin || current_user.is_org_admin(organization.id))
+            insufficient_privilege && return
         end
+        user_id = params[:user_id]
+        @organization_user = OrganizationsUsers.where(organization_id: organization.id, user_id: user_id).first
+        @organization_user.destroy
     end
 
     private

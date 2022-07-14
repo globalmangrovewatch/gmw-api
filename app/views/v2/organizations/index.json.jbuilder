@@ -5,4 +5,5 @@ json.array! @organizations do |organization|
     json.id landscape.id
     json.landscape_name landscape.landscape_name
   end
+  json.role organization.role
 end
