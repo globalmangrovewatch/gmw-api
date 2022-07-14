@@ -1,6 +1,12 @@
 class V2::OrganizationsController < MrttApiController
     def index
-        @organizations = Organization.left_joins(:organizations_users).select("organizations.*, organizations_users.role")
+        @own_organizations = Organization.joins(:organizations_users)
+            .select("distinct organizations.*, organizations_users.role")
+            .where("organizations_users.user_id=%s" % current_user.id)
+        where_clause = "organizations.id not in (select organization_id from organizations_users where user_id=%s)" % current_user.id
+        @other_organizations = Organization.left_joins(:organizations_users)
+            .select("distinct organizations.*, null as role")
+            .where(where_clause)
     end
 
     def show
