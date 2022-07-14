@@ -49,7 +49,7 @@ class V2::WidgetsController < ApiController
       @data = RestorationPotential.where(location_id: params[:location_id], year: params[:year] || 2016)
     else
       @location_id = 'worldwide'
-      @data = RestorationPotential.select('indicator, sum(value) as value, unit').where(year: params[:year] || 2016).group(:indicator, :unit)
+      @data = RestorationPotential.select('indicator, sum(value) as value, unit').where(year: params[:year] || 2016, indicator: ['restorable_area','mangrove_area'] ).group(:indicator, :unit)
     end
     
   end
