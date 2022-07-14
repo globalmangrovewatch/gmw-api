@@ -5,7 +5,9 @@ class V2::LandscapesController < MrttApiController
         @landscapes = current_user.is_admin ? Landscape.all :
             (
                 organization_ids = current_user.organization_ids
-                Landscape.joins(:organizations).where("organization_id in (%s)" % organization_ids.join(","))
+                Landscape.joins(:organizations)
+                    .select("distinct landscapes.*")
+                    .where("organization_id in (%s)" % organization_ids.join(","))
             )
     end
 

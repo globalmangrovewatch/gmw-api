@@ -67,7 +67,7 @@ class V2::OrganizationsController < MrttApiController
         else 
             Organization.find(organization_id) && insufficient_privilege && return
         end
-   end
+    end
 
     def remove_user
         organization_id = params[:organization_id]
@@ -123,6 +123,7 @@ class V2::OrganizationsController < MrttApiController
 
     def organization_params
         params.except(:organization, :format).permit(:organization_name, :id)
+    end
     
     def remove_user
         current_user_is_admin = current_user.admin
@@ -139,10 +140,6 @@ class V2::OrganizationsController < MrttApiController
     end
 
     def organization_params
-        params.permit(:organization).require(:organization).permit(:organization_name)
-    end
-
-    def insufficient_privilege
-        render json: {message: "Insufficient privilege" }, status: :unauthorized
+        params.except(:format, :organization).permit(:organization_name)
     end
 end
