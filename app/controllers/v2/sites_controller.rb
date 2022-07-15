@@ -59,12 +59,11 @@ class V2::SitesController < MrttApiController
         # admin can update any site record
         # org member can only update site that belongs to landscape
         #   that is associated to the org they are member of
-        if current_user.is_admin || current_user.is_member_of_any(organization_ids)
-            @site = Site.find(params[:id])
-            @site.update!(site_params)
-        else
+        if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
             insufficient_privilege && return
         end
+        @site = Site.find(params[:id])
+        @site.update!(site_params)
     end
 
     def destroy
@@ -75,13 +74,14 @@ class V2::SitesController < MrttApiController
         # admin can delete any site record
         # org member can only delete site that belongs to landscape
         #   that is associated to the org they are member of
-        if current_user.is_admin || current_user.is_member_of_any(organization_ids)
-            @site = Site.find(params[:id])
-            @site.destroy
-        else
+        if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
             insufficient_privilege && return
         end
+        @site = Site.find(params[:id])
+        @site.destroy
     end
+
+    private
 
     def site_params
         params.require(:site).permit(:site_name, :landscape_id)
