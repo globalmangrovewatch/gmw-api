@@ -1,5 +1,5 @@
 class MrttApiController < ActionController::API
-    before_action :authenticate_user!, :log_current_user
+    before_action :authenticate_user!
     rescue_from Exception, with: :exception
     rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
     rescue_from ActiveRecord::RecordNotUnique, with: :record_not_unique
@@ -21,14 +21,5 @@ class MrttApiController < ActionController::API
 
       def insufficient_privilege
         render json: {message: "Insufficient privilege" }, status: :forbidden
-      end
-
-      def log_current_user
-        current_user_id = current_user.id
-        roles = current_user.roles
-        puts "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-        puts "xxx current_user.id: %s" % current_user_id
-        puts "xxx current_user.roles: %s" % roles
-        puts "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
       end
 end
