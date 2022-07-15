@@ -62,7 +62,7 @@ class V2::SitesController < MrttApiController
         if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
             insufficient_privilege && return
         end
-        @site = Site.find(params[:id])
+        @site = Site.find(site_params[:id])
         @site.update!(site_params)
     end
 
@@ -84,6 +84,6 @@ class V2::SitesController < MrttApiController
     private
 
     def site_params
-        params.require(:site).permit(:site_name, :landscape_id)
+        params.except(:format, :site).permit(:id, :site_name, :landscape_id, section_data_visibility: {})
     end
 end
