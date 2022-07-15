@@ -32,8 +32,7 @@ class V2::SitesController < MrttApiController
         # admin can show any site record
         # org member can only show site that belongs to landscape
         #   that is associated to the org they are member of
-        if current_user.is_admin || current_user.is_member_of_any(organization_ids)
-        else
+        if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
             insufficient_privilege && return
         end
     end
@@ -46,11 +45,10 @@ class V2::SitesController < MrttApiController
         # admin can create any site record
         # org member can only create site that belongs to landscape
         #   that is associated to the org they are member of
-        if current_user.is_admin || current_user.is_member_of_any(organization_ids)
-            @site = Site.create!(site_params)
-        else
+        if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
             insufficient_privilege && return
         end
+        @site = Site.create!(site_params)
     end
 
     def update
