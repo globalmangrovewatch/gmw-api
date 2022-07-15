@@ -15,26 +15,26 @@ class V2::LandscapesController < MrttApiController
         @landscape = Landscape.find(params[:id])
         organization_ids = landscape.organization_ids
 
-        # admin and any org member can show landscape record
-        if current_user.is_admin || current_user.is_member_of_any(organization_ids)
-            where_clause = "landscapes_organizations.landscape_id = %s" % @landscape.id.to_s
-            @organizations = Organization.joins(:landscapes_organizations).where(where_clause)
-        else
+        # only admin and any org member can show landscape record
+        if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
             insufficient_privilege && return
         end
+
+        where_clause = "landscapes_organizations.landscape_id = %s" % @landscape.id.to_s
+        @organizations = Organization.joins(:landscapes_organizations).where(where_clause)
     end
 
     def create
         organization_ids = params[:organizations]
         organizations_exists(organization_ids)
 
-        # admin and any org member can create landscape record
-        if current_user.is_admin || current_user.is_member_of_all(organization_ids)
-            @landscape = Landscape.create(landscape_params)
-            associate_organizations(@landscape, organization_ids)
-        else
+        # only admin and any org member can create landscape record
+        if not (current_user.is_admin || current_user.is_member_of_all(organization_ids))
             insufficient_privilege && return
         end
+
+        @landscape = Landscape.create(landscape_params)
+        associate_organizations(@landscape, organization_ids)
     end
 
     def update
@@ -42,25 +42,25 @@ class V2::LandscapesController < MrttApiController
         organization_ids = params[:organizations]
         organizations_exists(organization_ids)
 
-        # admin and any org member can update landscape record
-        if current_user.is_admin || current_user.is_member_of_all(organization_ids)
-            @landscape.update(landscape_params)
-            associate_organizations(@landscape, organizations)
-        else
+        # only admin and any org member can update landscape record
+        if not (current_user.is_admin || current_user.is_member_of_all(organization_ids))
             insufficient_privilege && return
         end
+
+        @landscape.update(landscape_params)
+        associate_organizations(@landscape, organizations)
     end
 
     def destroy
         @landscape = Landscape.find(params[:id])
         organization_ids = @landscape.organization_ids
 
-        # admin and org-admin can delete landscape record
-        if current_user.is_admin || current_user.is_org_admin_of_all(organization_ids)
-            @landscape.destroy
-        else
+        # only admin and org-admin can delete landscape record
+        if not (current_user.is_admin || current_user.is_org_admin_of_all(organization_ids))
             insufficient_privilege && return
         end
+
+        @landscape.destroy
     end
 
     private
