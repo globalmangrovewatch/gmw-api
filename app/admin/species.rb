@@ -16,7 +16,7 @@ ActiveAdmin.register Specie do
   # end
 
   active_admin_import({
-    before_batch_import: ->(importer) {
+    before_import: ->(importer) {
       Specie.delete_all
     }
   })

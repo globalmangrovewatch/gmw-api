@@ -1,7 +1,7 @@
 ActiveAdmin.register Location do
 
   active_admin_import({
-    before_batch_import: ->(importer) {
+    before_import: ->(importer) {
       Location.delete_all
     }
   })
