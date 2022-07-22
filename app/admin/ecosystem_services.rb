@@ -18,7 +18,7 @@ ActiveAdmin.register EcosystemService do
   menu parent: "Widgets"
 
   active_admin_import({
-    before_batch_import: ->(importer) {
+    before_import: ->(importer) {
       EcosystemService.delete_all
     }
   })
