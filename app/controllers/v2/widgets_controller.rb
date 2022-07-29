@@ -97,14 +97,61 @@ class V2::WidgetsController < ApiController
     end
   end
 
-    # GET /v2/widgets/ecosystem_services
-    def ecosystem_service
-      if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
-        @location_id = params[:location_id]
-        @data = EcosystemService.select('indicator, location_id, value, sum(value) over () as total_value').where(location_id: params[:location_id])
-      else
-        @data = EcosystemService.select('indicator, sum(value) as value').group('indicator')
-        @location_id = 'worldwide'
-      end
+  # GET /v2/widgets/ecosystem_services
+  def ecosystem_service
+    if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
+      @location_id = params[:location_id]
+      @data = EcosystemService.select('indicator, location_id, value, sum(value) over () as total_value').where(location_id: params[:location_id])
+    else
+      @data = EcosystemService.select('indicator, sum(value) as value').group('indicator')
+      @location_id = 'worldwide'
     end
+  end
+
+  # GET /v2/widgets/habitat_extent
+  def habitat_extent
+    if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
+      @location_id = params[:location_id]
+      @data = HabitatExtent.joins(:location).includes(:location
+            ).where(location: {id: params[:location_id]}).order('indicator, year')
+      @total_area = @data.first.location.area_m2 * 0.000001 # convert to km2
+      @total_lenght = @data.first.location.coast_length_m * 0.001 # convert to km
+    else
+      @data = HabitatExtent.joins(:location).select(
+        'indicator, year, sum(value) as value, sum(coast_length_m) as coast_length_m, sum(area_m2) as area_m2'
+        ).group(:indicator, :year).order(:indicator,:year)
+      @location_id = 'worldwide'
+      @total_area = @data.first.area_m2 * 0.000001 # convert to km2
+      @total_lenght = @data.first.coast_length_m * 0.001 # convert to km
+    end
+  end
+
+  # GET /v2/widgets/net_change
+  def net_change
+    if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
+      @location_id = params[:location_id]
+      @data = HabitatExtent.joins(:location).includes(:location
+            ).select('year, COALESCE(LAG(value, 1) OVER (ORDER BY year), value) value_prior, value, location.location_id'
+            ).where(location: {id: params[:location_id]}, indicator: 'habitat_extent_area'
+            ).order(:indicator,:year)
+      @total_area = @data.first.location.area_m2 * 0.000001 # convert to km2
+      @total_lenght = @data.first.location.coast_length_m * 0.001 # convert to km
+    else
+      subquery = HabitatExtent.joins(:location).select(
+        'indicator, year, sum(value) as value, sum(coast_length_m) as coast_length_m, sum(area_m2) as area_m2'
+        ).where(
+          indicator: 'habitat_extent_area'
+        ).group(:indicator, :year
+        ).order(:indicator,:year)
+        
+      @data = HabitatExtent.from(subquery, :a
+      ).select(
+        'a.year, COALESCE(LAG(a.value, 1) OVER (ORDER BY a.year), a.value) value_prior, a.value, a.coast_length_m, a.area_m2'
+        )
+      
+      @location_id = 'worldwide'
+      @total_area = @data[0].area_m2 * 0.000001 # convert to km2
+      @total_lenght = @data[0].coast_length_m * 0.001 # convert to km
+    end
+  end
 end

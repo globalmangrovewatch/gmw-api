@@ -191,7 +191,28 @@ RSpec.configure do |config|
               value: {type: :number},
             },
             required: [:indicator, :value]
-          }
+          },
+          habitat_extent: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
+              value: {type: :number},
+              year: {type: :number},
+              percentage: {type: :number},
+            },
+            required: [:indicator, :value, :year, :percentage]
+          },
+
+          net_change: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
+              value: {type: :number},
+              year: {type: :number},
+              percentage: {type: :number},
+            },
+            required: [:indicator, :value, :year, :percentage]
+          },
         },
       }
     }
