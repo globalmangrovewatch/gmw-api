@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_15_181653) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_29_090744) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -18,6 +18,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_15_181653) do
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "degradation_indicators", ["degraded_area", "lost_area", "main_loss_driver"]
   create_enum "degradation_units", ["ha", "%"]
+  create_enum "habitat_extent_indicators", ["habitat_extent_area", "linear_coverage"]
   create_enum "mangrove_types", ["estuary", "delta", "lagoon", "fringe"]
   create_enum "new_degradation_indicators", ["degraded_area", "lost_area", "mangrove_area"]
   create_enum "red_list_cat", ["ex", "ew", "re", "cr", "en", "vu", "lr", "nt", "lc", "dd"]
@@ -67,6 +68,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_15_181653) do
     t.index ["location_id"], name: "index_ecosystem_services_on_location_id"
   end
 
+  create_table "habitat_extents", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.enum "indicator", default: "habitat_extent_area", null: false, enum_type: "habitat_extent_indicators"
+    t.integer "year"
+    t.float "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_habitat_extents_on_location_id"
+  end
+
   create_table "international_statuses", force: :cascade do |t|
     t.bigint "location_id", null: false
     t.string "indicator"
@@ -103,7 +114,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_15_181653) do
     t.bigint "organization_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["landscape_id", "organization_id"], name: "idx_u_landscapes_organizations", unique: true
     t.index ["landscape_id"], name: "index_landscapes_organizations_on_landscape_id"
     t.index ["organization_id"], name: "index_landscapes_organizations_on_organization_id"
   end
@@ -116,8 +126,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_15_181653) do
     t.json "geometry"
     t.float "area_m2"
     t.float "perimeter_m"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.float "coast_length_m"
     t.string "location_id"
     t.index ["location_id"], name: "index_locations_on_location_id", unique: true
@@ -133,8 +143,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_15_181653) do
     t.float "agb_mgha_1"
     t.float "hba_m"
     t.bigint "location_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "con_hotspot_summary_km2"
     t.float "net_change_m2"
     t.text "agb_hist_mgha_1"
@@ -251,6 +261,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_15_181653) do
   add_foreign_key "blue_carbon_investments", "locations"
   add_foreign_key "degradation_treemaps", "locations"
   add_foreign_key "ecosystem_services", "locations"
+  add_foreign_key "habitat_extents", "locations"
   add_foreign_key "international_statuses", "locations"
   add_foreign_key "intervention_answers", "sites"
   add_foreign_key "landscapes_organizations", "landscapes"
