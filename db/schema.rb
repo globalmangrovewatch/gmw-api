@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_29_090744) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_29_135347) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "aboveground_biomasses_indicators", ["total", "avg", "0-50", "50-100", "100-150", "150-250", "250-1500"]
   create_enum "degradation_indicators", ["degraded_area", "lost_area", "main_loss_driver"]
   create_enum "degradation_units", ["ha", "%"]
   create_enum "habitat_extent_indicators", ["habitat_extent_area", "linear_coverage"]
@@ -24,6 +25,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_29_090744) do
   create_enum "red_list_cat", ["ex", "ew", "re", "cr", "en", "vu", "lr", "nt", "lc", "dd"]
   create_enum "restoration_indicators", ["restorable_area", "mangrove_area", "restoration_potential_score"]
   create_enum "restoration_units", ["ha", "%"]
+  create_enum "tree_heights_indicators", ["0-5", "5-10", "10-15", "15-20", "20-65", "avg"]
+
+  create_table "aboveground_biomasses", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.enum "indicator", default: "total", null: false, enum_type: "aboveground_biomasses_indicators"
+    t.integer "year"
+    t.float "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_aboveground_biomasses_on_location_id"
+  end
 
   create_table "admin_users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -45,6 +57,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_29_090744) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_blue_carbon_investments_on_location_id"
+  end
+
+  create_table "blue_carbons", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "indicator"
+    t.integer "year"
+    t.float "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_blue_carbons_on_location_id"
   end
 
   create_table "degradation_treemaps", force: :cascade do |t|
@@ -225,6 +247,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_29_090744) do
     t.index ["specie_id"], name: "index_species_locations_on_specie_id"
   end
 
+  create_table "tree_heights", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.enum "indicator", default: "avg", null: false, enum_type: "tree_heights_indicators"
+    t.integer "year"
+    t.float "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_tree_heights_on_location_id"
+  end
+
   create_table "typologies", force: :cascade do |t|
     t.integer "value"
     t.string "unit", default: "ha"
@@ -258,7 +290,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_29_090744) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "aboveground_biomasses", "locations"
   add_foreign_key "blue_carbon_investments", "locations"
+  add_foreign_key "blue_carbons", "locations"
   add_foreign_key "degradation_treemaps", "locations"
   add_foreign_key "ecosystem_services", "locations"
   add_foreign_key "habitat_extents", "locations"
@@ -272,6 +306,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_29_090744) do
   add_foreign_key "registration_answers", "sites"
   add_foreign_key "restoration_potentials", "locations"
   add_foreign_key "sites", "landscapes"
+  add_foreign_key "tree_heights", "locations"
   add_foreign_key "typologies", "locations"
   add_foreign_key "widget_protected_areas", "locations", primary_key: "location_id", on_delete: :cascade
 end

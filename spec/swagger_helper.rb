@@ -202,8 +202,37 @@ RSpec.configure do |config|
             },
             required: [:indicator, :value, :year, :percentage]
           },
-
           net_change: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
+              value: {type: :number},
+              year: {type: :number},
+              percentage: {type: :number},
+            },
+            required: [:indicator, :value, :year, :percentage]
+          },
+          aboveground_biomass: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
+              value: {type: :number},
+              year: {type: :number},
+              percentage: {type: :number},
+            },
+            required: [:indicator, :value, :year, :percentage]
+          },
+          tree_height: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
+              value: {type: :number},
+              year: {type: :number},
+              percentage: {type: :number},
+            },
+            required: [:indicator, :value, :year, :percentage]
+          },
+          blue_carbon: {
             type: :object,
             properties: {
               indicator: {type: :string},
