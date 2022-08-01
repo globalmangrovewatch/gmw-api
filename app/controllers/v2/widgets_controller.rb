@@ -154,4 +154,92 @@ class V2::WidgetsController < ApiController
       @total_lenght = @data[0].coast_length_m * 0.001 # convert to km
     end
   end
+
+  # GET /v2/widgets/aboveground_biomass
+  def aboveground_biomass
+    if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
+      base = AbovegroundBiomass.joins(:location).includes(:location
+      ).where(location: {id: params[:location_id]}
+      )
+      @location_id = params[:location_id]
+      @data = base.and(AbovegroundBiomass.where.not(
+        indicator: ['avg', 'total']
+      )).order('indicator, year')
+      totals = base.and(AbovegroundBiomass.where(
+        indicator: ['avg', 'total']
+      )).order('indicator, year')
+      @total_aboveground_biomass = totals.where(indicator: 'total'
+                                  ).map { |row| {'year'=> row.year, 'value'=> row.value}}
+      @avg_aboveground_biomass = totals.where(indicator: 'avg'
+                                  ).map { |row| {'year'=> row.year, 'value'=> row.value}}
+    else
+      @data = AbovegroundBiomass.select(
+        'indicator, year, sum(value) as value'
+        ).where.not(
+          indicator: ['avg']
+        ).group(:indicator, :year
+        ).order(:indicator,:year)
+      @location_id = 'worldwide'
+      @total_aboveground_biomass = @data.where(indicator: 'total'
+      ).map { |row| {'year'=> row.year, 'value'=> row.value}}
+      @avg_aboveground_biomass = AbovegroundBiomass.select(
+        'indicator, year, avg(value) as value'
+        ).where(
+          indicator: ['avg']
+        ).group(:indicator, :year
+        ).order(:indicator,:year).map { |row| {'year'=> row.year, 'value'=> row.value}}
+    end
+  end
+
+  # GET /v2/widgets/tree_height
+  def tree_height
+    if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
+      base = TreeHeight.joins(:location).includes(:location
+      ).where(location: {id: params[:location_id]}
+      )
+      @location_id = params[:location_id]
+      @data = base.and(TreeHeight.where.not(
+              indicator: ['avg']
+            )).order('indicator, year')
+      @avg_height = base.and(TreeHeight.where(
+        indicator: ['avg']
+      )).order('indicator, year'
+      ).map { |row| {'year'=> row.year, 'value'=> row.value}}
+    else
+      @data = TreeHeight.select(
+        'indicator, year, sum(value) as value'
+        ).where.not(
+          indicator: ['avg']
+        ).group(:indicator, :year
+        ).order(:indicator,:year)
+      @location_id = 'worldwide'
+      @avg_height = TreeHeight.select(
+        'indicator, year, avg(value) as value'
+        ).where(
+          indicator: ['avg']
+        ).group(:indicator, :year
+        ).order(:indicator,:year
+        ).map { |row| {'year'=> row.year, 'value'=> row.value}}
+    end
+  end
+
+  # GET /v2/widgets/blue_carbon
+  def blue_carbon
+    if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
+      @location_id = params[:location_id]
+      @data = BlueCarbon.joins(:location).includes(:location
+            ).where(location: {id: params[:location_id]}
+            ).and(BlueCarbon.where.not(
+              indicator: ['blue_carbon_area']
+            )).order('indicator, year')
+    else
+      @data = BlueCarbon.select(
+        'indicator, year, sum(value) as value'
+        ).where.not(
+          indicator: ['blue_carbon_area']
+        ).group(:indicator, :year
+        ).order(:indicator,:year)
+      @location_id = 'worldwide'
+    end
+  end
 end

@@ -46,6 +46,9 @@ Rails.application.routes.draw do
       get '/widgets/ecosystem_services', to: 'widgets#ecosystem_service'
       get '/widgets/habitat_extent', to: 'widgets#habitat_extent'
       get '/widgets/net_change', to: 'widgets#net_change'
+      get '/widgets/aboveground_biomass', to: 'widgets#aboveground_biomass'
+      get '/widgets/tree_height', to: 'widgets#tree_height'
+      get '/widgets/blue_carbon', to: 'widgets#blue_carbon'
 
       # MRTT
       resources :sites, only: [:index, :show, :create, :update, :destroy]
