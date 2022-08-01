@@ -26,9 +26,7 @@ ActiveAdmin.register BlueCarbon do
    
     form do |f|
       f.inputs 'Details' do
-        f.input :indicator, as: :select, 
-          collection: BlueCarbon.indicator.keys,
-          default: BlueCarbon.indicator.keys.first,
+        f.input :indicator,
           include_blank: false,
           required: true
         f.input :value, required: true

@@ -27,8 +27,8 @@ ActiveAdmin.register TreeHeight do
   form do |f|
     f.inputs 'Details' do
       f.input :indicator, as: :select, 
-        collection: TreeHeight.indicator.keys,
-        default: TreeHeight.indicator.keys.first,
+        collection: TreeHeight.indicators,
+        default: TreeHeight.indicators.first,
         include_blank: false,
         required: true
       f.input :value, required: true

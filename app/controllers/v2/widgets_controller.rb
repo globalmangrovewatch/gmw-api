@@ -165,16 +165,29 @@ class V2::WidgetsController < ApiController
       @data = base.and(AbovegroundBiomass.where.not(
         indicator: ['avg', 'total']
       )).order('indicator, year')
-      @total_aboveground_biomass = @data
-      @avg_aboveground_biomass = @data
+      totals = base.and(AbovegroundBiomass.where(
+        indicator: ['avg', 'total']
+      )).order('indicator, year')
+      @total_aboveground_biomass = totals.where(indicator: 'total'
+                                  ).map { |row| {'year'=> row.year, 'value'=> row.value}}
+      @avg_aboveground_biomass = totals.where(indicator: 'avg'
+                                  ).map { |row| {'year'=> row.year, 'value'=> row.value}}
     else
-      @data = AbovegroundBiomass.joins(:location).select(
+      @data = AbovegroundBiomass.select(
         'indicator, year, sum(value) as value'
+        ).where.not(
+          indicator: ['avg']
         ).group(:indicator, :year
         ).order(:indicator,:year)
       @location_id = 'worldwide'
-      @total_aboveground_biomass = @data
-      @avg_aboveground_biomass = @data
+      @total_aboveground_biomass = @data.where(indicator: 'total'
+      ).map { |row| {'year'=> row.year, 'value'=> row.value}}
+      @avg_aboveground_biomass = AbovegroundBiomass.select(
+        'indicator, year, avg(value) as value'
+        ).where(
+          indicator: ['avg']
+        ).group(:indicator, :year
+        ).order(:indicator,:year).map { |row| {'year'=> row.year, 'value'=> row.value}}
     end
   end
 
@@ -190,7 +203,8 @@ class V2::WidgetsController < ApiController
             )).order('indicator, year')
       @avg_height = base.and(TreeHeight.where(
         indicator: ['avg']
-      )).order('indicator, year')
+      )).order('indicator, year'
+      ).map { |row| {'year'=> row.year, 'value'=> row.value}}
     else
       @data = TreeHeight.select(
         'indicator, year, sum(value) as value'
@@ -204,7 +218,8 @@ class V2::WidgetsController < ApiController
         ).where(
           indicator: ['avg']
         ).group(:indicator, :year
-        ).order(:indicator,:year)
+        ).order(:indicator,:year
+        ).map { |row| {'year'=> row.year, 'value'=> row.value}}
     end
   end
 
@@ -217,8 +232,6 @@ class V2::WidgetsController < ApiController
             ).and(BlueCarbon.where.not(
               indicator: ['blue_carbon_area']
             )).order('indicator, year')
-      @total_area = @data
-      @total_lenght = @data
     else
       @data = BlueCarbon.select(
         'indicator, year, sum(value) as value'
