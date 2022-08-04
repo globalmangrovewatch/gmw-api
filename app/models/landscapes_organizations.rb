@@ -1,0 +1,2 @@
+class LandscapesOrganizations < ApplicationRecord
+end

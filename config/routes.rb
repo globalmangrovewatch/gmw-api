@@ -1,5 +1,18 @@
 Rails.application.routes.draw do
-  get 'widgets/species'
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
+  # Token auth
+  devise_for :users,
+  controllers: {
+      sessions: 'users/sessions',
+      registrations: 'users/registrations',
+
+  }
+  get '/users/current_user', to: 'users/current_user#show'
+
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   scope :api do
@@ -20,12 +33,40 @@ Rails.application.routes.draw do
 
     namespace :v2, defaults: { format: :json } do
       resources :locations
+      resources :species, only: [:index]
 
       get '/widgets/protected-areas', to: 'widgets#protected_areas'
       post '/widgets/protected-areas/import', to: 'widgets#protected_areas_import'
+      
+      get '/widgets/biodiversity', to: 'widgets#biodiversity'
+      get '/widgets/restoration-potential', to: 'widgets#restoration_potential'
+      get '/widgets/degradation-and-loss', to: 'widgets#degradation_and_loss'
+      get '/widgets/blue-carbon-investment', to: 'widgets#blue_carbon_investment'
+      get '/widgets/international_status', to: 'widgets#international_status'
+      get '/widgets/ecosystem_services', to: 'widgets#ecosystem_service'
+      get '/widgets/habitat_extent', to: 'widgets#habitat_extent'
+      get '/widgets/net_change', to: 'widgets#net_change'
+      get '/widgets/aboveground_biomass', to: 'widgets#aboveground_biomass'
+      get '/widgets/tree_height', to: 'widgets#tree_height'
+      get '/widgets/blue_carbon', to: 'widgets#blue_carbon'
 
-      get '/widgets/species', to: 'widgets#species'
-      post '/widgets/species/import', to: 'widgets#species_import'
+      # MRTT
+      resources :sites, only: [:index, :show, :create, :update, :destroy]
+      resources :landscapes, only: [:index, :show, :create, :update, :destroy]
+      resources :organizations, only: [:index, :show, :create, :update, :destroy]
+      get '/sites/:site_id/registration_answers', to: 'registration_answers#index'
+      put '/sites/:site_id/registration_answers', to: 'registration_answers#update'
+      patch '/sites/:site_id/registration_answers', to: 'registration_answers#partial_update'
+      get '/sites/:site_id/intervention_answers', to: 'intervention_answers#index'
+      put '/sites/:site_id/intervention_answers', to: 'intervention_answers#update'
+      patch '/sites/:site_id/intervention_answers', to: 'intervention_answers#partial_update'
+
+      get '/organizations/:organization_id/users', to: 'organizations#get_users'
+      put '/organizations/:organization_id/users/:user_id', to: 'organizations#add_or_update_user'
+      delete '/organizations/:organization_id/users/:user_id', to: 'organizations#remove_user'
+
     end
   end
 end
+
+

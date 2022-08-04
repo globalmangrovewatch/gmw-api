@@ -32,7 +32,7 @@ Restore from dump file:
 1. Get the dump file from heroku (staging)
 
 ```
-pg_dump -O -x -d postgres://username:password@hostname > database.sql
+pg_dump -O -x -d postgres://username:password@hostname/database > database.sql
 ```
 
 2. Restore with no user check
@@ -54,14 +54,34 @@ bundle exec rails s
 ```
 
 
-## Docker
+## Docker (only first time)
+ENV variables:
+```
+RAILS_ENV=development
+POSTGRES_HOST=
+```
 
 ```
-docker compose up
+docker-compose up --build
 ```
-In a separate terminal:
-
+In a separate terminal, create the database:
 
 ```
-docker-compose run web rake db:create RAILS_ENV=development db:migrate
+docker-compose run web rake db:create RAILS_ENV=development
+```
+
+Download dump:
+
+```
+[docker-compose run db] pg_dump -O -x -d postgres://username:password@hostname/database > database.sql
+```
+
+Restore from dump file:
+
+```
+docker-compose run -T db psql postgres://postgres:postgres@db:5432/mangrove-atlas-api_development < database.sql
+```
+
+```
+docker-compose run web rake db:migrate RAILS_ENV=development
 ```

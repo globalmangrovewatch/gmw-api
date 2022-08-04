@@ -1,4 +1,4 @@
-class V1::LocationsController < ApplicationController
+class V1::LocationsController < ApiController
   # deserializable_resource :location
   before_action :set_location, only: [:show, :update, :destroy]
 

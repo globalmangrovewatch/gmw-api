@@ -7,6 +7,9 @@
 # Ignore bundler config.
 /.bundle
 
+## Ignore Swagger JSON files.
+/public/apidocs/
+
 # Ignore all logfiles and tempfiles.
 /log/*
 ./tmp/*
@@ -31,3 +34,4 @@
 *.env
 
 *.sql
+
