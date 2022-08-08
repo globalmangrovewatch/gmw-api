@@ -13,7 +13,7 @@ class V2::LandscapesController < MrttApiController
 
     def show
         @landscape = Landscape.find(params[:id])
-        organization_ids = landscape.organization_ids
+        organization_ids = @landscape.organization_ids
 
         # only admin and any org member can show landscape record
         if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
