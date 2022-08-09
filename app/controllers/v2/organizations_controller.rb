@@ -63,8 +63,8 @@ class V2::OrganizationsController < MrttApiController
         if not (current_user.is_admin || current_user.is_org_admin(organization.id))
             insufficient_privilege && return
         end
-        user_id = params[:user_id]
-        @organization_user = OrganizationsUsers.where(organization_id: organization.id, user_id: user_id).first
+        user = User.find_by_email!(params[:email])
+        @organization_user = OrganizationsUsers.where(organization_id: organization.id, user_id: user.id).first
         @organization_user.destroy
     end
 
@@ -115,14 +115,6 @@ class V2::OrganizationsController < MrttApiController
 
     def organization_params
         params.except(:organization, :format).permit(:organization_name, :id)
-    end
-    
-    def remove_user
-        current_user_is_admin = current_user.admin
-        insufficient_privilege && return if !current_user_is_admin 
-
-        @organization_user = OrganizationsUsers.where(organization_id: params[:organization_id], user_id: params[:user_id]).first
-        @organization_user.destroy
     end
 
     private
