@@ -48,6 +48,16 @@ class V2::OrganizationsController < MrttApiController
         @users = organization.users.select("users.*, organizations_users.role")
     end
 
+    def get_user
+        organization = Organization.find(params[:organization_id])
+        user = User.find(params[:user_id])
+        if not (current_user.is_admin || current_user.is_org_admin(organization.id))
+            insufficient_privilege && return
+        end
+        user_id = params[:user_id]
+        @user = organization.users.where('"organizations_users"."user_id"=%s' % user.id).select("users.*, organizations_users.role").first
+    end
+
     def add_or_update_user
         organization = Organization.find(params[:organization_id])
         if not (current_user.is_admin || current_user.is_org_admin(organization.id))
