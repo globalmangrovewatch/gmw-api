@@ -7,9 +7,9 @@ class Location < ApplicationRecord
 
   # model association
   has_many :mangrove_datum, dependent: :destroy
-  has_many :species_locations
+  has_many :species_locations, dependent: :destroy
   has_many :species, through: :species_locations, source: :specie
-  has_many :restoration_potentials
+  has_many :restoration_potentials, dependent: :destroy
   accepts_nested_attributes_for :species
 
   # validations
@@ -37,7 +37,9 @@ class Location < ApplicationRecord
   end
 
   def self.import(import_params)
-    CSV.foreach(import_params[:file].path, headers: true, col_sep: ';') do |row|
+    logger.debug "Importing #{import_params[:file].path}"
+    CSV.foreach(import_params[:file].path, headers: true) do |row|
+      p row['name']
       location_hash = Location.new
       location_hash.name = row['name']
       location_hash.location_type = row['location_type']

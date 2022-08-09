@@ -4,10 +4,7 @@ class V2::LocationsController < ApiController
 
   # GET /locations
   def index
-    @locations = []
-    worldwide = Location.find_by(location_id: 'worldwide')
-    @locations << worldwide if worldwide
-    @locations += Location.all.where.not(location_id: 'worldwide').order(name: :asc)
+    @locations = Location.select('id, bounds, name, location_type, location_id, iso, area_m2, perimeter_m,coast_length_m').all.order(name: :asc)
 
     @dates = Location.dates_with_data(params[:rank_by])
   end

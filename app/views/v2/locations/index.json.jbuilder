@@ -7,7 +7,5 @@ json.meta do
 end
 
 json.data do
-  json.array! @locations do |location|
-    json.partial! "location", obj: location
-  end
+  json.array! @locations
 end
