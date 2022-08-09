@@ -50,7 +50,7 @@ class V2::OrganizationsController < MrttApiController
 
     def get_user
         organization = Organization.find(params[:organization_id])
-        user = User.find(params[:user_id])
+        user = User.find_by_email!(params[:email])
         if not (current_user.is_admin || current_user.is_org_admin(organization.id))
             insufficient_privilege && return
         end
