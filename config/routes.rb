@@ -63,7 +63,8 @@ Rails.application.routes.draw do
 
       get '/organizations/:organization_id/users', to: 'organizations#get_users'
       get '/organizations/:organization_id/users/:user_id', to: 'organizations#get_user'
-      put '/organizations/:organization_id/users/:user_id', to: 'organizations#add_or_update_user'
+      post '/organizations/:organization_id/users', to: 'organizations#add_user'
+      patch '/organizations/:organization_id/users/:email', to: 'organizations#update_user', constraints: { email: /[^\/]+/}
       delete '/organizations/:organization_id/users/:user_id', to: 'organizations#remove_user'
 
     end
