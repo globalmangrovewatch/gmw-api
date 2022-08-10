@@ -62,9 +62,10 @@ Rails.application.routes.draw do
       patch '/sites/:site_id/intervention_answers', to: 'intervention_answers#partial_update'
 
       get '/organizations/:organization_id/users', to: 'organizations#get_users'
-      get '/organizations/:organization_id/users/:user_id', to: 'organizations#get_user'
-      put '/organizations/:organization_id/users/:user_id', to: 'organizations#add_or_update_user'
-      delete '/organizations/:organization_id/users/:user_id', to: 'organizations#remove_user'
+      get '/organizations/:organization_id/users/:email', to: 'organizations#get_user', constraints: { email: /[^\/]+/}
+      post '/organizations/:organization_id/users', to: 'organizations#add_user'
+      patch '/organizations/:organization_id/users/:email', to: 'organizations#update_user', constraints: { email: /[^\/]+/}
+      delete '/organizations/:organization_id/users/:email', to: 'organizations#remove_user', constraints: { email: /[^\/]+/}
 
     end
   end
