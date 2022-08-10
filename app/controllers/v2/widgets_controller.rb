@@ -35,9 +35,9 @@ class V2::WidgetsController < ApiController
   # GET /v2/widgets/biodiversity
   def biodiversity
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
-      @data = Location.joins(:species).includes(:species).where(id: params[:location_id])
+      @data = Location.unscope(:select).joins(:species).includes(:species).where(id: params[:location_id])
     else
-      @data = Location.joins(:species).includes(:species)
+      @data = Location.unscope(:select).joins(:species).includes(:species)
     end
   end
 
