@@ -4,9 +4,9 @@ class V2::LocationsController < ApiController
 
   # GET /locations
   def index
-    @locations = Location.select('id, bounds, name, location_type, location_id, iso, area_m2, perimeter_m,coast_length_m').all.order(name: :asc)
+    @locations = Location.all.order(location_type: :asc, name: :asc, iso: :asc)
 
-    @dates = Location.dates_with_data(params[:rank_by])
+    @dates = Location.dates_with_data()
   end
 
   # GET /locations/worldwide
@@ -28,6 +28,8 @@ class V2::LocationsController < ApiController
 
   # GET /locations/:id
   def show
+    data = Location.unscope(:select)
+    @location = data.find_by(iso: params[:id], location_type: 'country') || data.find_by(location_id: params[:id])
   end
 
   # PUT /locations/:id
