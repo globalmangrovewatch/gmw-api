@@ -18,7 +18,7 @@ class Location < ApplicationRecord
 
   # scopes
   default_scope { select(:name, :location_type, :iso, :bounds, 
-                :location_id, :coast_length_m, :perimeter_m, :area_m2) }
+                :location_id, :coast_length_m, :perimeter_m, :area_m2, :id, :created_at) }
 
   def self.worldwide
     self.find_by(location_type: 'worldwide')
