@@ -87,7 +87,7 @@ class Location < ApplicationRecord
   end
 
   def self.dates_with_data()
-      self.unscope(:select).joins(:habitat_extent).select('habitat_extents.year').group('habitat_extents.year')
+      self.unscope(:select).joins(:habitat_extent).select('habitat_extents.year').distinct.order('habitat_extents.year')
   end
 
   private
