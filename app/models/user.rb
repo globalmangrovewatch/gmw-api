@@ -2,6 +2,8 @@ class User < ApplicationRecord
   devise :database_authenticatable,
          :jwt_authenticatable,
          :registerable,
+         :confirmable,
+         :recoverable,
          jwt_revocation_strategy: JwtDenylist
   has_and_belongs_to_many :organizations
 
