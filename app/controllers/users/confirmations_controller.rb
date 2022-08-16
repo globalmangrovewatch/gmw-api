@@ -7,7 +7,7 @@ class Users::ConfirmationsController < Devise::
     if resource.errors.empty?
       set_flash_message!(:notice, :confirmed)
       url = ENV["MRTT_UI_BASE_URL"] + "/auth/login"
-      respond_with_navigational(resource){ redirect_to url, allow_other_host: true}
+      redirect_to url, allow_other_host: true
     else
       respond_with_navigational(resource.errors, status: :unprocessable_entity){ render :new }
     end
