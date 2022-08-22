@@ -114,3 +114,14 @@ git push heroku develop:master
 ```
 rails rswag
 ```
+
+## Mailer setting
+
+```
+MAILER_DEFAULT_HOST={MRTT API base url}
+MRTT_UI_BASE_URL={MRTT UI base url}
+SMTP_ADDRESS={SMTP address}
+SMTP_PORT={SMTP port}
+SMTP_USER_NAME={SMTP username}
+SMTP_PASSWORD={SMTP password}
+```

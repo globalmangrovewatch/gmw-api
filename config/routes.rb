@@ -1,13 +1,14 @@
 Rails.application.routes.draw do
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
+  
   # Token auth
-  devise_for :users,
-  controllers: {
-      sessions: 'users/sessions',
-      registrations: 'users/registrations',
-
-  }
+  devise_for :users, controllers: {
+        sessions: 'users/sessions',
+        registrations: 'users/registrations',
+        confirmations: 'users/confirmations',
+        passwords: 'users/passwords'
+    }
   get '/users/current_user', to: 'users/current_user#show'
 
   devise_for :admin_users, ActiveAdmin::Devise.config
