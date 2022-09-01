@@ -68,6 +68,8 @@ Rails.application.routes.draw do
       patch '/organizations/:organization_id/users/:email', to: 'organizations#update_user', constraints: { email: /[^\/]+/}
       delete '/organizations/:organization_id/users/:email', to: 'organizations#remove_user', constraints: { email: /[^\/]+/}
 
+      get '/dashboard/sites', to: 'dashboard#sites'
+
     end
   end
 end
