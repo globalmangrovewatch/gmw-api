@@ -119,9 +119,12 @@ class V2::WidgetsController < ApiController
     else
       @data = HabitatExtent.joins(:location).select(
         'indicator, year, sum(value) as value, sum(coast_length_m) as coast_length_m, sum(area_m2) as area_m2'
-        ).group(:indicator, :year).order(:indicator,:year)
+        ).where(
+          locations: {location_type: 'country'}
+        ).group(:indicator, :year
+        ).order(:indicator,:year)
       @location_id = 'worldwide'
-      @total_area = @data.first.area_m2 * 0.000001 # convert to km2
+      @total_area = @data.first.area_m2 #* 0.000001 # convert to km2
       @total_lenght = @data.first.coast_length_m * 0.001 # convert to km
     end
   end
@@ -140,7 +143,8 @@ class V2::WidgetsController < ApiController
       subquery = HabitatExtent.joins(:location).select(
         'indicator, year, sum(value) as value, sum(coast_length_m) as coast_length_m, sum(area_m2) as area_m2'
         ).where(
-          indicator: 'habitat_extent_area'
+          indicator: 'habitat_extent_area',
+          locations: {location_type: 'country'}
         ).group(:indicator, :year
         ).order(:indicator,:year)
         
@@ -150,7 +154,7 @@ class V2::WidgetsController < ApiController
         )
       
       @location_id = 'worldwide'
-      @total_area = @data[0].area_m2 * 0.000001 # convert to km2
+      @total_area = @data[0].area_m2  # convert to km2
       @total_lenght = @data[0].coast_length_m * 0.001 # convert to km
     end
   end
@@ -175,6 +179,8 @@ class V2::WidgetsController < ApiController
     else
       @data = AbovegroundBiomass.select(
         'indicator, year, sum(value) as value'
+        ).where(
+          locations: {location_type: 'country'}
         ).where.not(
           indicator: ['avg']
         ).group(:indicator, :year
@@ -208,6 +214,8 @@ class V2::WidgetsController < ApiController
     else
       @data = TreeHeight.select(
         'indicator, year, sum(value) as value'
+        ).where(
+          locations: {location_type: 'country'}
         ).where.not(
           indicator: ['avg']
         ).group(:indicator, :year
@@ -235,6 +243,8 @@ class V2::WidgetsController < ApiController
     else
       @data = BlueCarbon.select(
         'indicator, year, sum(value) as value'
+        ).where(
+          locations: {location_type: 'country'}
         ).where.not(
           indicator: ['blue_carbon_area']
         ).group(:indicator, :year
