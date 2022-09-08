@@ -101,7 +101,9 @@ class V2::WidgetsController < ApiController
   def ecosystem_service
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = EcosystemService.select('indicator, location_id, value, sum(value) over () as total_value').where(location_id: params[:location_id])
+      @data = EcosystemService.select('indicator, location_id, value, sum(value) over () as total_value').where(
+        location_id: params[:location_id]
+        )
     else
       @data = EcosystemService.select('indicator, sum(value) as value').group('indicator')
       @location_id = 'worldwide'
@@ -118,14 +120,17 @@ class V2::WidgetsController < ApiController
       @total_lenght = @data.first.location.coast_length_m * 0.001 # convert to km
     else
       @data = HabitatExtent.joins(:location).select(
-        'indicator, year, sum(value) as value, sum(coast_length_m) as coast_length_m, sum(area_m2) as area_m2'
+        'indicator, year, sum(value) as value'
         ).where(
           locations: {location_type: 'country'}
         ).group(:indicator, :year
         ).order(:indicator,:year)
       @location_id = 'worldwide'
-      @total_area = @data.first.area_m2 #* 0.000001 # convert to km2
-      @total_lenght = @data.first.coast_length_m * 0.001 # convert to km
+      metadata = Location.where(
+        locations: {location_type: @location_id}
+        ).first
+      @total_area = metadata.area_m2 * 0.000001 # data in m convert to km2
+      @total_lenght =metadata.coast_length_m * 0.001 # data in m convert to km
     end
   end
 
