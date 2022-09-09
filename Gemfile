@@ -27,6 +27,9 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
+# Used for pivoting tables [https://github.com/edjames/pivot_table]
+gem "pivot_table"
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", "~> 4.0"
 

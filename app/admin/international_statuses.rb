@@ -28,11 +28,13 @@ ActiveAdmin.register InternationalStatus do
   form do |f|
     f.inputs 'Details' do
       f.input :indicator, as: :select, 
-        collection: ["nationally_determined_contributions", "forest_reference_emissions_levels", "ipcc_wetlands_supplement"],
-        default: 'nationally_determined_contributions',
+        collection: InternationalStatus.indicators,
+        default: InternationalStatus.indicators.first,
         include_blank: false,
         required: true
-      f.input :value, as: :string, required: true
+      f.input :value, as: :string,
+        include_blank: true, 
+        required: true
     end
 
     f.inputs 'Location' do
