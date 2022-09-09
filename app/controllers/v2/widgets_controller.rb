@@ -1,3 +1,4 @@
+include PivotTableHelper
 class V2::WidgetsController < ApiController
   
    # GET /v2/widgets/protected-areas
@@ -90,10 +91,16 @@ class V2::WidgetsController < ApiController
   def international_status
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = InternationalStatus.select('indicator, location_id, value').where(location_id: params[:location_id])
+      @data = helpers.grid(InternationalStatus.select('indicator, location_id, value').where(location_id: params[:location_id]), 
+      { :row_name => :location_id, :column_name => :indicator, 
+        :value_name => :indicator, :field_name => :value})
     else
-      @data = InternationalStatus.select("indicator, '-' as value").group('indicator')
       @location_id = 'worldwide'
+      @data = PivotTableHelper.grid(InternationalStatus.select(
+        "indicator, 'worldwide' as location_id, '-' as value").group('indicator'), 
+      { :row_name => :location_id, :column_name => :indicator, 
+        :value_name => :indicator, :field_name => :value})
+      
     end
   end
 
