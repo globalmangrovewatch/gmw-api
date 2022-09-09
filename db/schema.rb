@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_10_230144) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_09_135541) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -76,8 +76,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_10_230144) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "year", default: 2016
-    t.enum "indicator", default: "degraded_area", null: false, enum_type: "new_degradation_indicators"
     t.text "main_loss_driver"
+    t.string "indicator", null: false
     t.index ["location_id"], name: "index_degradation_treemaps_on_location_id"
   end
 
