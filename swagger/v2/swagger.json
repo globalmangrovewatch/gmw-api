@@ -1012,6 +1012,58 @@
           }
         }
       }
+    },
+    "/api/v2/widgets/country_ranking": {
+      "get": {
+        "summary": "Retrieves the data for the mitigation potential widget",
+        "tags": [
+          "Widgets"
+        ],
+        "parameters": [
+          {
+            "name": "location_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/country_ranking"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/metadata"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error 500",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/error_response"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
@@ -1522,6 +1574,29 @@
         ]
       },
       "mitigation_potential": {
+        "type": "object",
+        "properties": {
+          "indicator": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "year": {
+            "type": "number"
+          },
+          "category": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "indicator",
+          "value",
+          "year",
+          "category"
+        ]
+      },
+      "country_ranking": {
         "type": "object",
         "properties": {
           "indicator": {
