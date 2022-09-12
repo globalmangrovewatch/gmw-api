@@ -264,4 +264,19 @@ class V2::WidgetsController < ApiController
       @location_id = 'worldwide'
     end
   end
+
+  # GET /v2/widgets/mitigation_potencials
+  def mitigation_potencials
+    if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
+      @location_id = params[:location_id]
+      @data = MitigationPotentials.select('*').joins(:location).includes(:location
+      ).where(location: {id: @location_id}
+      )
+    else
+      @location_id = 'worldwide'
+      @data = MitigationPotentials.select('indicator, category, year, sum(value) as value'
+        ).group(:indicator, :category, :year
+        ).order(:year, :category, :indicator)
+    end
+  end
 end

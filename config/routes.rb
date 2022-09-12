@@ -50,6 +50,7 @@ Rails.application.routes.draw do
       get '/widgets/aboveground_biomass', to: 'widgets#aboveground_biomass'
       get '/widgets/tree_height', to: 'widgets#tree_height'
       get '/widgets/blue_carbon', to: 'widgets#blue_carbon'
+      get '/widgets/mitigation_potentials', to: 'widgets#mitigation_potencials'
 
       # MRTT
       resources :sites, only: [:index, :show, :create, :update, :destroy]
