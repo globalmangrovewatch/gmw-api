@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_09_135541) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -181,6 +181,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_135541) do
     t.index ["location_id"], name: "index_mangrove_data_on_location_id"
   end
 
+  create_table "mitigation_potentials", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "indicator"
+    t.string "category"
+    t.integer "year"
+    t.float "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_mitigation_potentials_on_location_id"
+  end
+
   create_table "organizations", force: :cascade do |t|
     t.string "organization_name"
     t.datetime "created_at", null: false
@@ -305,6 +316,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_135541) do
   add_foreign_key "landscapes_organizations", "landscapes"
   add_foreign_key "landscapes_organizations", "organizations"
   add_foreign_key "mangrove_data", "locations"
+  add_foreign_key "mitigation_potentials", "locations"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "registration_answers", "sites"

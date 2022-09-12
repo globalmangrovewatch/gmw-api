@@ -179,10 +179,28 @@ RSpec.configure do |config|
         international_status: {
             type: :object,
             properties: {
-              indicator: {type: :string},
-              value: {type: :string},
-            },
-            required: [:indicator, :value]
+                location_id: {type: :integer},
+                base_years: {type: :string},
+                fow: {type: :string},
+                frel: {type: :string},
+                ipcc_wetlands_suplement: {type: :string},
+                ndc: {type: :string},
+                ndc_adaptation: {type: :string},
+                ndc_blurb: {type: :string},
+                ndc_mitigation: {type: :string},
+                ndc_reduction_target: {type: :string},
+                ndc_target: {type: :string},
+                ndc_target_url: {type: :string},
+                ndc_updated: {type: :string},
+                pledge_summary: {type: :string},
+                pledge_type: {type: :string},
+                target_years: {type: :string},
+                year_frel: {type: :string}
+              },
+            required: [:location_id, :base_years, :fow, :frel, :ipcc_wetlands_suplement,
+              :ndc, :ndc_adaptation, :ndc_blurb, :ndc_mitigation, :ndc_reduction_target,
+              :ndc_target, :ndc_target_url, :ndc_updated, :pledge_summary, :pledge_type,
+              :target_years, :year_frel]
           },
           ecosystem_service: {
             type: :object,
@@ -241,6 +259,16 @@ RSpec.configure do |config|
               percentage: {type: :number},
             },
             required: [:indicator, :value, :year, :percentage]
+          },
+          mitigation_potential: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
+              value: {type: :number},
+              year: {type: :number},
+              category: {type: :string},
+            },
+            required: [:indicator, :value, :year, :category]
           },
         },
       }
