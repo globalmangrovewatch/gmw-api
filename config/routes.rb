@@ -51,6 +51,7 @@ Rails.application.routes.draw do
       get '/widgets/tree_height', to: 'widgets#tree_height'
       get '/widgets/blue_carbon', to: 'widgets#blue_carbon'
       get '/widgets/mitigation_potentials', to: 'widgets#mitigation_potencials'
+      get '/widgets/country_ranking', to: 'widgets#country_ranking'
 
       # MRTT
       resources :sites, only: [:index, :show, :create, :update, :destroy]
