@@ -72,6 +72,8 @@ Rails.application.routes.draw do
 
       get '/dashboard/sites', to: 'dashboard#sites'
 
+      get '/report/answers', to: 'report#answers'
+
     end
   end
 end
