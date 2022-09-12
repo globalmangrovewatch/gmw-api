@@ -270,6 +270,16 @@ RSpec.configure do |config|
             },
             required: [:indicator, :value, :year, :category]
           },
+          country_ranking: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
+              value: {type: :number},
+              year: {type: :number},
+              category: {type: :string},
+            },
+            required: [:indicator, :value, :year, :category]
+          },
         },
       }
     }
