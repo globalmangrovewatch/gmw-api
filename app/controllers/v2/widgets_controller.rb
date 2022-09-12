@@ -1,3 +1,4 @@
+include PivotTableHelper
 class V2::WidgetsController < ApiController
   
    # GET /v2/widgets/protected-areas
@@ -90,10 +91,21 @@ class V2::WidgetsController < ApiController
   def international_status
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = InternationalStatus.select('indicator, location_id, value').where(location_id: params[:location_id])
+      @data = helpers.grid(InternationalStatus.select('indicator, location_id, value'
+          ).where(location_id: params[:location_id]), 
+        { :row_name => :location_id, :column_name => :indicator, 
+          :value_name => :indicator, :field_name => :value,
+          :cast => {
+            'ndc' => 'boolean',
+            'ndc_adaptation' => 'boolean',
+            'ndc_mitigation' => 'boolean',
+            'ndc_updated' => 'boolean',
+            'ndc_reduction_target' => 'float',
+            'ndc_target' => 'float',
+          }})
     else
-      @data = InternationalStatus.select("indicator, '-' as value").group('indicator')
       @location_id = 'worldwide'
+      @data = []
     end
   end
 
@@ -101,7 +113,9 @@ class V2::WidgetsController < ApiController
   def ecosystem_service
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = EcosystemService.select('indicator, location_id, value, sum(value) over () as total_value').where(location_id: params[:location_id])
+      @data = EcosystemService.select('indicator, location_id, value, sum(value) over () as total_value').where(
+        location_id: params[:location_id]
+        )
     else
       @data = EcosystemService.select('indicator, sum(value) as value').group('indicator')
       @location_id = 'worldwide'
@@ -118,11 +132,17 @@ class V2::WidgetsController < ApiController
       @total_lenght = @data.first.location.coast_length_m * 0.001 # convert to km
     else
       @data = HabitatExtent.joins(:location).select(
-        'indicator, year, sum(value) as value, sum(coast_length_m) as coast_length_m, sum(area_m2) as area_m2'
-        ).group(:indicator, :year).order(:indicator,:year)
+        'indicator, year, sum(value) as value'
+        ).where(
+          locations: {location_type: 'country'}
+        ).group(:indicator, :year
+        ).order(:indicator,:year)
       @location_id = 'worldwide'
-      @total_area = @data.first.area_m2 * 0.000001 # convert to km2
-      @total_lenght = @data.first.coast_length_m * 0.001 # convert to km
+      metadata = Location.where(
+        locations: {location_type: @location_id}
+        ).first
+      @total_area = metadata.area_m2 * 0.000001 # data in m convert to km2
+      @total_lenght =metadata.coast_length_m * 0.001 # data in m convert to km
     end
   end
 
@@ -140,7 +160,8 @@ class V2::WidgetsController < ApiController
       subquery = HabitatExtent.joins(:location).select(
         'indicator, year, sum(value) as value, sum(coast_length_m) as coast_length_m, sum(area_m2) as area_m2'
         ).where(
-          indicator: 'habitat_extent_area'
+          indicator: 'habitat_extent_area',
+          locations: {location_type: 'country'}
         ).group(:indicator, :year
         ).order(:indicator,:year)
         
@@ -150,7 +171,7 @@ class V2::WidgetsController < ApiController
         )
       
       @location_id = 'worldwide'
-      @total_area = @data[0].area_m2 * 0.000001 # convert to km2
+      @total_area = @data[0].area_m2  # convert to km2
       @total_lenght = @data[0].coast_length_m * 0.001 # convert to km
     end
   end
@@ -175,6 +196,8 @@ class V2::WidgetsController < ApiController
     else
       @data = AbovegroundBiomass.select(
         'indicator, year, sum(value) as value'
+        ).where(
+          locations: {location_type: 'country'}
         ).where.not(
           indicator: ['avg']
         ).group(:indicator, :year
@@ -208,6 +231,8 @@ class V2::WidgetsController < ApiController
     else
       @data = TreeHeight.select(
         'indicator, year, sum(value) as value'
+        ).where(
+          locations: {location_type: 'country'}
         ).where.not(
           indicator: ['avg']
         ).group(:indicator, :year
@@ -235,6 +260,8 @@ class V2::WidgetsController < ApiController
     else
       @data = BlueCarbon.select(
         'indicator, year, sum(value) as value'
+        ).where(
+          locations: {location_type: 'country'}
         ).where.not(
           indicator: ['blue_carbon_area']
         ).group(:indicator, :year
@@ -242,4 +269,32 @@ class V2::WidgetsController < ApiController
       @location_id = 'worldwide'
     end
   end
+
+  # GET /v2/widgets/mitigation_potencials
+  def mitigation_potencials
+    if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
+      @location_id = params[:location_id]
+      @data = MitigationPotentials.select('*').joins(:location).includes(:location
+      ).where(location: {id: @location_id}
+      )
+    else
+      @location_id = 'worldwide'
+      @data = MitigationPotentials.select('indicator, category, year, sum(value) as value'
+        ).group(:indicator, :category, :year
+        ).order(:year, :category, :indicator)
+    end
+  end
+
+    # GET /v2/widgets/country_ranking
+    def country_ranking
+        @location_id = params[:location_id]
+        @data = HabitatExtent.select('sum(value - value_prior) as value, name, indicator'
+      ).from(HabitatExtent.joins(:location).includes(:location
+        ).select('year, COALESCE(LAG(value, 1) OVER (ORDER BY indicator, location.name,  year), value) value_prior, value, location.name, indicator'
+        ).where(location: {location_type: 'country'}#, indicator: 'habitat_extent_area'
+        ).order(:indicator, :year)
+      ).group(:name, :indicator
+      ).order('1 desc'
+      ).limit(5)
+    end
 end

@@ -28,8 +28,8 @@ ActiveAdmin.register DegradationTreemap do
   form do |f|
     f.inputs 'Details' do
       f.input :indicator, as: :select, 
-        collection: ["degraded_area", "lost_area", "mangrove_area"],
-        default: 'degraded_area',
+        collection: DegradationTreemap.indicators,
+        default: DegradationTreemap.indicators.first,
         include_blank: false,
         required: true
       f.input :value

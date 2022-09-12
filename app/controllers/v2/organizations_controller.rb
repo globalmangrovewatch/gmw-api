@@ -18,7 +18,7 @@ class V2::OrganizationsController < MrttApiController
         @organization = Organization.create(organization_params)
         params = {
             organization_id: @organization.id,
-            user_id: current_user.id,
+            email: current_user.email,
             role: 'org-admin'
         }
         add_or_update_user_helper(params)

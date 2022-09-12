@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_29_135347) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -76,8 +76,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_29_135347) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "year", default: 2016
-    t.enum "indicator", default: "degraded_area", null: false, enum_type: "new_degradation_indicators"
     t.text "main_loss_driver"
+    t.string "indicator", null: false
     t.index ["location_id"], name: "index_degradation_treemaps_on_location_id"
   end
 
@@ -181,6 +181,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_29_135347) do
     t.index ["location_id"], name: "index_mangrove_data_on_location_id"
   end
 
+  create_table "mitigation_potentials", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "indicator"
+    t.string "category"
+    t.integer "year"
+    t.float "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_mitigation_potentials_on_location_id"
+  end
+
   create_table "organizations", force: :cascade do |t|
     t.string "organization_name"
     t.datetime "created_at", null: false
@@ -277,6 +288,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_29_135347) do
     t.datetime "updated_at", null: false
     t.string "name"
     t.boolean "admin", default: false, null: false
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -301,6 +316,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_29_135347) do
   add_foreign_key "landscapes_organizations", "landscapes"
   add_foreign_key "landscapes_organizations", "organizations"
   add_foreign_key "mangrove_data", "locations"
+  add_foreign_key "mitigation_potentials", "locations"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "registration_answers", "sites"

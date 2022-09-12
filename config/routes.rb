@@ -50,6 +50,8 @@ Rails.application.routes.draw do
       get '/widgets/aboveground_biomass', to: 'widgets#aboveground_biomass'
       get '/widgets/tree_height', to: 'widgets#tree_height'
       get '/widgets/blue_carbon', to: 'widgets#blue_carbon'
+      get '/widgets/mitigation_potentials', to: 'widgets#mitigation_potencials'
+      get '/widgets/country_ranking', to: 'widgets#country_ranking'
 
       # MRTT
       resources :sites, only: [:index, :show, :create, :update, :destroy]
@@ -67,6 +69,8 @@ Rails.application.routes.draw do
       post '/organizations/:organization_id/users', to: 'organizations#add_user'
       patch '/organizations/:organization_id/users/:email', to: 'organizations#update_user', constraints: { email: /[^\/]+/}
       delete '/organizations/:organization_id/users/:email', to: 'organizations#remove_user', constraints: { email: /[^\/]+/}
+
+      get '/dashboard/sites', to: 'dashboard#sites'
 
     end
   end
