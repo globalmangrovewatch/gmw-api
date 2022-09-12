@@ -94,14 +94,16 @@ class V2::WidgetsController < ApiController
       @data = helpers.grid(InternationalStatus.select('indicator, location_id, value'
           ).where(location_id: params[:location_id]), 
         { :row_name => :location_id, :column_name => :indicator, 
-          :value_name => :indicator, :field_name => :value})
+          :value_name => :indicator, :field_name => :value,
+          :cast => {
+            'ndc' => 'boolean',
+            'ndc_adaptation' => 'boolean',
+            'ndc_mitigation' => 'boolean',
+            'ndc_updated' => 'boolean',
+          }})
     else
       @location_id = 'worldwide'
       @data = []
-      # @data = PivotTableHelper.grid(InternationalStatus.select(
-      #   "indicator, 'worldwide' as location_id, null as value").group('indicator'), 
-      # { :row_name => :location_id, :column_name => :indicator, 
-      #   :value_name => :indicator, :field_name => :value})
     end
   end
 
