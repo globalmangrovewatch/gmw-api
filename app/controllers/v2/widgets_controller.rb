@@ -100,6 +100,8 @@ class V2::WidgetsController < ApiController
             'ndc_adaptation' => 'boolean',
             'ndc_mitigation' => 'boolean',
             'ndc_updated' => 'boolean',
+            'ndc_reduction_target' => 'float',
+            'ndc_target' => 'float',
           }})
     else
       @location_id = 'worldwide'
