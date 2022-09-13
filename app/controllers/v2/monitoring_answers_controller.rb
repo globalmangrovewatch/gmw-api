@@ -1,8 +1,7 @@
-class V2::MonitoringAnswersController < ApplicationController
-    skip_before_action :verify_authenticity_token
+class V2::MonitoringAnswersController < MrttApiController
 
     def index
-        site = Site.find_by_id(params[:site_id])
+        site = Site.find_by_id!(params[:site_id])
         landscape = site.landscape
         organization_ids = landscape.organization_ids
 
@@ -24,7 +23,7 @@ class V2::MonitoringAnswersController < ApplicationController
     end
 
     def index_per_date
-        site = Site.find_by_id(params[:site_id])
+        site = Site.find_by_id!(params[:site_id])
         landscape = site.landscape
         organization_ids = landscape.organization_ids
 
