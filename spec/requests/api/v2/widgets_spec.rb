@@ -526,7 +526,7 @@ RSpec.describe 'api/v2/widgets', type: :request do
         end
     end
 
-    path '/api/v2/widgets/mitigation_potential' do
+    path '/api/v2/widgets/mitigation_potentials' do
         get 'Retrieves the data for the mitigation potential widget' do
             tags 'Widgets'
             consumes 'application/json'
@@ -538,7 +538,7 @@ RSpec.describe 'api/v2/widgets', type: :request do
                 properties:{
                     data:{
                         type: :array,
-                        items: {'$ref' => '#/components/schemas/mitigation_potential'}
+                        items: {'$ref' => '#/components/schemas/mitigation_potentials'}
                     },
                     metadata: {
                         type: :object, 
@@ -573,6 +573,8 @@ RSpec.describe 'api/v2/widgets', type: :request do
             consumes 'application/json'
             produces 'application/json'
             parameter name: :location_id, in: :query, type: :string
+            parameter name: :start_year, in: :query, type: :integer, default: 2007
+            parameter name: :end_year, in: :query, type: :integer, default: 2020
             
             response 200, 'Success' do
                 schema type: :object,
