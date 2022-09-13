@@ -260,7 +260,7 @@ RSpec.configure do |config|
             },
             required: [:indicator, :value, :year, :percentage]
           },
-          mitigation_potential: {
+          mitigation_potentials: {
             type: :object,
             properties: {
               indicator: {type: :string},

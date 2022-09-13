@@ -287,14 +287,17 @@ class V2::WidgetsController < ApiController
 
     # GET /v2/widgets/country_ranking
     def country_ranking
-        @location_id = params[:location_id]
+        @start_year = params[:start_year] || 2007
+        @end_year = params[:end_year] || 2020
         @data = HabitatExtent.select('sum(value - value_prior) as value, name, indicator'
       ).from(HabitatExtent.joins(:location).includes(:location
         ).select('year, COALESCE(LAG(value, 1) OVER (ORDER BY indicator, location.name,  year), value) value_prior, value, location.name, indicator'
         ).where(location: {location_type: 'country'}#, indicator: 'habitat_extent_area'
         ).order(:indicator, :year)
+      ).where(
+        'year >= ? AND year <= ?', @start_year, @end_year
       ).group(:name, :indicator
       ).order('1 desc'
-      ).limit(5)
+      ).limit(10)
     end
 end
