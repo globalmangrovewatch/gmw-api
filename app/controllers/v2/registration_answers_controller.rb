@@ -84,7 +84,6 @@ class V2::RegistrationAnswersController < MrttApiController
 
     def update_site_area(site, item)
         puts "xxx inside update_site_area"
-        puts "xxx item[:question_id] == site_area_question_id is %s" % item[:question_id] == site_area_question_id
 
         site_area_question_id = "1.3"
         if item[:question_id] == site_area_question_id
