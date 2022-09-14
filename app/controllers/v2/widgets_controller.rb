@@ -71,7 +71,7 @@ class V2::WidgetsController < ApiController
         ).select('indicator, sum(value) as value'
       ).group('indicator'), :a)
     end
-
+    @restorable_area = DegradationTreemap.find_by(indicator: 'restorable_area')
     @degraded_area = DegradationTreemap.find_by(indicator: 'degraded_area')
     @lost_area = DegradationTreemap.find_by(indicator: 'lost_area')
     @mangrove_area = DegradationTreemap.find_by(indicator: 'mangrove_area')
