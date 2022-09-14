@@ -83,12 +83,18 @@ class V2::RegistrationAnswersController < MrttApiController
     private
 
     def update_site_area(site, item)
+        puts "xxx inside update_site_area"
+        puts "xxx item[:question_id] == site_area_question_id is %s" % item[:question_id] == site_area_question_id
+
         site_area_question_id = "1.3"
         if item[:question_id] == site_area_question_id
             if item[:answer_value].key?("features")
                 polygon = item[:answer_value][:features][0][:geometry]
                 polygon = polygon.to_json.to_s
                 polygon = RGeo::GeoJSON.decode(polygon, :json_parser => :json)
+
+                puts "xxx polygon: %s" % polygon
+                puts "xxx about to site.update(area: polygon)"
                 site.update(area: polygon)
             else
                 site.update(area: nil)
