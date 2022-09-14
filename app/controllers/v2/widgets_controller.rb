@@ -62,11 +62,14 @@ class V2::WidgetsController < ApiController
     @year = DegradationTreemap.pluck(:year).uniq.sort.reverse
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = DegradationTreemap.where(location_id: params[:location_id], year: params[:year] || 2016)
+      @data = DegradationTreemap.where(location_id: @location_id, year: params[:year] || 2016)
       @lost_driver = @data.first
     else
       @location_id = 'worldwide'
-      @data = DegradationTreemap.select('a.*').from(DegradationTreemap.where(year: params[:year] || 2016).select('indicator, sum(value) as value').group('indicator'), :a)
+      @data = DegradationTreemap.select('a.*').from(
+        DegradationTreemap.where(year: params[:year] || 2016
+        ).select('indicator, sum(value) as value'
+      ).group('indicator'), :a)
     end
 
     @degraded_area = DegradationTreemap.find_by(indicator: 'degraded_area')

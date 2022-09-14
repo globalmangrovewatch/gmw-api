@@ -1,7 +1,7 @@
 json.data do
   json.array! @data do |datum|
     json.indicator datum.indicator
-    json.value datum.value
+    json.value datum.indicator == 'lost_area' ?  @lost_area.value - datum.value : datum.value
   end
 end
 
