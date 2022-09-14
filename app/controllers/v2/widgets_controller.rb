@@ -18,8 +18,10 @@ class V2::WidgetsController < ApiController
     end
     # location_id here references location.location_id instead of location.id
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
-      @protected_areas = WidgetProtectedAreas.where(location_id: params[:location_id])
       @location_id = params[:location_id]
+      @protected_areas = WidgetProtectedAreas.joins(:location).includes(:location
+      ).where(location: {id: @location_id})
+      
     else
       @location_id = 'worldwide'
       @protected_areas = WidgetProtectedAreas.select('year, sum(total_area) as total_area, sum(protected_area) as protected_area').group('year')
@@ -250,14 +252,27 @@ class V2::WidgetsController < ApiController
 
   # GET /v2/widgets/blue_carbon
   def blue_carbon
+    indicators = ['toc', 'soc', 'agb']
+
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = BlueCarbon.joins(:location).includes(:location
-            ).where(location: {id: params[:location_id]}
-            ).and(BlueCarbon.where.not(
-              indicator: ['blue_carbon_area']
+      
+      base = BlueCarbon.joins(:locations).includes(:locations
+        ).select(:location_id, :indicator, :value, :year
+        ).where(locations: {id: @location_id}
+        )
+      @data = base.and(BlueCarbon.where.not(
+              indicator: indicators
             )).order('indicator, year')
+      
+      @meta = helpers.grid(base.and(BlueCarbon.where(
+             indicator: indicators
+            )).order('indicator, year'),
+            {:row_name => :location_id, :column_name => :indicator, 
+            :value_name => :indicator, :field_name => :value,
+            :cast =>{}})
     else
+      @location_id = 'worldwide'
       @data = BlueCarbon.select(
         'indicator, year, sum(value) as value'
         ).where(
@@ -266,7 +281,7 @@ class V2::WidgetsController < ApiController
           indicator: ['blue_carbon_area']
         ).group(:indicator, :year
         ).order(:indicator,:year)
-      @location_id = 'worldwide'
+      
     end
   end
 
@@ -289,15 +304,17 @@ class V2::WidgetsController < ApiController
     def country_ranking
         @start_year = params[:start_year] || 2007
         @end_year = params[:end_year] || 2020
+        @limit = params[:limit] || 10
+        @order = params[:order] || 'desc'
         @data = HabitatExtent.select('sum(value - value_prior) as value, name, indicator'
       ).from(HabitatExtent.joins(:location).includes(:location
         ).select('year, COALESCE(LAG(value, 1) OVER (ORDER BY indicator, location.name,  year), value) value_prior, value, location.name, indicator'
-        ).where(location: {location_type: 'country'}#, indicator: 'habitat_extent_area'
+        ).where(location: {location_type: 'country', indicator: 'habitat_extent_area'}
         ).order(:indicator, :year)
       ).where(
         'year >= ? AND year <= ?', @start_year, @end_year
       ).group(:name, :indicator
-      ).order('1 desc'
-      ).limit(10)
+      ).order('1 ?', @order
+      ).limit(@limit)
     end
 end
