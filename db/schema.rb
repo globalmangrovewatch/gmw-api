@@ -248,7 +248,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_14_164645) do
     t.datetime "updated_at", null: false
     t.bigint "landscape_id", null: false
     t.json "section_data_visibility"
-    t.geometry "area", limit: {:srid=>0, :type=>"geometry"}
+    t.geometry "area", limit: {:srid=>4326, :type=>"geometry"}
     t.index ["area"], name: "index_sites_on_area", using: :gist
     t.index ["landscape_id"], name: "index_sites_on_landscape_id"
     t.index ["site_name"], name: "index_sites_on_site_name", unique: true
