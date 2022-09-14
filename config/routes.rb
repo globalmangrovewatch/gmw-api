@@ -57,12 +57,19 @@ Rails.application.routes.draw do
       resources :sites, only: [:index, :show, :create, :update, :destroy]
       resources :landscapes, only: [:index, :show, :create, :update, :destroy]
       resources :organizations, only: [:index, :show, :create, :update, :destroy]
+
       get '/sites/:site_id/registration_answers', to: 'registration_answers#index'
       put '/sites/:site_id/registration_answers', to: 'registration_answers#update'
       patch '/sites/:site_id/registration_answers', to: 'registration_answers#partial_update'
+
       get '/sites/:site_id/intervention_answers', to: 'intervention_answers#index'
       put '/sites/:site_id/intervention_answers', to: 'intervention_answers#update'
       patch '/sites/:site_id/intervention_answers', to: 'intervention_answers#partial_update'
+
+      get '/sites/:site_id/monitoring_answers', to: 'monitoring_answers#index'
+      get '/sites/:site_id/monitoring_answers/:date', to: 'monitoring_answers#index_per_date'
+      put '/sites/:site_id/monitoring_answers/:date', to: 'monitoring_answers#update_per_date'
+      patch '/sites/:site_id/monitoring_answers/:date', to: 'monitoring_answers#partial_update_per_date'
 
       get '/organizations/:organization_id/users', to: 'organizations#get_users'
       get '/organizations/:organization_id/users/:email', to: 'organizations#get_user', constraints: { email: /[^\/]+/}
@@ -71,6 +78,8 @@ Rails.application.routes.draw do
       delete '/organizations/:organization_id/users/:email', to: 'organizations#remove_user', constraints: { email: /[^\/]+/}
 
       get '/dashboard/sites', to: 'dashboard#sites'
+
+      get '/report/answers', to: 'report#answers'
 
     end
   end

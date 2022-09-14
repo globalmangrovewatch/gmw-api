@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_12_215256) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -136,6 +136,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
     t.bigint "organization_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["landscape_id", "organization_id"], name: "idx_u_landscapes_organizations", unique: true
     t.index ["landscape_id"], name: "index_landscapes_organizations_on_landscape_id"
     t.index ["organization_id"], name: "index_landscapes_organizations_on_organization_id"
   end
@@ -148,8 +149,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
     t.json "geometry"
     t.float "area_m2"
     t.float "perimeter_m"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.float "coast_length_m"
     t.string "location_id"
     t.index ["location_id"], name: "index_locations_on_location_id", unique: true
@@ -165,8 +166,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
     t.float "agb_mgha_1"
     t.float "hba_m"
     t.bigint "location_id"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "con_hotspot_summary_km2"
     t.float "net_change_m2"
     t.text "agb_hist_mgha_1"
@@ -190,6 +191,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_mitigation_potentials_on_location_id"
+  end
+
+  create_table "monitoring_answers", force: :cascade do |t|
+    t.bigint "site_id", null: false
+    t.date "monitoring_date"
+    t.string "question_id"
+    t.json "answer_value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["site_id"], name: "index_monitoring_answers_on_site_id"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -317,6 +328,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
   add_foreign_key "landscapes_organizations", "organizations"
   add_foreign_key "mangrove_data", "locations"
   add_foreign_key "mitigation_potentials", "locations"
+  add_foreign_key "monitoring_answers", "sites"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "registration_answers", "sites"
