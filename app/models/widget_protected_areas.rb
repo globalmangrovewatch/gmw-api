@@ -1,5 +1,7 @@
 class WidgetProtectedAreas < ApplicationRecord
-  
+  belongs_to :location, primary_key: "location_id", foreign_key: "location_id"
+
+
   require 'csv'
 
   

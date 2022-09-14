@@ -13,4 +13,5 @@ json.metadata do
   end
   json.year @data.pluck(:year).uniq.sort.reverse
   json.note nil
+  json.merge! @meta unless @meta.nil? 
 end

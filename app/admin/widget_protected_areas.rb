@@ -22,16 +22,20 @@ ActiveAdmin.register WidgetProtectedAreas do
   index do
     selectable_column
     id_column
+    column :location
     column :year
     column :total_area
     column :protected_area
-    column :location_id
     column :updated_at
     actions
   end
 
   form do |f|
-    f.inputs 'Details'
+    f.inputs 'Details' do
+      f.input :year, required: true
+      f.input :total_area, required: true
+      f.input :protected_area, required: true
+    end
 
     f.inputs 'Location' do
       f.input :location_id , as: :select, collection: Location.all.pluck(:name, :location_id)
