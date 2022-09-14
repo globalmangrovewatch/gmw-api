@@ -89,3 +89,7 @@ end
 
 # Token auth
 gem 'devise-jwt'
+
+# Geo
+gem 'rgeo-geojson'
+gem 'activerecord-postgis-adapter'

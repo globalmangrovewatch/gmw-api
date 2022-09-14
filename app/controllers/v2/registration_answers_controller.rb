@@ -43,6 +43,7 @@ class V2::RegistrationAnswersController < MrttApiController
                 question_id: item[:question_id],
                 answer_value: item[:answer_value]
             )
+            update_site_area(site, item)
         end
         @answers = @answers.order(question_id: :asc)
     end
@@ -74,11 +75,26 @@ class V2::RegistrationAnswersController < MrttApiController
                     answer_value: item[:answer_value]
                 )
             end
+            update_site_area(site, item)
         end
         @answers = @answers.order(question_id: :asc)
     end
 
     private
+
+    def update_site_area(site, item)
+        site_area_question_id = "1.3"
+        if item[:question_id] == site_area_question_id
+            if item[:answer_value].key?("features")
+                polygon = item[:answer_value][:features][0][:geometry]
+                polygon = polygon.to_json.to_s
+                polygon = RGeo::GeoJSON.decode(polygon, :json_parser => :json)
+                site.update(area: polygon)
+            else
+                site.update(area: nil)
+            end
+        end
+    end
 
     def ensure_unique(payload)
         counts = Hash.new 0
