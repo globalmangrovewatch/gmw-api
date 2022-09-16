@@ -1,3 +1,5 @@
-json.array! @monitoring_dates do |date|
-  json.monitoring_date date.monitoring_date
+json.array! @monitoring_forms do |form|
+  json.id form.uuid
+  json.form_type form.form_type
+  json.monitoring_date form.monitoring_date
 end
