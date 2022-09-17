@@ -156,7 +156,7 @@ class V2::MonitoringAnswersController < MrttApiController
         form_types = {
             "managementStatusAndEffectiveness" => "8.1",
             "socioeconomicGovernanceStatusAndOutcomes" => "9.1",
-            "ecologicalStatusAndOutcomes" => "10.1"
+            "ecologicalStatusAndOutcomes" => "10.1a"
         }
         monitoring_date_question_id = form_types[form_type]
 
