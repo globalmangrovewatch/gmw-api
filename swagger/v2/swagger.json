@@ -1352,6 +1352,9 @@
           "indicator": {
             "type": "string"
           },
+          "label": {
+            "type": "string"
+          },
           "value": {
             "type": "number"
           }
@@ -1509,7 +1512,7 @@
           "year": {
             "type": "number"
           },
-          "percentage": {
+          "cum_sum": {
             "type": "number"
           }
         },

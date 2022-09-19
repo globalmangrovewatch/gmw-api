@@ -1,4 +1,5 @@
 include PivotTableHelper
+include ApplicationHelper
 class V2::WidgetsController < ApiController
   
    # GET /v2/widgets/protected-areas
@@ -163,7 +164,7 @@ class V2::WidgetsController < ApiController
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
       @data = HabitatExtent.joins(:location).includes(:location
-            ).select('year, COALESCE(LAG(value, 1) OVER (ORDER BY year), value) value_prior, value, location.location_id'
+            ).select('year, value - (COALESCE(LAG(value, 1) OVER (ORDER BY year), value)) as value, location.location_id'
             ).where(location: {id: params[:location_id]}, indicator: 'habitat_extent_area'
             ).order(:indicator,:year)
       @total_area = @data.first.location.area_m2 * 0.000001 # convert to km2
@@ -179,13 +180,14 @@ class V2::WidgetsController < ApiController
         
       @data = HabitatExtent.from(subquery, :a
       ).select(
-        'a.year, COALESCE(LAG(a.value, 1) OVER (ORDER BY a.year), a.value) value_prior, a.value, a.coast_length_m, a.area_m2'
+        'a.year, a.value - (COALESCE(LAG(a.value, 1) OVER (ORDER BY a.year), a.value)) as value, a.coast_length_m, a.area_m2'
         )
       
       @location_id = 'worldwide'
       @total_area = @data[0].area_m2  # convert to km2
       @total_lenght = @data[0].coast_length_m * 0.001 # convert to km
     end
+    @data = helpers.cum_sum(@data, 0, 'value')
   end
 
   # GET /v2/widgets/aboveground_biomass
@@ -323,6 +325,7 @@ class V2::WidgetsController < ApiController
 
     # GET /v2/widgets/country_ranking
     def country_ranking
+        @range = HabitatExtent.distinct.pluck(:year).sort
         @start_year = params[:start_year] || 2007
         @end_year = params[:end_year] || 2020
         @limit = params[:limit] || 10
