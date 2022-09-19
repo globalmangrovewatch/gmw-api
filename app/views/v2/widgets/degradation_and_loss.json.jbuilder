@@ -2,7 +2,7 @@ json.data do
   json.array! @data do |datum|
     json.indicator datum.indicator
     json.value datum.indicator == 'lost_area' ? datum.value - @restorable_area.value : datum.value
-    json.label datum.indicator == 'lost_area' ? 'loss' : datum.indicator
+    json.label datum.indicator == 'lost_area' ? 'Non-Restorable Lost Mangrove Area' : datum.indicator
   end
 end
 
