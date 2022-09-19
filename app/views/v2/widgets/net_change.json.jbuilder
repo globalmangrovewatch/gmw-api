@@ -2,7 +2,8 @@ json.data do
   json.array! @data do |datum|
     json.year datum.year
     json.indicator 'net_change'
-    json.value datum.value - datum.value_prior
+    json.value datum.value
+    json.cum_sum datum.cum_sum
   end
 end
 
