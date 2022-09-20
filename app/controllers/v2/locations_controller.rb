@@ -8,7 +8,9 @@ class V2::LocationsController < ApiController
     # @locations << worldwide if worldwide
     # @locations += Location.all.where.not(location_id: 'worldwide').order(name: :asc)
     
-    @locations = Location.all.order(location_type: :asc, name: :asc, iso: :asc)
+    @locations = Location.where.not(
+      location_type: 'aoi'
+    ).all.order(location_type: :asc, name: :asc, iso: :asc)
 
     @dates = Location.dates_with_data()
   end

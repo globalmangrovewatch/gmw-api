@@ -333,8 +333,9 @@ class V2::WidgetsController < ApiController
     def country_ranking
       @limit = params[:limit] || 10
       @order = params[:order] || 'desc'
-      subquery = HabitatExtent.joins(:location).includes(:location
-      ).select('year, COALESCE(LAG(value, 1) OVER (ORDER BY indicator, location.name,  year), value) value_prior, value, location.name, indicator, location.iso'
+      subquery = HabitatExtent.joins(:location
+      ).includes(:location
+      ).select('year, COALESCE(LAG(value, 1) OVER (PARTITION BY location.iso ORDER BY year ASC), value) value_prior, value, location.name, indicator, location.iso'
       ).where(location: {location_type: 'country'}, indicator: 'habitat_extent_area'
       ).order(:indicator, :year)
 
