@@ -61,6 +61,12 @@ class V2::WidgetsController < ApiController
   # GET /v2/widgets/degradation-and-loss
   def degradation_and_loss
     @year = DegradationTreemap.pluck(:year).uniq.sort.reverse
+    @labels = {
+      'degraded_area' => 'degraded_area',
+      'lost_area' => 'Non-Restorable Lost Mangrove Area',
+      'mangrove_area' => 'Mangrove area',
+      'restorable_area' => 'Restorable area',
+    }
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
       @data = DegradationTreemap.where(location_id: @location_id, year: params[:year] || 2016)
@@ -184,7 +190,7 @@ class V2::WidgetsController < ApiController
         )
       
       @location_id = 'worldwide'
-      @total_area = @data[0].area_m2  # convert to km2
+      @total_area = @data[0].area_m2  * 0.000001# convert to km2
       @total_lenght = @data[0].coast_length_m * 0.001 # convert to km
     end
     @data = helpers.cum_sum(@data, 0, 'value')
@@ -325,17 +331,19 @@ class V2::WidgetsController < ApiController
 
     # GET /v2/widgets/country_ranking
     def country_ranking
-        @range = HabitatExtent.distinct.pluck(:year).sort
-        @start_year = params[:start_year] || 2007
-        @end_year = params[:end_year] || 2020
-        @limit = params[:limit] || 10
-        @order = params[:order] || 'desc'
-        @data = HabitatExtent.select("sum(value - value_prior) as value, name,'net_change' indicator, iso"
-      ).from(HabitatExtent.joins(:location).includes(:location
-        ).select('year, COALESCE(LAG(value, 1) OVER (ORDER BY indicator, location.name,  year), value) value_prior, value, location.name, indicator, location.iso'
-        ).where(location: {location_type: 'country'}, indicator: 'habitat_extent_area'
-        ).order(:indicator, :year)
-      ).where(
+      @limit = params[:limit] || 10
+      @order = params[:order] || 'desc'
+      subquery = HabitatExtent.joins(:location).includes(:location
+      ).select('year, COALESCE(LAG(value, 1) OVER (ORDER BY indicator, location.name,  year), value) value_prior, value, location.name, indicator, location.iso'
+      ).where(location: {location_type: 'country'}, indicator: 'habitat_extent_area'
+      ).order(:indicator, :year)
+
+      @range = subquery.pluck(:year).uniq.sort
+      @start_year = params[:start_year] || @range[0]
+      @end_year = params[:end_year] || @range[-1]
+
+      @data = HabitatExtent.select("sum(value - value_prior) as value, name,'net_change' indicator, iso"
+      ).from(subquery).where(
         'year >= ? AND year <= ?', @start_year, @end_year
       ).group(:name, :indicator, :iso
       ).order('1 desc'
