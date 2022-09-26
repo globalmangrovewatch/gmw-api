@@ -57,12 +57,24 @@ Rails.application.routes.draw do
       resources :sites, only: [:index, :show, :create, :update, :destroy]
       resources :landscapes, only: [:index, :show, :create, :update, :destroy]
       resources :organizations, only: [:index, :show, :create, :update, :destroy]
+
       get '/sites/:site_id/registration_answers', to: 'registration_answers#index'
       put '/sites/:site_id/registration_answers', to: 'registration_answers#update'
       patch '/sites/:site_id/registration_answers', to: 'registration_answers#partial_update'
+
       get '/sites/:site_id/intervention_answers', to: 'intervention_answers#index'
       put '/sites/:site_id/intervention_answers', to: 'intervention_answers#update'
       patch '/sites/:site_id/intervention_answers', to: 'intervention_answers#partial_update'
+
+      get '/sites/:site_id/registration_intervention_answers', to: 'registration_intervention_answers#index'
+      put '/sites/:site_id/registration_intervention_answers', to: 'registration_intervention_answers#update'
+      patch '/sites/:site_id/registration_intervention_answers', to: 'registration_intervention_answers#partial_update'
+
+      post '/sites/:site_id/monitoring_answers', to: 'monitoring_answers#create'
+      get '/sites/:site_id/monitoring_answers', to: 'monitoring_answers#index'
+      get '/sites/:site_id/monitoring_answers/:uuid', to: 'monitoring_answers#index_per_form'
+      put '/sites/:site_id/monitoring_answers/:uuid', to: 'monitoring_answers#update_per_form'
+      delete '/sites/:site_id/monitoring_answers/:uuid', to: 'monitoring_answers#delete'
 
       get '/organizations/:organization_id/users', to: 'organizations#get_users'
       get '/organizations/:organization_id/users/:email', to: 'organizations#get_user', constraints: { email: /[^\/]+/}

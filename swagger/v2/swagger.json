@@ -961,7 +961,7 @@
         }
       }
     },
-    "/api/v2/widgets/mitigation_potential": {
+    "/api/v2/widgets/mitigation_potentials": {
       "get": {
         "summary": "Retrieves the data for the mitigation potential widget",
         "tags": [
@@ -987,7 +987,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/mitigation_potential"
+                        "$ref": "#/components/schemas/mitigation_potentials"
                       }
                     },
                     "metadata": {
@@ -1025,6 +1025,22 @@
             "in": "query",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "start_year",
+            "in": "query",
+            "default": 2007,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "end_year",
+            "in": "query",
+            "default": 2020,
+            "schema": {
+              "type": "integer"
             }
           }
         ],
@@ -1336,6 +1352,9 @@
           "indicator": {
             "type": "string"
           },
+          "label": {
+            "type": "string"
+          },
           "value": {
             "type": "number"
           }
@@ -1493,7 +1512,7 @@
           "year": {
             "type": "number"
           },
-          "percentage": {
+          "cum_sum": {
             "type": "number"
           }
         },
@@ -1573,7 +1592,7 @@
           "percentage"
         ]
       },
-      "mitigation_potential": {
+      "mitigation_potentials": {
         "type": "object",
         "properties": {
           "indicator": {

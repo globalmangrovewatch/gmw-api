@@ -162,6 +162,7 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               indicator: {type: :string},
+              label: {type: :string},
               value: {type: :number},
               },
             required: [:indicator, :value]
@@ -226,7 +227,7 @@ RSpec.configure do |config|
               indicator: {type: :string},
               value: {type: :number},
               year: {type: :number},
-              percentage: {type: :number},
+              cum_sum: {type: :number},
             },
             required: [:indicator, :value, :year, :percentage]
           },
@@ -260,7 +261,7 @@ RSpec.configure do |config|
             },
             required: [:indicator, :value, :year, :percentage]
           },
-          mitigation_potential: {
+          mitigation_potentials: {
             type: :object,
             properties: {
               indicator: {type: :string},

@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "postgis"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
@@ -136,6 +137,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
     t.bigint "organization_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["landscape_id", "organization_id"], name: "idx_u_landscapes_organizations", unique: true
     t.index ["landscape_id"], name: "index_landscapes_organizations_on_landscape_id"
     t.index ["organization_id"], name: "index_landscapes_organizations_on_organization_id"
   end
@@ -148,8 +150,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
     t.json "geometry"
     t.float "area_m2"
     t.float "perimeter_m"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.float "coast_length_m"
     t.string "location_id"
     t.index ["location_id"], name: "index_locations_on_location_id", unique: true
@@ -165,8 +167,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
     t.float "agb_mgha_1"
     t.float "hba_m"
     t.bigint "location_id"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "con_hotspot_summary_km2"
     t.float "net_change_m2"
     t.text "agb_hist_mgha_1"
@@ -190,6 +192,18 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_mitigation_potentials_on_location_id"
+  end
+
+  create_table "monitoring_answers", force: :cascade do |t|
+    t.bigint "site_id", null: false
+    t.date "monitoring_date"
+    t.string "question_id"
+    t.json "answer_value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "uuid"
+    t.string "form_type"
+    t.index ["site_id"], name: "index_monitoring_answers_on_site_id"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -219,6 +233,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
     t.index ["site_id"], name: "index_registration_answers_on_site_id"
   end
 
+  create_table "registration_intervention_answers", force: :cascade do |t|
+    t.bigint "site_id", null: false
+    t.string "question_id"
+    t.json "answer_value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["site_id"], name: "index_registration_intervention_answers_on_site_id"
+  end
+
   create_table "restoration_potentials", force: :cascade do |t|
     t.enum "indicator", default: "restorable_area", null: false, enum_type: "restoration_indicators"
     t.float "value"
@@ -236,6 +259,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
     t.datetime "updated_at", null: false
     t.bigint "landscape_id", null: false
     t.json "section_data_visibility"
+    t.geometry "area", limit: {:srid=>4326, :type=>"geometry"}
+    t.index ["area"], name: "index_sites_on_area", using: :gist
     t.index ["landscape_id"], name: "index_sites_on_landscape_id"
     t.index ["site_name"], name: "index_sites_on_site_name", unique: true
   end
@@ -317,9 +342,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_09_141305) do
   add_foreign_key "landscapes_organizations", "organizations"
   add_foreign_key "mangrove_data", "locations"
   add_foreign_key "mitigation_potentials", "locations"
+  add_foreign_key "monitoring_answers", "sites"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "registration_answers", "sites"
+  add_foreign_key "registration_intervention_answers", "sites"
   add_foreign_key "restoration_potentials", "locations"
   add_foreign_key "sites", "landscapes"
   add_foreign_key "tree_heights", "locations"

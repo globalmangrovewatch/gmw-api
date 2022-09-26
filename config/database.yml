@@ -15,7 +15,7 @@
 # gem 'pg'
 #
 default: &default
-  adapter: postgresql
+  adapter: postgis
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
@@ -23,6 +23,7 @@ default: &default
   username: postgres
   password: postgres
   host: <%= ENV.fetch("POSTGRES_HOST") { "localhost" } %>
+  port: <%= ENV.fetch("POSTGRES_PORT") { 5432 } %>
 
 development:
   <<: *default
@@ -89,4 +90,4 @@ test:
 #   password: <%= ENV['MANGROVE-ATLAS-API_DATABASE_PASSWORD'] %>
 
 production:
-  url: <%= ENV['DATABASE_URL'] %>
+  url: <%= (ENV['DATABASE_URL'] || "").sub(/^postgres/, "postgis") %>

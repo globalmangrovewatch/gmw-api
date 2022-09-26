@@ -1,7 +1,8 @@
 json.data do
   json.array! @data do |datum|
     json.indicator datum.indicator
-    json.value datum.value
+    json.value datum.indicator == 'lost_area' ? datum.value - @restorable_area.value : datum.value
+    json.label @labels[datum.indicator]
   end
 end
 

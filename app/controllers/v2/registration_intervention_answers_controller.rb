@@ -1,4 +1,4 @@
-class V2::RegistrationAnswersController < MrttApiController
+class V2::RegistrationInterventionAnswersController < MrttApiController
     def index
         site = Site.find_by_id!(params[:site_id])
         landscape = site.landscape
@@ -17,7 +17,7 @@ class V2::RegistrationAnswersController < MrttApiController
                 "message": "Site %s not found" % params[:site_id]
             }, :status => :not_found
         else
-            @answers = site.registration_answers.order(question_id: :asc)
+            @answers = site.registration_intervention_answers.order(question_id: :asc)
         end
     end
 
@@ -35,7 +35,7 @@ class V2::RegistrationAnswersController < MrttApiController
         if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
             insufficient_privilege && return
         end
-        @answers = site.registration_answers
+        @answers = site.registration_intervention_answers
         @answers.delete_all
 
         payload.each do |item|
@@ -63,7 +63,7 @@ class V2::RegistrationAnswersController < MrttApiController
             insufficient_privilege && return
         end
         # proceed
-        @answers = site.registration_answers
+        @answers = site.registration_intervention_answers
 
         payload.each do |item|
             existing_answer = @answers.where(question_id: item[:question_id]).first
@@ -108,5 +108,6 @@ class V2::RegistrationAnswersController < MrttApiController
             end
         end
     end
-
+    
 end
+    

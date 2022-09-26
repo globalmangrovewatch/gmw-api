@@ -3,7 +3,9 @@ json.data do
     json.category datum.category
     json.value datum.area
     json.percentage datum.area / datum.total_area * 100
-    json.text datum.description
+    json.description datum.description
+    json.label @labels[datum.category]
+
   end
 end
 
