@@ -1,16 +1,14 @@
 class V2::ReportController < MrttApiController
-    skip_before_action :authenticate_user!
+    # skip_before_action :authenticate_user!
 
     def answers
-        if report_params[:site_id]
-            @answers = RegistrationAnswer.where(site_id: report_params[:site_id])
-        else
-            @answers = RegistrationAnswer.all
-        end
-        puts report_params
+        range_query = "split_part(question_id, '.', 1)::numeric between 1 and 5"
+        @registration_answers = RegistrationInterventionAnswer.where(range_query)
+
+        range_query = "split_part(question_id, '.', 1)::numeric between 6 and 9"
+        @intervention_answers = RegistrationInterventionAnswer.where(range_query)
+
+        @monitoring_answers = MonitoringAnswer.all
     end
 
-    def report_params
-        params.except(:format, :site).permit(:site_id)
-    end
 end
