@@ -1,5 +1,15 @@
 ActiveAdmin.register Location do
 
+  controller do
+    def scoped_collection
+      Location.unscoped
+    end
+
+    def csv_filename
+      'locations.csv'
+    end
+  end
+
   active_admin_import({
     before_import: ->(importer) {
       Location.delete_all
@@ -41,11 +51,17 @@ ActiveAdmin.register Location do
 
     actions
   end
-
-  controller do
-    def csv_filename
-      'locations.csv'
-    end
+  
+  csv do
+    column :name
+    column :location_type
+    column :iso
+    column :bounds
+    column :geometry
+    column :area_m2
+    column :perimeter_m
+    column :coast_length_m
+    column :location_id
   end
   
 end

@@ -1,6 +1,6 @@
 class V2::InterventionAnswersController < MrttApiController
     def index
-        site = Site.find_by_id(params[:site_id])
+        site = Site.find_by_id!(params[:site_id])
         landscape = site.landscape
         organization_ids = landscape.organization_ids
 

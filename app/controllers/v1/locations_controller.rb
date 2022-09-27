@@ -10,7 +10,7 @@ class V1::LocationsController < ApiController
       @locations = []
       worldwide = Location.find_by(location_id: 'worldwide')
       @locations << worldwide if worldwide
-      @locations += Location.all.where.not(location_id: 'worldwide').order(name: :asc)
+      @locations += Location.in_batches.where.not(location_id: 'worldwide').order(name: :asc)
     end
 
     @meta = Location.dates_with_data(params[:rank_by])

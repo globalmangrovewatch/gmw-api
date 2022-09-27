@@ -1,13 +1,14 @@
 Rails.application.routes.draw do
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
+  
   # Token auth
-  devise_for :users,
-  controllers: {
-      sessions: 'users/sessions',
-      registrations: 'users/registrations',
-
-  }
+  devise_for :users, controllers: {
+        sessions: 'users/sessions',
+        registrations: 'users/registrations',
+        confirmations: 'users/confirmations',
+        passwords: 'users/passwords'
+    }
   get '/users/current_user', to: 'users/current_user#show'
 
   devise_for :admin_users, ActiveAdmin::Devise.config
@@ -49,21 +50,41 @@ Rails.application.routes.draw do
       get '/widgets/aboveground_biomass', to: 'widgets#aboveground_biomass'
       get '/widgets/tree_height', to: 'widgets#tree_height'
       get '/widgets/blue_carbon', to: 'widgets#blue_carbon'
+      get '/widgets/mitigation_potentials', to: 'widgets#mitigation_potencials'
+      get '/widgets/country_ranking', to: 'widgets#country_ranking'
 
       # MRTT
       resources :sites, only: [:index, :show, :create, :update, :destroy]
       resources :landscapes, only: [:index, :show, :create, :update, :destroy]
       resources :organizations, only: [:index, :show, :create, :update, :destroy]
+
       get '/sites/:site_id/registration_answers', to: 'registration_answers#index'
       put '/sites/:site_id/registration_answers', to: 'registration_answers#update'
       patch '/sites/:site_id/registration_answers', to: 'registration_answers#partial_update'
+
       get '/sites/:site_id/intervention_answers', to: 'intervention_answers#index'
       put '/sites/:site_id/intervention_answers', to: 'intervention_answers#update'
       patch '/sites/:site_id/intervention_answers', to: 'intervention_answers#partial_update'
 
+      get '/sites/:site_id/registration_intervention_answers', to: 'registration_intervention_answers#index'
+      put '/sites/:site_id/registration_intervention_answers', to: 'registration_intervention_answers#update'
+      patch '/sites/:site_id/registration_intervention_answers', to: 'registration_intervention_answers#partial_update'
+
+      post '/sites/:site_id/monitoring_answers', to: 'monitoring_answers#create'
+      get '/sites/:site_id/monitoring_answers', to: 'monitoring_answers#index'
+      get '/sites/:site_id/monitoring_answers/:uuid', to: 'monitoring_answers#index_per_form'
+      put '/sites/:site_id/monitoring_answers/:uuid', to: 'monitoring_answers#update_per_form'
+      delete '/sites/:site_id/monitoring_answers/:uuid', to: 'monitoring_answers#delete'
+
       get '/organizations/:organization_id/users', to: 'organizations#get_users'
-      put '/organizations/:organization_id/users/:user_id', to: 'organizations#add_or_update_user'
-      delete '/organizations/:organization_id/users/:user_id', to: 'organizations#remove_user'
+      get '/organizations/:organization_id/users/:email', to: 'organizations#get_user', constraints: { email: /[^\/]+/}
+      post '/organizations/:organization_id/users', to: 'organizations#add_user'
+      patch '/organizations/:organization_id/users/:email', to: 'organizations#update_user', constraints: { email: /[^\/]+/}
+      delete '/organizations/:organization_id/users/:email', to: 'organizations#remove_user', constraints: { email: /[^\/]+/}
+
+      get '/dashboard/sites', to: 'dashboard#sites'
+
+      get '/report/answers', to: 'report#answers'
 
     end
   end

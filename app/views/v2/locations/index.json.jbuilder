@@ -1,13 +1,11 @@
 json.meta do
   json.dates do
     json.array! @dates do |date|
-      json.date date.date
+      json.date date.year.to_s + '-01-01'
     end 
   end
 end
 
 json.data do
-  json.array! @locations do |location|
-    json.partial! "location", obj: location
-  end
+  json.array! @locations
 end

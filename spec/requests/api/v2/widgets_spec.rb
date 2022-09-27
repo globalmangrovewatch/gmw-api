@@ -525,5 +525,89 @@ RSpec.describe 'api/v2/widgets', type: :request do
             end
         end
     end
+
+    path '/api/v2/widgets/mitigation_potentials' do
+        get 'Retrieves the data for the mitigation potential widget' do
+            tags 'Widgets'
+            consumes 'application/json'
+            produces 'application/json'
+            parameter name: :location_id, in: :query, type: :string
+            
+            response 200, 'Success' do
+                schema type: :object,
+                properties:{
+                    data:{
+                        type: :array,
+                        items: {'$ref' => '#/components/schemas/mitigation_potentials'}
+                    },
+                    metadata: {
+                        type: :object, 
+                        '$ref' => '#/components/schemas/metadata' 
+                    }
+                }
+                example 'application/json', :example_key, {
+                    data: [{
+
+                    }],
+                    metadata: {
+                        location_id: '1',
+                    }
+                }
+            end
+
+            response 500, 'Error 500' do
+                schema type: :object,
+                '$ref' => '#/components/schemas/error_response' 
+
+                example 'application/json', :example_key, {
+                    
+                        location_id: '1',
+                }
+            end
+        end
+    end
+
+    path '/api/v2/widgets/country_ranking' do
+        get 'Retrieves the data for the mitigation potential widget' do
+            tags 'Widgets'
+            consumes 'application/json'
+            produces 'application/json'
+            parameter name: :location_id, in: :query, type: :string
+            parameter name: :start_year, in: :query, type: :integer, default: 2007
+            parameter name: :end_year, in: :query, type: :integer, default: 2020
+            
+            response 200, 'Success' do
+                schema type: :object,
+                properties:{
+                    data:{
+                        type: :array,
+                        items: {'$ref' => '#/components/schemas/country_ranking'}
+                    },
+                    metadata: {
+                        type: :object, 
+                        '$ref' => '#/components/schemas/metadata' 
+                    }
+                }
+                example 'application/json', :example_key, {
+                    data: [{
+
+                    }],
+                    metadata: {
+                        location_id: '1',
+                    }
+                }
+            end
+
+            response 500, 'Error 500' do
+                schema type: :object,
+                '$ref' => '#/components/schemas/error_response' 
+
+                example 'application/json', :example_key, {
+                    
+                        location_id: '1',
+                }
+            end
+        end
+    end
    
 end

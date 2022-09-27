@@ -74,6 +74,9 @@ GEM
       activesupport (= 7.0.3)
     activerecord-import (1.4.0)
       activerecord (>= 4.2)
+    activerecord-postgis-adapter (8.0.1)
+      activerecord (~> 7.0.0)
+      rgeo-activerecord (~> 7.0.0)
     activestorage (7.0.3)
       actionpack (= 7.0.3)
       activejob (= 7.0.3)
@@ -226,6 +229,7 @@ GEM
       racc (~> 1.4)
     orm_adapter (0.5.0)
     pg (1.4.1)
+    pivot_table (1.0.0)
     public_suffix (4.0.7)
     puma (5.6.4)
       nio4r (~> 2.0)
@@ -278,6 +282,12 @@ GEM
       actionpack (>= 5.0)
       railties (>= 5.0)
     rexml (3.2.5)
+    rgeo (2.4.0)
+    rgeo-activerecord (7.0.1)
+      activerecord (>= 5.0)
+      rgeo (>= 1.0.0)
+    rgeo-geojson (2.1.1)
+      rgeo (>= 1.0.0)
     rspec-core (3.11.0)
       rspec-support (~> 3.11.0)
     rspec-expectations (3.11.0)
@@ -372,6 +382,7 @@ PLATFORMS
 DEPENDENCIES
   active_admin_import
   activeadmin
+  activerecord-postgis-adapter
   bootsnap
   cancancan
   capybara
@@ -384,10 +395,12 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   pg (~> 1.1)
+  pivot_table
   puma (~> 5.0)
   pundit
   rack-cors
   rails (~> 7.0.2, >= 7.0.2.3)
+  rgeo-geojson
   rspec-rails
   rswag-api
   rswag-specs
