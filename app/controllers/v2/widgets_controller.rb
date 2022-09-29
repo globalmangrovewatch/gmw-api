@@ -193,7 +193,6 @@ class V2::WidgetsController < ApiController
       @total_area = @data[0].area_m2  * 0.000001# convert to km2
       @total_lenght = @data[0].coast_length_m * 0.001 # convert to km
     end
-    @data = helpers.cum_sum(@data, 0, 'value')
   end
 
   # GET /v2/widgets/aboveground_biomass
@@ -343,11 +342,11 @@ class V2::WidgetsController < ApiController
       @start_year = params[:start_year] || @range[0]
       @end_year = params[:end_year] || @range[-1]
 
-      @data = HabitatExtent.select("sum(value - value_prior) as value, name,'net_change' indicator, iso"
+      @data = HabitatExtent.select("sum(value - value_prior) as value, ABS(sum(value - value_prior)) as abs_value, name,'net_change' indicator, iso"
       ).from(subquery).where(
         'year >= ? AND year <= ?', @start_year, @end_year
       ).group(:name, :indicator, :iso
-      ).order('1 desc'
+      ).order('2 desc'
       ).limit(@limit)
     end
 end
