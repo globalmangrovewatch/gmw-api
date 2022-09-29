@@ -5,7 +5,7 @@ class V2::FileConverterController < ApiController
     def convert
         file = import_params[:file]
         @response = if file.blank? || file.size > MAX_FILE_SIZE
-            { errors: "File must exist and be smaller than #{MAX_FILE_SIZE/1000} KB" }
+            exception("File must exist and be smaller than #{MAX_FILE_SIZE/1000} KB")
             else
                 importer.convert
             end
