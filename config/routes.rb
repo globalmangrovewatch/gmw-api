@@ -53,6 +53,9 @@ Rails.application.routes.draw do
       get '/widgets/mitigation_potentials', to: 'widgets#mitigation_potencials'
       get '/widgets/country_ranking', to: 'widgets#country_ranking'
 
+      ## Geometry file conversion
+      post '/spatial_file/converter', to: 'file_converter#convert'
+
       # MRTT
       resources :sites, only: [:index, :show, :create, :update, :destroy]
       resources :landscapes, only: [:index, :show, :create, :update, :destroy]

@@ -1,18 +1,23 @@
 class V2::FileConverterController < ApiController
-
-    # POST /locations/:id
-    def import
-        file = params['file']
-        response = if file.blank? || file.size > MAX_FILE_SIZE
+    include FileDataImport
+    MAX_FILE_SIZE = 10000000000
+    # POST /spatial_file/converter
+    def convert
+        file = import_params[:file]
+        @response = if file.blank? || file.size > MAX_FILE_SIZE
             { errors: "File must exist and be smaller than #{MAX_FILE_SIZE/1000} KB" }
-          else
-            Fmu.file_upload(file)
-        end
+            else
+                importer.convert
+            end
     end
 
     private
+
         def import_params
         params.permit(:file)
         end
 
+        def importer
+            @importer ||= FileDataImport::BaseImporter.new(import_params[:file])
+        end
 end
