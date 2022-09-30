@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 FROM ruby:3.0.3
-RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
+RUN apt-get update -qq && apt-get install -y nodejs postgresql-client binutils libproj-dev gdal-bin
 WORKDIR /mangroveAtlasApi
 COPY Gemfile /mangroveAtlasApi/Gemfile
 COPY Gemfile.lock /mangroveAtlasApi/Gemfile.lock
