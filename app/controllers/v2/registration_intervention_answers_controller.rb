@@ -19,6 +19,11 @@ class V2::RegistrationInterventionAnswersController < MrttApiController
         else
             @answers = site.registration_intervention_answers.order(question_id: :asc)
         end
+
+        @restricted_sections = (
+            site.section_data_visibility.map{|key, value| value == "private" ? key : nil }.select{|i| i != nil}
+        )
+
     end
 
     def update
