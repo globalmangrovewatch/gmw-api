@@ -21,7 +21,9 @@ class V2::RegistrationInterventionAnswersController < MrttApiController
         end
 
         @restricted_sections = (
-            site.section_data_visibility.map{|key, value| value == "private" ? key : nil }.select{|i| i != nil}
+            site.section_data_visibility ?
+                site.section_data_visibility.map{|key, value| value == "private" ? key : nil }.select{|i| i != nil} :
+                []
         )
 
     end
