@@ -1,5 +1,3 @@
 binutils 
-libatlas-base-dev
-libblas-base-dev
-libproj-dev
 gdal-bin
+libgdal-dev
