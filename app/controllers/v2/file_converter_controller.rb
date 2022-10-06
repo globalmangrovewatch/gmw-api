@@ -14,7 +14,7 @@ class V2::FileConverterController < ApiController
     private
 
         def import_params
-        params.permit(:file)
+        params.permit(:file, :format)
         end
 
         def importer

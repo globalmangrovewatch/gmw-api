@@ -3,7 +3,7 @@
 module FileDataImport
   module Parser
     class Base
-      AVAILABLE_EXTENSIONS = %w[shp gpkg].freeze
+      AVAILABLE_EXTENSIONS = %w[zip shp gpkg json geojson].freeze
 
       attr_reader :path_to_file
 
