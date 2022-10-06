@@ -20,7 +20,12 @@ module FileDataImport
 
     def parser
       @parser ||= begin
-        parser_name = "FileDataImport::Parser::#{extension.capitalize}"
+        extension_value = extension.capitalize
+        if extension_value == 'Geojson'
+          extension_value = 'Json'
+        end
+        
+        parser_name = "FileDataImport::Parser::#{extension_value}"
         parser_name.constantize.new(file.path)
                   rescue NameError
                     raise InvalidParserError, "Undefined parser #{parser_name}."
