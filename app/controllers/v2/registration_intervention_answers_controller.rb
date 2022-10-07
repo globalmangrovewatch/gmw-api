@@ -4,21 +4,20 @@ class V2::RegistrationInterventionAnswersController < MrttApiController
         landscape = site.landscape
         organization_ids = landscape.organization_ids
 
-        # admin can show any answer record
-        # org member can only show answer under site that belongs to landscape
-        #   that is associated to the org they are member of
+        # Non-admin and non-members are allowed to view answers on public section of the form
+        # Instead of returning: insufficient_privilege && return
+        # We restrict the sections instead
+        @restricted_sections = []
         if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
-            insufficient_privilege && return
+            @restricted_sections = (
+                site.section_data_visibility ?
+                    site.section_data_visibility.map{|key, value| value == "private" ? key : nil }.select{|i| i != nil} :
+                    []
+            )
         end
         # proceed
 
-        if not site
-            render json: {
-                "message": "Site %s not found" % params[:site_id]
-            }, :status => :not_found
-        else
-            @answers = site.registration_intervention_answers.order(question_id: :asc)
-        end
+        @answers = site.registration_intervention_answers.order(question_id: :asc)
     end
 
     def update
