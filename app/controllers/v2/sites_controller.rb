@@ -7,7 +7,7 @@ class V2::SitesController < MrttApiController
         #   that is associated to the org they are member of
         @sites = current_user.is_admin ? 
             (
-                Site.left_joins(:registration_intervention_answers)
+                Site.left_joins(:landscape, :registration_intervention_answers, :monitoring_answers)
                     .select(select_clause).group(:id)
             ) :
             (
