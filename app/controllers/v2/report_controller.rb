@@ -3,11 +3,27 @@ class V2::ReportController < MrttApiController
 
     def answers_by_site
         site_id = report_params[:site_id]
-        @site = Site.find(site_id)
-        @registration_intervention_answers = @site.registration_intervention_answers
+        @site_id, @registration_intervention_answers, @monitoring_answers = get_answers_by_site(site_id)
+    end
+
+    def answers
+        @answers = []
+        Site.all.each { |site|
+            site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id)
+            @answers.push({
+                "site_id" => site_id,
+                "registration_intervention_answers" => registration_intervention_answers,
+                "monitoring_answers" => monitoring_answers
+            })
+        }
+    end
+
+    def get_answers_by_site(site_id)
+        site = Site.find(site_id)
+        registration_intervention_answers = site.registration_intervention_answers
 
         monitoring_events = {}
-        @site.monitoring_answers.each { |answer|
+        site.monitoring_answers.each { |answer|
             if not monitoring_events.key?(answer.uuid)
                 monitoring_events[answer.uuid] = {
                     "uuid" => answer.uuid,
@@ -19,10 +35,11 @@ class V2::ReportController < MrttApiController
             monitoring_events[answer.uuid]["answers"][answer.question_id] = answer.answer_value
         }
 
-        @monitoring_answers = []
+        monitoring_answers = []
         monitoring_events.each { |key, value|
-            @monitoring_answers.push(value)
+            monitoring_answers.push(value)
         }
+        return site.id, registration_intervention_answers, monitoring_answers
     end
 
     def report_params
