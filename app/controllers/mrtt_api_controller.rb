@@ -22,4 +22,8 @@ class MrttApiController < ActionController::API
       def insufficient_privilege
         render json: {message: "Insufficient privilege" }, status: :forbidden
       end
+
+      def forbidden_role_change
+        render json: {message: "Changing your own role is not allowed"}, status: :forbidden
+      end
 end
