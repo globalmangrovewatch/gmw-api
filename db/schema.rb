@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -110,15 +110,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
     t.index ["location_id"], name: "index_international_statuses_on_location_id"
   end
 
-  create_table "intervention_answers", force: :cascade do |t|
-    t.bigint "site_id", null: false
-    t.string "question_id"
-    t.json "answer_value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["site_id"], name: "index_intervention_answers_on_site_id"
-  end
-
   create_table "jwt_denylist", force: :cascade do |t|
     t.string "jti", null: false
     t.datetime "exp", null: false
@@ -137,6 +128,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
     t.bigint "organization_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["landscape_id", "organization_id"], name: "idx_u_landscapes_organizations", unique: true
     t.index ["landscape_id"], name: "index_landscapes_organizations_on_landscape_id"
     t.index ["organization_id"], name: "index_landscapes_organizations_on_organization_id"
   end
@@ -149,8 +141,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
     t.json "geometry"
     t.float "area_m2"
     t.float "perimeter_m"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.float "coast_length_m"
     t.string "location_id"
     t.index ["location_id"], name: "index_locations_on_location_id", unique: true
@@ -166,8 +158,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
     t.float "agb_mgha_1"
     t.float "hba_m"
     t.bigint "location_id"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "con_hotspot_summary_km2"
     t.float "net_change_m2"
     t.text "agb_hist_mgha_1"
@@ -221,15 +213,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
     t.index ["organization_id", "user_id"], name: "index_organizations_users_on_organization_id_and_user_id", unique: true
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
     t.index ["user_id"], name: "index_organizations_users_on_user_id"
-  end
-
-  create_table "registration_answers", force: :cascade do |t|
-    t.bigint "site_id", null: false
-    t.string "question_id"
-    t.json "answer_value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["site_id"], name: "index_registration_answers_on_site_id"
   end
 
   create_table "registration_intervention_answers", force: :cascade do |t|
@@ -336,7 +319,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
   add_foreign_key "ecosystem_services", "locations"
   add_foreign_key "habitat_extents", "locations"
   add_foreign_key "international_statuses", "locations"
-  add_foreign_key "intervention_answers", "sites"
   add_foreign_key "landscapes_organizations", "landscapes"
   add_foreign_key "landscapes_organizations", "organizations"
   add_foreign_key "mangrove_data", "locations"
@@ -344,7 +326,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
   add_foreign_key "monitoring_answers", "sites"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
-  add_foreign_key "registration_answers", "sites"
   add_foreign_key "registration_intervention_answers", "sites"
   add_foreign_key "restoration_potentials", "locations"
   add_foreign_key "sites", "landscapes"
