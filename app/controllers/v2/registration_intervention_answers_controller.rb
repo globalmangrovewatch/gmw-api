@@ -9,10 +9,12 @@ class V2::RegistrationInterventionAnswersController < MrttApiController
         # We restrict the sections instead
         @restricted_sections = []
         if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
+            always_public_sections = ["1"]
             @restricted_sections = (
                 site.section_data_visibility ?
-                    site.section_data_visibility.map{|key, value| value == "private" ? key : nil }.select{|i| i != nil} :
-                    []
+                    site.section_data_visibility.map{
+                        |key, value| value == "private" && always_public_sections.exclude?(key.split(".")[0]) ? key : nil
+                    }.select{|i| i != nil} : []
             )
         end
         # proceed
