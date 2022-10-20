@@ -41,11 +41,6 @@ class V2::MonitoringAnswersController < MrttApiController
         @uuid = uuid
         @form_type = form.form_type
         @answers = site.monitoring_answers.where(uuid: uuid).order(question_id: :asc)
-        @restricted_sections = (
-            site.section_data_visibility ?
-                site.section_data_visibility.map{|key, value| value == "private" ? key : nil }.select{|i| i != nil} :
-                []
-        )
     end
 
     def create
