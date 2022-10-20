@@ -18,6 +18,8 @@ class V2::ReportController < MrttApiController
 
     def get_answers_by_site(site_id)
         site = Site.find(site_id)
+        landscape = site.landscape
+        organization_ids = landscape.organization_ids
         registration_intervention_answers = site.registration_intervention_answers
 
         # Non-admin and non-members are allowed to view answers on public section of the form
@@ -42,8 +44,10 @@ class V2::ReportController < MrttApiController
                     "answers" => {}
                 }
             end
-            answer_value = (not @restricted_sections.include?(answer.question_id.split(".")[0])) ? answer.answer_value : nil
-            monitoring_events[answer.uuid]["answers"][answer.question_id] = answer_value
+
+            if not @restricted_sections.include?(answer.question_id.split(".")[0])
+                monitoring_events[answer.uuid]["answers"][answer.question_id] = answer.answer_value
+            end
         }
 
         monitoring_answers = []
