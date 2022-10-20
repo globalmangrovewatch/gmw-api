@@ -44,7 +44,6 @@ class V2::ReportController < MrttApiController
                     "answers" => {}
                 }
             end
-
             if not @restricted_sections.include?(answer.question_id.split(".")[0])
                 monitoring_events[answer.uuid]["answers"][answer.question_id] = answer.answer_value
             end
