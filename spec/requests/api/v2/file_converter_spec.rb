@@ -8,7 +8,6 @@ RSpec.describe 'api/v2/spatial_file', type: :request do
             consumes 'multipart/form-data'
             produces 'application/json'
             parameter name: :file, :in => :formData, :type => :file, required: true
-            
             response 200, 'Success' do
                 schema type: :object,
                 properties:{
