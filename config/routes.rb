@@ -53,18 +53,13 @@ Rails.application.routes.draw do
       get '/widgets/mitigation_potentials', to: 'widgets#mitigation_potencials'
       get '/widgets/country_ranking', to: 'widgets#country_ranking'
 
+      ## Geometry file conversion
+      post '/spatial_file/converter', to: 'file_converter#convert'
+
       # MRTT
       resources :sites, only: [:index, :show, :create, :update, :destroy]
       resources :landscapes, only: [:index, :show, :create, :update, :destroy]
       resources :organizations, only: [:index, :show, :create, :update, :destroy]
-
-      get '/sites/:site_id/registration_answers', to: 'registration_answers#index'
-      put '/sites/:site_id/registration_answers', to: 'registration_answers#update'
-      patch '/sites/:site_id/registration_answers', to: 'registration_answers#partial_update'
-
-      get '/sites/:site_id/intervention_answers', to: 'intervention_answers#index'
-      put '/sites/:site_id/intervention_answers', to: 'intervention_answers#update'
-      patch '/sites/:site_id/intervention_answers', to: 'intervention_answers#partial_update'
 
       get '/sites/:site_id/registration_intervention_answers', to: 'registration_intervention_answers#index'
       put '/sites/:site_id/registration_intervention_answers', to: 'registration_intervention_answers#update'
@@ -85,6 +80,7 @@ Rails.application.routes.draw do
       get '/dashboard/sites', to: 'dashboard#sites'
 
       get '/report/answers', to: 'report#answers'
+      get '/report/answers/:site_id', to: 'report#answers_by_site'
 
     end
   end

@@ -1,14 +1,13 @@
 class V2::SitesController < MrttApiController
     def index
-        select_clause = "sites.*, greatest(max(registration_answers.updated_at), " \
-                        "max(intervention_answers.updated_at)) as section_last_updated"
+        select_clause = "sites.*, greatest(max(registration_intervention_answers.updated_at), max(monitoring_answers.updated_at)) as section_last_updated"
 
         # admin can list all sites record
         # org member can only list sites that belongs to landscapes 
         #   that is associated to the org they are member of
         @sites = current_user.is_admin ? 
             (
-                Site.left_joins(:registration_answers, :intervention_answers)
+                Site.left_joins(:landscape, :registration_intervention_answers, :monitoring_answers)
                     .select(select_clause).group(:id)
             ) :
             (
@@ -17,7 +16,7 @@ class V2::SitesController < MrttApiController
                                     .select("landscapes_organizations.*")
                                     .where("organization_id in (%s)" % (organization_ids + [0]).join(","))
                                     .map { |i| [i.landscape_id] }
-                @sites = Site.left_joins(:landscape, :registration_answers, :intervention_answers)
+                @sites = Site.left_joins(:landscape, :registration_intervention_answers, :monitoring_answers)
                     .select(select_clause)
                     .group(:id, "landscapes.id")
                     .where("landscape_id in (%s)" % (landscape_ids + [0]).join(","))

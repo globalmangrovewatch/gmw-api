@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -108,15 +108,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
     t.datetime "updated_at", null: false
     t.string "value", null: false
     t.index ["location_id"], name: "index_international_statuses_on_location_id"
-  end
-
-  create_table "intervention_answers", force: :cascade do |t|
-    t.bigint "site_id", null: false
-    t.string "question_id"
-    t.json "answer_value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["site_id"], name: "index_intervention_answers_on_site_id"
   end
 
   create_table "jwt_denylist", force: :cascade do |t|
@@ -224,15 +215,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
     t.index ["user_id"], name: "index_organizations_users_on_user_id"
   end
 
-  create_table "registration_answers", force: :cascade do |t|
-    t.bigint "site_id", null: false
-    t.string "question_id"
-    t.json "answer_value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["site_id"], name: "index_registration_answers_on_site_id"
-  end
-
   create_table "registration_intervention_answers", force: :cascade do |t|
     t.bigint "site_id", null: false
     t.string "question_id"
@@ -337,7 +319,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
   add_foreign_key "ecosystem_services", "locations"
   add_foreign_key "habitat_extents", "locations"
   add_foreign_key "international_statuses", "locations"
-  add_foreign_key "intervention_answers", "sites"
   add_foreign_key "landscapes_organizations", "landscapes"
   add_foreign_key "landscapes_organizations", "organizations"
   add_foreign_key "mangrove_data", "locations"
@@ -345,7 +326,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_20_164631) do
   add_foreign_key "monitoring_answers", "sites"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
-  add_foreign_key "registration_answers", "sites"
   add_foreign_key "registration_intervention_answers", "sites"
   add_foreign_key "restoration_potentials", "locations"
   add_foreign_key "sites", "landscapes"

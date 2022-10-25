@@ -48,7 +48,7 @@ class V2::LandscapesController < MrttApiController
         end
 
         @landscape.update(landscape_params)
-        associate_organizations(@landscape, organizations)
+        associate_organizations(@landscape, organization_ids)
     end
 
     def destroy

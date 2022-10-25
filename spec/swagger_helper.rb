@@ -281,6 +281,18 @@ RSpec.configure do |config|
             },
             required: [:indicator, :value, :year, :category]
           },
+          file_converter: {
+            type: :object,
+            properties: {
+              type: {type: :string},
+              features: {
+                type: :array, 
+                items: {type: :object}, 
+                nullable: false
+              },
+            },
+            required: [:type, :features]
+          },
         },
       }
     }

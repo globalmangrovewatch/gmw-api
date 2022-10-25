@@ -81,6 +81,9 @@ class V2::OrganizationsController < MrttApiController
         if not (current_user.is_admin || current_user.is_org_admin(organization.id))
             insufficient_privilege && return
         end
+        if params[:email] == current_user.email
+            forbidden_role_change && return
+        end
         add_or_update_user_helper(params)
     end
 
