@@ -128,7 +128,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
     t.bigint "organization_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["landscape_id", "organization_id"], name: "idx_u_landscapes_organizations", unique: true
     t.index ["landscape_id"], name: "index_landscapes_organizations_on_landscape_id"
     t.index ["organization_id"], name: "index_landscapes_organizations_on_organization_id"
   end
@@ -141,8 +140,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
     t.json "geometry"
     t.float "area_m2"
     t.float "perimeter_m"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.float "coast_length_m"
     t.string "location_id"
     t.index ["location_id"], name: "index_locations_on_location_id", unique: true
@@ -158,8 +157,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
     t.float "agb_mgha_1"
     t.float "hba_m"
     t.bigint "location_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "con_hotspot_summary_km2"
     t.float "net_change_m2"
     t.text "agb_hist_mgha_1"

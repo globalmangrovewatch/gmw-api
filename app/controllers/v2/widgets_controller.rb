@@ -335,7 +335,7 @@ class V2::WidgetsController < ApiController
       subquery = HabitatExtent.joins(:location
       ).includes(:location
       ).select('year, COALESCE(LAG(value, 1) OVER (PARTITION BY location.iso ORDER BY year ASC), value) value_prior, value, location.name, indicator, location.iso'
-      ).where(location: {location_type: 'country'}, indicator: 'habitat_extent_area'
+      ).where(location: {location_type: 'country'}, indicator: 'habitat_extent_area', year: [@start_year, @end_year]
       ).order(:indicator, :year)
 
       @range = subquery.pluck(:year).uniq.sort
@@ -343,9 +343,7 @@ class V2::WidgetsController < ApiController
       @end_year = params[:end_year] || @range[-1]
 
       @data = HabitatExtent.select("sum(value - value_prior) as value, ABS(sum(value - value_prior)) as abs_value, name,'net_change' indicator, iso"
-      ).from(subquery).where(
-        'year >= ? AND year <= ?', @start_year, @end_year
-      ).group(:name, :indicator, :iso
+      ).from(subquery).group(:name, :indicator, :iso
       ).order('2 desc'
       ).limit(@limit)
     end
