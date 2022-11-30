@@ -12,7 +12,7 @@ json.metadata do
   json.units do
     json.net_change 'km2'
   end
-  json.year @data.pluck(:year).uniq.sort.reverse
+  json.year @range
   json.note nil
   json.total_area @total_area
   json.total_lenght @total_lenght
