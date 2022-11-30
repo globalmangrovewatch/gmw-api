@@ -12,7 +12,17 @@ json.metadata do
   json.units do
     json.net_change 'km2'
   end
-  json.year @range
+  json.year [1996,
+    2007,
+    2008,
+    2009,
+    2010,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020]
   json.note nil
   json.total_area @total_area
   json.total_lenght @total_lenght
