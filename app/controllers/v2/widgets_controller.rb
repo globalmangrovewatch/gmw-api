@@ -169,7 +169,7 @@ class V2::WidgetsController < ApiController
   def net_change
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @range = HabitatExtent.select(:year).distinct.pluck(:year).sort.reverse
+      @range = HabitatExtent.select(:year).distinct.pluck(:year).uniq.sort
       @data = HabitatExtent.joins(:location).includes(:location
             ).select('year, value - (COALESCE(LAG(value, 1) OVER (ORDER BY year), value)) as value, location.location_id'
             ).where(location: {id: params[:location_id]}, indicator: 'habitat_extent_area'
@@ -334,7 +334,6 @@ class V2::WidgetsController < ApiController
       @limit = params[:limit] || 10
       @order = params[:order] || 'desc'
       @range = HabitatExtent.select(:year).distinct.pluck(:year).uniq.sort
-      @start_year = params[:start_year] || @range[0]
       @start_year = params[:start_year] || @range[0]
       @end_year = params[:end_year] || @range[-1]
       
