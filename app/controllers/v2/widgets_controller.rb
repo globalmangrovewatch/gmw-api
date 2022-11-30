@@ -332,9 +332,8 @@ class V2::WidgetsController < ApiController
     def country_ranking
       @limit = params[:limit] || 10
       @order = params[:order] || 'desc'
-      @range = HabitatExtent.joins(:location
-      ).includes(:location
-      ).where(location: {location_type: 'country'}, indicator: 'habitat_extent_area').pluck(:year).uniq.sort
+      @range = HabitatExtent.select(:year).distinct.pluck(:year).uniq.sort
+      @start_year = params[:start_year] || @range[0]
       @start_year = params[:start_year] || @range[0]
       @end_year = params[:end_year] || @range[-1]
       
