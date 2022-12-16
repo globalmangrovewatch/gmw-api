@@ -61,6 +61,7 @@ class V2::WidgetsController < ApiController
   # GET /v2/widgets/degradation-and-loss
   def degradation_and_loss
     @year = DegradationTreemap.pluck(:year).uniq.sort.reverse
+    default_year = @year[0]
     @labels = {
       'degraded_area' => 'degraded_area',
       'lost_area' => 'Non-Restorable Lost Mangrove Area',
@@ -69,12 +70,12 @@ class V2::WidgetsController < ApiController
     }
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = DegradationTreemap.where(location_id: @location_id, year: params[:year] || 2016)
+      @data = DegradationTreemap.where(location_id: @location_id, year: params[:year] || default_year)
       @lost_driver = @data.first
     else
       @location_id = 'worldwide'
       @data = DegradationTreemap.select('a.*').from(
-        DegradationTreemap.where(year: params[:year] || 2016
+        DegradationTreemap.where(year: params[:year] || default_year
         ).select('indicator, sum(value) as value'
       ).group('indicator'), :a)
     end
@@ -169,7 +170,7 @@ class V2::WidgetsController < ApiController
   def net_change
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @years = HabitatExtent.select('year')
+      @year = HabitatExtent.select('year').distinct.pluck(:year).sort
       @data = HabitatExtent.joins(:location).includes(:location
             ).select('year, value - (COALESCE(LAG(value, 1) OVER (ORDER BY year), value)) as value, location.location_id'
             ).where(location: {id: params[:location_id]}, indicator: 'habitat_extent_area'
