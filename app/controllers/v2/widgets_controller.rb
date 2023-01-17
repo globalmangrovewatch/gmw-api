@@ -48,12 +48,13 @@ class V2::WidgetsController < ApiController
   # GET /v2/widgets/restoration-potential
   def restoration_potential
     @year = RestorationPotential.pluck(:year).uniq.sort.reverse
+    default_year = @year[0]
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = RestorationPotential.where(location_id: params[:location_id], year: params[:year] || 2016)
+      @data = RestorationPotential.where(location_id: params[:location_id], year: params[:year] || default_year)
     else
       @location_id = 'worldwide'
-      @data = RestorationPotential.select('indicator, sum(value) as value, unit').where(year: params[:year] || 2016, indicator: ['restorable_area','mangrove_area'] ).group(:indicator, :unit)
+      @data = RestorationPotential.select('indicator, sum(value) as value, unit').where(year: params[:year] || default_year, indicator: ['restorable_area','mangrove_area'] ).group(:indicator, :unit)
     end
     
   end
