@@ -359,7 +359,7 @@ class V2::WidgetsController < ApiController
         @conversion_factor = case params[:units]
           when 'km2' then 0.001
           when 'ha' then  1
-          when 'm' then  10000
+          when 'm2' then  10000
           else 1
         end
       else @conversion_factor = 1
