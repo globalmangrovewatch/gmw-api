@@ -94,12 +94,12 @@ class V2::WidgetsController < ApiController
     
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = BlueCarbonInvestment.select("category, (area*#{@conversion_factor})::varchar(255)\
+      @data = BlueCarbonInvestment.select("category, to_char((area*#{@conversion_factor}), '999,999,999D9')\
        ||' (± '|| area*0.05*#{@conversion_factor} || ')' as description, location_id, area,\
        sum(area) over () as total_area").where(location_id: @location_id)
     else
       @location_id = 'worldwide'
-      @data = BlueCarbonInvestment.select("category, (area*#{@conversion_factor})::varchar(255)\
+      @data = BlueCarbonInvestment.select("category, to_char((area*#{@conversion_factor}), '999,999,999D9')\
        || ' (±'|| area*0.05*#{@conversion_factor} || ')' as description,'_' as description_a, area,\
         sum(area) over () as total_area"
     ).from(BlueCarbonInvestment.select('category, sum("blue_carbon_investments".area) as area'
