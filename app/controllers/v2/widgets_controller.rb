@@ -57,10 +57,10 @@ class V2::WidgetsController < ApiController
     @year = DegradationTreemap.pluck(:year).uniq.sort.reverse
     default_year = @year[0]
     @labels = {
-      'degraded_area' => 'degraded_area',
-      'lost_area' => 'Non-Restorable Lost Mangrove Area',
+      'degraded_area' => 'Non-Restorable loss mangrove area',
+      'lost_area' => 'Total loss',
       'mangrove_area' => 'Mangrove area',
-      'restorable_area' => 'Restorable area',
+      'restorable_area' => 'Restorable loss mangrove area',
     }
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
