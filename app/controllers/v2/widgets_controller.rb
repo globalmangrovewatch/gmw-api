@@ -1,22 +1,15 @@
 include PivotTableHelper
 include ApplicationHelper
+
 class V2::WidgetsController < ApiController
-  
-   # GET /v2/widgets/protected-areas
+
+  # GET /v2/widgets/protected-areas
   def protected_areas
     # original area data is in hectares, 
     # but we want to display it in square km 
     # TODO: make this configurable https://github.com/mhuggins/ruby-measurement
-    @conversion_factor = 1
+    @conversion_factor = convert_factor(params)
     @unit = params[:units] || 'ha'
-    if params.has_key?(:units)
-      @conversion_factor = case params[:units]
-        when 'km2' then 0.001
-        when 'ha' then  1
-        when 'm' then  10000
-        else 1
-      end
-    end
     # location_id here references location.location_id instead of location.id
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
@@ -48,12 +41,13 @@ class V2::WidgetsController < ApiController
   # GET /v2/widgets/restoration-potential
   def restoration_potential
     @year = RestorationPotential.pluck(:year).uniq.sort.reverse
+    default_year = @year[0]
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = RestorationPotential.where(location_id: params[:location_id], year: params[:year] || 2016)
+      @data = RestorationPotential.where(location_id: params[:location_id], year: params[:year] || default_year)
     else
       @location_id = 'worldwide'
-      @data = RestorationPotential.select('indicator, sum(value) as value, unit').where(year: params[:year] || 2016, indicator: ['restorable_area','mangrove_area'] ).group(:indicator, :unit)
+      @data = RestorationPotential.select('indicator, sum(value) as value, unit').where(year: params[:year] || default_year, indicator: ['restorable_area','mangrove_area'] ).group(:indicator, :unit)
     end
     
   end
@@ -61,20 +55,21 @@ class V2::WidgetsController < ApiController
   # GET /v2/widgets/degradation-and-loss
   def degradation_and_loss
     @year = DegradationTreemap.pluck(:year).uniq.sort.reverse
+    default_year = @year[0]
     @labels = {
-      'degraded_area' => 'degraded_area',
-      'lost_area' => 'Non-Restorable Lost Mangrove Area',
+      'degraded_area' => 'Non-Restorable loss mangrove area',
+      'lost_area' => 'Total loss',
       'mangrove_area' => 'Mangrove area',
-      'restorable_area' => 'Restorable area',
+      'restorable_area' => 'Restorable loss mangrove area',
     }
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = DegradationTreemap.where(location_id: @location_id, year: params[:year] || 2016)
+      @data = DegradationTreemap.where(location_id: @location_id, year: params[:year] || default_year)
       @lost_driver = @data.first
     else
       @location_id = 'worldwide'
       @data = DegradationTreemap.select('a.*').from(
-        DegradationTreemap.where(year: params[:year] || 2016
+        DegradationTreemap.where(year: params[:year] || default_year
         ).select('indicator, sum(value) as value'
       ).group('indicator'), :a)
     end
@@ -94,15 +89,22 @@ class V2::WidgetsController < ApiController
       'protected' => 'Protected',
       'remaining' => 'Remaining',
     }
+    @conversion_factor = convert_factor(params)
+    @unit = params[:units] || 'ha'
+    
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @data = BlueCarbonInvestment.select('category, description, location_id, area, sum(area) over () as total_area').where(location_id: params[:location_id])
+      @data = BlueCarbonInvestment.select("category, to_char((area*#{@conversion_factor}), '999,999,999D9')\
+       ||' (± '|| area*0.05*#{@conversion_factor} || ')' as description, location_id, area,\
+       sum(area) over () as total_area").where(location_id: @location_id)
     else
-      @data = BlueCarbonInvestment.select("category, area::varchar(255) || ' (±'|| area*0.05 || ')' as description, area, sum(area) over () as total_area"
+      @location_id = 'worldwide'
+      @data = BlueCarbonInvestment.select("category, to_char((area*#{@conversion_factor}), '999,999,999D9')\
+       || ' (±'|| area*0.05*#{@conversion_factor} || ')' as description,'_' as description_a, area,\
+        sum(area) over () as total_area"
     ).from(BlueCarbonInvestment.select('category, sum("blue_carbon_investments".area) as area'
           ).group('category'), :a
     )
-      @location_id = 'worldwide'
     end
   end
 
@@ -169,7 +171,7 @@ class V2::WidgetsController < ApiController
   def net_change
     if params.has_key?(:location_id) && params[:location_id] != 'worldwide'
       @location_id = params[:location_id]
-      @years = HabitatExtent.select('year')
+      @year = HabitatExtent.select('year').distinct.pluck(:year).sort
       @data = HabitatExtent.joins(:location).includes(:location
             ).select('year, value - (COALESCE(LAG(value, 1) OVER (ORDER BY year), value)) as value, location.location_id'
             ).where(location: {id: params[:location_id]}, indicator: 'habitat_extent_area'
@@ -347,5 +349,20 @@ class V2::WidgetsController < ApiController
       ).from(subquery).group(:name, :indicator, :iso
       ).order('2 desc'
       ).limit(@limit)
+    end
+
+    private
+    def convert_factor(params)
+      logger.info "asdfasdf"
+      logger.error "asdfasdf"
+      if params.has_key?(:units)
+        @conversion_factor = case params[:units]
+          when 'km2' then 0.001
+          when 'ha' then  1
+          when 'm2' then  10000
+          else 1
+        end
+      else @conversion_factor = 1
+      end  
     end
 end
