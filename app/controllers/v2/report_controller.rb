@@ -127,7 +127,7 @@ class V2::ReportController < MrttApiController
             geojson = answer["features"][0]
             feature = RGeo::GeoJSON.decode(geojson)            
             geojson = reduce_precision_geojson(geojson)
-            url = "https://api.mapbox.com/v4/mapbox.satellite/geojson(%s)/%s/600x300@2x.png?access_token=%s" % [geojson.to_json, "auto", "MABOX_ACCESS_TOKEN"]
+            url = "https://api.mapbox.com/v4/mapbox.satellite/geojson(%s)/%s/600x300@2x.png?access_token=%s" % [geojson.to_json, "auto", "MAPBOX_ACCESS_TOKEN"]
             return url
         else
             return answer.to_json
