@@ -81,6 +81,7 @@ Rails.application.routes.draw do
 
       get '/report/answers', to: 'report#answers'
       get '/report/answers/:site_id', to: 'report#answers_by_site'
+      get '/report/pdf/answers', to: 'pdf_report#export_pdf'
 
     end
   end
