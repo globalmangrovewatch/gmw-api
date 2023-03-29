@@ -59,7 +59,16 @@ class V2::ReportController < MrttApiController
     def answers_as_xlsx
         # prep
         empty_answer = "---"
-        registration_sheet_columns = ["site_id", "site_name", "1.1a", "1.1b", "1.1c", "1.2", "1.3", "2.2", "2.3", "5.3f"]
+        question_key_ids = {
+            "registration": ['1.1a', '1.1b', '1.1c', '1.2', '1.3', '2.1', '2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8', '2.9', '3.1', '3.2', '3.3', '4.1', '4.2', '5.1', '5.2', '5.2a', '5.2b', '5.2c', '5.3', '5.3a', '5.3b', '5.3c', '5.3d', '5.3e', '5.3f', '5.3g', '5.4', '5.5'],
+            "intervention": ['6.1', '6.2', '6.2a', '6.2b', '6.2c', '6.3', '6.3a', '6.4', '7.1', '7.2', '7.3', '7.4', '7.5', '7.5a', '7.6'],
+            "monitoring": ['8.1', '8.2', '8.3', '8.4', '8.4a', '8.4b', '8.4c', '8.5', '8.5a', '8.6', '8.7', '8.8', '8.9', '8.10', '9.1', '9.2', '9.2a', '9.3', '9.3a', '9.3b', '9.4', '9.5', '10.1', '10.1a', '10.1b', '10.2', '10.3', '10.3a', '10.4', '10.4a', '10.5', '10.6', '10.6a', '10.7', '10.8']
+        }
+        
+        columns = ["site_id", "site_name"]
+        registration_sheet_columns = columns + question_key_ids[:registration]
+        intervention_sheet_columns = columns + question_key_ids[:intervention]
+        monitoring_sheet_columns = columns + question_key_ids[:monitoring]
 
         # initialize workbook
         p = Axlsx::Package.new
@@ -71,9 +80,12 @@ class V2::ReportController < MrttApiController
 
         # create registration worksheet
         registration_worksheet = wb.add_worksheet(name: "Registration")
+        intervention_worksheet = wb.add_worksheet(name: "Intervention")
+        monitoring_worksheet = wb.add_worksheet(name: "Monitoring")
 
         # generate cells data
-        all_site_rows = []
+        all_sites_rows = []
+        monitoring_sites_rows = []
         Site.all.each { |site|
             site_row = {}
             site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id)
@@ -85,15 +97,28 @@ class V2::ReportController < MrttApiController
                 # site_row[answer.question_id] = answer.answer_value
                 site_row[answer.question_id] = to_human_readable(answer.question_id, answer.answer_value)
             }
-            
-            all_site_rows.push(site_row)
+        
+            all_sites_rows.push(site_row)
+
+            if not monitoring_answers.empty?
+                monitoring_answers.each { |event|
+                    monitoring_site_row = {}
+                    monitoring_site_row["site_id"] = site.id
+                    monitoring_site_row["site_name"] = site.site_name
+                    
+                    event["answers"].each do  |question_id, answer|
+                        monitoring_site_row[question_id] = to_human_readable(question_id, answer)
+                    end
+                    monitoring_sites_rows.push(monitoring_site_row)
+                }
+            end
         }
 
-        # add header
+        # add registration header
         registration_worksheet.add_row registration_sheet_columns, :style => style_header
 
-        # add rows
-        all_site_rows.each { |site_row|
+        # add registration rows
+        all_sites_rows.each { |site_row|
             row = []
             registration_sheet_columns.each { |column|
                 cell_value = site_row[column] || empty_answer
@@ -102,6 +127,32 @@ class V2::ReportController < MrttApiController
             registration_worksheet.add_row row, :style => style_row
         }
     
+        # add intervention header
+        intervention_worksheet.add_row intervention_sheet_columns, :style => style_header
+        
+        # add intervention rows
+        all_sites_rows.each { |site_row|
+            row = []
+            intervention_sheet_columns.each { |column|
+                cell_value = site_row[column] || empty_answer
+                row.push(cell_value)
+            }
+            intervention_worksheet.add_row row, :style => style_row
+        }
+
+        # add monitoring header
+        monitoring_worksheet.add_row monitoring_sheet_columns, :style => style_header
+
+        # add monitoring rows
+        monitoring_sites_rows.each { |site_row| 
+            row = []
+            monitoring_sheet_columns.each { |column| 
+                cell_value = site_row[column] || empty_answer
+                row.push(cell_value)
+            }
+            monitoring_worksheet.add_row row, :style => style_row
+        }
+
         # export
         filename = "sites_report_#{Time.now.strftime("%Y-%m-%d_%H-%M-%S")}.xlsx"
         send_data(p.to_stream.read, filename: filename, disposition: 'attachment')
