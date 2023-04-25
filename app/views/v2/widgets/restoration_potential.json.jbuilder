@@ -1,4 +1,4 @@
-restoration_potential_score = @data.exists?(indicator: 'restoration_potential_score') ?  @data.find_by(indicator: 'restoration_potential_score').value : 60
+restoration_potential_score = @data.exists?(indicator: 'restoration_potential_score') ?  @data.find_by(indicator: 'restoration_potential_score').value : 68
 restorable_area = @data.find_by(indicator: 'restorable_area')
 mangrove_area = @data.find_by(indicator: 'mangrove_area')
 restorable_area_perc = restorable_area && mangrove_area ? (restorable_area.value / mangrove_area.value) * 100 : nil
