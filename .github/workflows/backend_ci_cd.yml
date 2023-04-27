@@ -21,3 +21,20 @@ jobs:
 
       - name: Run RuboCop
         run: bin/rails standard
+
+  security:
+    name: Run backend security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install ruby + gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+          bundler-cache: true
+
+      - name: Run Bundle Audit
+        run: bundle exec bundle-audit check --update
