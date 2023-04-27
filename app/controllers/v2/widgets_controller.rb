@@ -353,11 +353,9 @@ class V2::WidgetsController < ApiController
 
     private
     def convert_factor(params)
-      logger.info "asdfasdf"
-      logger.error "asdfasdf"
       if params.has_key?(:units)
         @conversion_factor = case params[:units]
-          when 'km2' then 0.001
+          when 'km2' then 0.01
           when 'ha' then  1
           when 'm2' then  10000
           else 1
