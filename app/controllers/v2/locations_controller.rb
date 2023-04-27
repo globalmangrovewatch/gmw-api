@@ -7,12 +7,12 @@ class V2::LocationsController < ApiController
     # worldwide = Location.find_by(location_id: 'worldwide')
     # @locations << worldwide if worldwide
     # @locations += Location.all.where.not(location_id: 'worldwide').order(name: :asc)
-    
+
     @locations = Location.where.not(
-      location_type: 'aoi'
+      location_type: "aoi"
     ).all.order(location_type: :asc, name: :asc, iso: :asc)
 
-    @dates = Location.dates_with_data()
+    @dates = Location.dates_with_data
   end
 
   # GET /locations/worldwide
@@ -35,7 +35,7 @@ class V2::LocationsController < ApiController
   # GET /locations/:id
   def show
     data = Location.unscope(:select)
-    @location = data.find_by(iso: params[:id], location_type: 'country') || data.find_by(location_id: params[:id])
+    @location = data.find_by(iso: params[:id], location_type: "country") || data.find_by(location_id: params[:id])
   end
 
   # PUT /locations/:id
@@ -55,22 +55,18 @@ class V2::LocationsController < ApiController
 
   private
 
-    def set_location
-      next_location = Location.find_by(iso: params[:id], location_type: 'country')
-      next_location = Location.find_by(location_id: params[:id]) unless next_location
+  def set_location
+    next_location = Location.find_by(iso: params[:id], location_type: "country")
+    next_location ||= Location.find_by(location_id: params[:id])
 
-      if next_location
-        @location = next_location
-      else
-        @location = Location.find(params[:id].to_i)
-      end
-    end
+    @location = next_location || Location.find(params[:id].to_i)
+  end
 
-    def location_params
-      params.permit(:name, :location_type, :iso)
-    end
+  def location_params
+    params.permit(:name, :location_type, :iso)
+  end
 
-    def import_params
-      params.permit(:file)
-    end
+  def import_params
+    params.permit(:file)
+  end
 end

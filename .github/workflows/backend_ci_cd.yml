@@ -1,0 +1,23 @@
+name: Backend CI/CD
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  ruby_linter:
+    name: Run backend rubocop
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install ruby + gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+          bundler-cache: true
+
+      - name: Run RuboCop
+        run: bin/rails standard

@@ -40,7 +40,7 @@ gem "pivot_table"
 # gem "bcrypt", "~> 3.1.7"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
+gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
@@ -52,27 +52,28 @@ gem "bootsnap", require: false
 gem "rack-cors"
 
 # ActiveAdmin
-gem 'activeadmin'
-gem 'sassc-rails'
+gem "activeadmin"
+gem "sassc-rails"
 # Plus integrations with:
-gem 'devise'
-gem 'cancancan'
-gem 'draper'
-gem 'pundit'
-gem 'active_admin_import'
-gem 'rswag-api'
-gem 'rswag-ui'
-#Gemfiles to add Swagger to the api
+gem "devise"
+gem "cancancan"
+gem "draper"
+gem "pundit"
+gem "active_admin_import"
+gem "rswag-api"
+gem "rswag-ui"
+# Gemfiles to add Swagger to the api
 
-
+# Linter
+gem "standard"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri mingw x64_mingw ]
-  gem 'rspec-rails'
-  gem 'rswag-specs'
-  gem 'database_cleaner'
-  gem 'factory_bot'
+  gem "debug", platforms: %i[mri mingw x64_mingw]
+  gem "rspec-rails"
+  gem "rswag-specs"
+  gem "database_cleaner"
+  gem "factory_bot"
 end
 
 group :development do
@@ -81,15 +82,15 @@ end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
-  gem 'shoulda-matchers', '~> 5.0'
+  gem "shoulda-matchers", "~> 5.0"
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
 end
 
 # Token auth
-gem 'devise-jwt'
+gem "devise-jwt"
 
 # Geo
-gem 'rgeo-geojson'
-gem 'activerecord-postgis-adapter'
+gem "rgeo-geojson"
+gem "activerecord-postgis-adapter"

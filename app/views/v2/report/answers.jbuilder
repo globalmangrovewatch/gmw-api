@@ -4,7 +4,7 @@ json.array! @answers do |answer|
     json.registration_intervention_answers []
   else
     json.registration_intervention_answers do
-      answer["registration_intervention_answers"].each{ |answer| json.set! answer.question_id, answer.answer_value }
+      answer["registration_intervention_answers"].each { |answer| json.set! answer.question_id, answer.answer_value }
     end
   end
   json.monitoring_answers answer["monitoring_answers"]

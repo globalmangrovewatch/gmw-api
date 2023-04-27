@@ -10,7 +10,6 @@ RSpec.describe MangroveDataController, type: :routing do
   #     expect(:get => "/mangrove_data/1").to route_to("mangrove_data#show", :id => "1")
   #   end
 
-
   #   it "routes to #create" do
   #     expect(:post => "/mangrove_data").to route_to("mangrove_data#create")
   #   end

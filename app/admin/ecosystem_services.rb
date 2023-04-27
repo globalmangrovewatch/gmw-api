@@ -1,5 +1,4 @@
 ActiveAdmin.register EcosystemService do
-
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -24,18 +23,18 @@ ActiveAdmin.register EcosystemService do
   })
 
   permit_params :indicator, :value, :location_id
- 
+
   form do |f|
-    f.inputs 'Details' do
-      f.input :indicator, as: :select, 
+    f.inputs "Details" do
+      f.input :indicator, as: :select,
         collection: ["soc", "abgc"],
-        default: 'soc',
+        default: "soc",
         include_blank: false,
         required: true
       f.input :value, as: :number, required: true
     end
 
-    f.inputs 'Location' do
+    f.inputs "Location" do
       f.input :location, as: :select
     end
 
@@ -50,8 +49,7 @@ ActiveAdmin.register EcosystemService do
 
   controller do
     def csv_filename
-      'ecosystem_services.csv'
+      "ecosystem_services.csv"
     end
   end
-  
 end

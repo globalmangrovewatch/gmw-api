@@ -4,10 +4,10 @@ class V1::MangroveDataController < ApiController
 
   # GET /locations/:location_id/mangrove_data
   def index
-    if params.has_key?(:rank_by)
-      @mangrove_datum = @location.mangrove_datum.rank_by(params[:rank_by], params[:dir], params[:dir], params[:start_date] || '1996', params[:end_date] || '2019', params[:limit] || 5)
+    @mangrove_datum = if params.has_key?(:rank_by)
+      @location.mangrove_datum.rank_by(params[:rank_by], params[:dir], params[:dir], params[:start_date] || "1996", params[:end_date] || "2019", params[:limit] || 5)
     else
-      @mangrove_datum = @location.mangrove_datum
+      @location.mangrove_datum
     end
 
     @location_coast_length_m = @location.coast_length_m
@@ -55,7 +55,7 @@ class V1::MangroveDataController < ApiController
 
   # Import data from CSV
   def import
-    if (params[:reset])
+    if params[:reset]
       MangroveDatum.destroy_all
     end
     MangroveDatum.import(import_params)
@@ -64,7 +64,7 @@ class V1::MangroveDataController < ApiController
 
   # Import data from CSV
   def import_geojson
-    if (params[:reset])
+    if params[:reset]
       MangroveDatum.destroy_all
     end
     MangroveDatum.import_geojson(import_params)
@@ -73,27 +73,23 @@ class V1::MangroveDataController < ApiController
 
   private
 
-    # Find location by iso by default, but in case it's a number find a country
-    def set_location
-      next_location = Location.find_by(iso: params[:location_id], location_type: 'country')
-      next_location = Location.find_by(location_id: params[:location_id]) if next_location.nil?
+  # Find location by iso by default, but in case it's a number find a country
+  def set_location
+    next_location = Location.find_by(iso: params[:location_id], location_type: "country")
+    next_location = Location.find_by(location_id: params[:location_id]) if next_location.nil?
 
-      if next_location
-        @location = next_location
-      else
-        @location = Location.find_by(id: params[:location_id].to_i)
-      end
-    end
+    @location = next_location || Location.find_by(id: params[:location_id].to_i)
+  end
 
-    def set_mangrove_datum
-      @mangrove_datum = @location.mangrove_datum.find_by!(id: params[:id]) if @location
-    end
+  def set_mangrove_datum
+    @mangrove_datum = @location.mangrove_datum.find_by!(id: params[:id]) if @location
+  end
 
-    def import_params
-      params.permit(:file)
-    end
+  def import_params
+    params.permit(:file)
+  end
 
-    def mangrove_datum_params
-      params.permit(:date, :location_id)
-    end
+  def mangrove_datum_params
+    params.permit(:date, :location_id)
+  end
 end

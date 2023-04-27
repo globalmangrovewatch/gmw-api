@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.configure do |config|
   # Specify a root folder where Swagger JSON files are generated
   # NOTE: If you're using the rswag-api to serve API descriptions, you'll need
   # to ensure that it's configured to serve Swagger from the same folder
-  config.swagger_root = Rails.root.join('swagger').to_s
+  config.swagger_root = Rails.root.join("swagger").to_s
 
   # Define one or more Swagger documents and provide global metadata for each one
   # When you run the 'rswag:specs:swaggerize' rake task, the complete Swagger will
@@ -15,21 +15,21 @@ RSpec.configure do |config|
   # document below. You can override this behavior by adding a swagger_doc tag to the
   # the root example_group in your specs, e.g. describe '...', swagger_doc: 'v2/swagger.json'
   config.swagger_docs = {
-    'v2/swagger.json' => {
-      openapi: '3.0.1',
+    "v2/swagger.json" => {
+      openapi: "3.0.1",
       info: {
-        title: 'API docs',
-        version: 'v2'
+        title: "API docs",
+        version: "v2"
       },
       paths: {},
       servers: [
         {
-          url: 'https://mangrove-atlas-api-staging.herokuapp.com',
-          description: 'staging api url'
+          url: "https://mangrove-atlas-api-staging.herokuapp.com",
+          description: "staging api url"
         },
         {
-          url: 'https://mangrove-atlas-api.herokuapp.com',
-          description: 'production api url'
+          url: "https://mangrove-atlas-api.herokuapp.com",
+          description: "production api url"
         }
       ],
       components: {
@@ -40,8 +40,8 @@ RSpec.configure do |config|
               location_id: {type: :string, nullable: true},
               units: {type: :string, nullable: true},
               years: {
-                type: :array, 
-                items: {type: :number}, 
+                type: :array,
+                items: {type: :number},
                 nullable: true
               },
               note: {type: :string, nullable: true}
@@ -55,8 +55,8 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   message: {type: :string, nullable: true}
-                },
-              },
+                }
+              }
             },
             required: [:error]
           },
@@ -76,11 +76,11 @@ RSpec.configure do |config|
                   state: {type: :string},
                   postalCode: {type: :string}
                 },
-                required:[]
+                required: []
               },
               medicareRequested: {type: :boolean},
               compensationUsdCents: {type: :integer,
-                                     description: 'compensation'},
+                                     description: "compensation"}
             },
             required: []
           },
@@ -100,11 +100,11 @@ RSpec.configure do |config|
                   state: {type: :string},
                   postalCode: {type: :string}
                 },
-                required:[]
+                required: []
               },
               medicareRequested: {type: :boolean},
               compensationUsdCents: {type: :integer,
-                                     description: 'compensation'},
+                                     description: "compensation"}
             },
             required: []
           },
@@ -114,7 +114,7 @@ RSpec.configure do |config|
               id: {type: :string},
               year: {type: :string},
               total_area: {type: :string},
-              protected_area: {type: :string},
+              protected_area: {type: :string}
             },
             required: []
           },
@@ -130,7 +130,7 @@ RSpec.configure do |config|
                   en: {type: :string, nullable: true},
                   nt: {type: :string, nullable: true},
                   lc: {type: :string, nullable: true}
-                },
+                }
               },
               species: {
                 type: :array,
@@ -141,10 +141,10 @@ RSpec.configure do |config|
                     scientific_name: {type: :string},
                     name: {type: :string, nullable: true},
                     iucn_url: {type: :string, nullable: true},
-                    red_list_cat: {type: :string},
-                  },
-                },
-              },
+                    red_list_cat: {type: :string}
+                  }
+                }
+              }
             },
             required: [:total, :threatened, :categories]
           },
@@ -154,7 +154,7 @@ RSpec.configure do |config|
               restoration_potential_score: {type: :number},
               restorable_area: {type: :number},
               restorable_area_perc: {type: :number},
-              mangrove_area_extent: {type: :number},
+              mangrove_area_extent: {type: :number}
             },
             required: [:restoration_potential_score, :restorable_area, :restorable_area_perc, :mangrove_area_extent]
           },
@@ -163,8 +163,8 @@ RSpec.configure do |config|
             properties: {
               indicator: {type: :string},
               label: {type: :string},
-              value: {type: :number},
-              },
+              value: {type: :number}
+            },
             required: [:indicator, :value]
           },
           blue_carbon_investment: {
@@ -173,31 +173,31 @@ RSpec.configure do |config|
               category: {type: :string},
               value: {type: :number},
               percentage: {type: :number},
-              text: {type: :string},
+              text: {type: :string}
             },
             required: [:category, :value, :percentage, :text]
           },
-        international_status: {
+          international_status: {
             type: :object,
             properties: {
-                location_id: {type: :integer},
-                base_years: {type: :string},
-                fow: {type: :string},
-                frel: {type: :string},
-                ipcc_wetlands_suplement: {type: :string},
-                ndc: {type: :string},
-                ndc_adaptation: {type: :string},
-                ndc_blurb: {type: :string},
-                ndc_mitigation: {type: :string},
-                ndc_reduction_target: {type: :string},
-                ndc_target: {type: :string},
-                ndc_target_url: {type: :string},
-                ndc_updated: {type: :string},
-                pledge_summary: {type: :string},
-                pledge_type: {type: :string},
-                target_years: {type: :string},
-                year_frel: {type: :string}
-              },
+              location_id: {type: :integer},
+              base_years: {type: :string},
+              fow: {type: :string},
+              frel: {type: :string},
+              ipcc_wetlands_suplement: {type: :string},
+              ndc: {type: :string},
+              ndc_adaptation: {type: :string},
+              ndc_blurb: {type: :string},
+              ndc_mitigation: {type: :string},
+              ndc_reduction_target: {type: :string},
+              ndc_target: {type: :string},
+              ndc_target_url: {type: :string},
+              ndc_updated: {type: :string},
+              pledge_summary: {type: :string},
+              pledge_type: {type: :string},
+              target_years: {type: :string},
+              year_frel: {type: :string}
+            },
             required: [:location_id, :base_years, :fow, :frel, :ipcc_wetlands_suplement,
               :ndc, :ndc_adaptation, :ndc_blurb, :ndc_mitigation, :ndc_reduction_target,
               :ndc_target, :ndc_target_url, :ndc_updated, :pledge_summary, :pledge_type,
@@ -207,7 +207,7 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               indicator: {type: :string},
-              value: {type: :number},
+              value: {type: :number}
             },
             required: [:indicator, :value]
           },
@@ -217,7 +217,7 @@ RSpec.configure do |config|
               indicator: {type: :string},
               value: {type: :number},
               year: {type: :number},
-              percentage: {type: :number},
+              percentage: {type: :number}
             },
             required: [:indicator, :value, :year, :percentage]
           },
@@ -227,7 +227,7 @@ RSpec.configure do |config|
               indicator: {type: :string},
               value: {type: :number},
               year: {type: :number},
-              cum_sum: {type: :number},
+              cum_sum: {type: :number}
             },
             required: [:indicator, :value, :year, :percentage]
           },
@@ -237,7 +237,7 @@ RSpec.configure do |config|
               indicator: {type: :string},
               value: {type: :number},
               year: {type: :number},
-              percentage: {type: :number},
+              percentage: {type: :number}
             },
             required: [:indicator, :value, :year, :percentage]
           },
@@ -247,7 +247,7 @@ RSpec.configure do |config|
               indicator: {type: :string},
               value: {type: :number},
               year: {type: :number},
-              percentage: {type: :number},
+              percentage: {type: :number}
             },
             required: [:indicator, :value, :year, :percentage]
           },
@@ -257,7 +257,7 @@ RSpec.configure do |config|
               indicator: {type: :string},
               value: {type: :number},
               year: {type: :number},
-              percentage: {type: :number},
+              percentage: {type: :number}
             },
             required: [:indicator, :value, :year, :percentage]
           },
@@ -267,7 +267,7 @@ RSpec.configure do |config|
               indicator: {type: :string},
               value: {type: :number},
               year: {type: :number},
-              category: {type: :string},
+              category: {type: :string}
             },
             required: [:indicator, :value, :year, :category]
           },
@@ -277,7 +277,7 @@ RSpec.configure do |config|
               indicator: {type: :string},
               value: {type: :number},
               year: {type: :number},
-              category: {type: :string},
+              category: {type: :string}
             },
             required: [:indicator, :value, :year, :category]
           },
@@ -286,14 +286,14 @@ RSpec.configure do |config|
             properties: {
               type: {type: :string},
               features: {
-                type: :array, 
-                items: {type: :object}, 
+                type: :array,
+                items: {type: :object},
                 nullable: false
-              },
+              }
             },
             required: [:type, :features]
-          },
-        },
+          }
+        }
       }
     }
   }

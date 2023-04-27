@@ -36,3 +36,5 @@
 *.sql
 *.dump
 
+.idea
+

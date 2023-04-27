@@ -1,5 +1,4 @@
 ActiveAdmin.register Specie do
-
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -36,22 +35,21 @@ ActiveAdmin.register Specie do
   end
 
   form do |f|
-    f.inputs 'Details' do
+    f.inputs "Details" do
       f.input :scientific_name, required: true
       f.input :common_name
-      f.input :iucn_url, label: 'IUCN URL'
-      f.input :red_list_cat, as: :select, 
-        collection: ["ex", "ew", "re", "cr", "en", "vu", "lr", "nt", "lc", "dd"], 
-        default: 'ex', 
+      f.input :iucn_url, label: "IUCN URL"
+      f.input :red_list_cat, as: :select,
+        collection: ["ex", "ew", "re", "cr", "en", "vu", "lr", "nt", "lc", "dd"],
+        default: "ex",
         include_blank: false,
         required: true
     end
 
-    f.inputs 'Locations' do
-      f.input :locations, as: :select, input_html: { multiple: true }
+    f.inputs "Locations" do
+      f.input :locations, as: :select, input_html: {multiple: true}
     end
 
     actions
   end
-  
 end

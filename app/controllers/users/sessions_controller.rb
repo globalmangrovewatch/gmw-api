@@ -6,9 +6,9 @@ class Users::SessionsController < Devise::SessionsController
 
   def respond_with(resource, _opts = {})
     render json: {
-        message: "You are logged in.",
-        token: request.env["warden-jwt_auth.token"]
-      }, status: :ok
+      message: "You are logged in.",
+      token: request.env["warden-jwt_auth.token"]
+    }, status: :ok
   end
 
   def respond_to_on_destroy
@@ -18,10 +18,10 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def log_out_success
-    render json: { message: "You are logged out." }, status: :ok
+    render json: {message: "You are logged out."}, status: :ok
   end
 
   def log_out_failure
-    render json: { message: "Something went wrong"}, status: :unauthorized
+    render json: {message: "Something went wrong"}, status: :unauthorized
   end
 end

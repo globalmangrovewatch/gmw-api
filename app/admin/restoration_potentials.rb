@@ -1,5 +1,4 @@
 ActiveAdmin.register RestorationPotential do
-
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -24,20 +23,20 @@ ActiveAdmin.register RestorationPotential do
   })
 
   permit_params :indicator, :value, :unit, :location_id
- 
+
   form do |f|
-    f.inputs 'Details' do
-      f.input :indicator, as: :select, 
+    f.inputs "Details" do
+      f.input :indicator, as: :select,
         collection: ["restorable_area", "mangrove_area", "restoration_potential_score"],
-        default: 'restorable_area',
+        default: "restorable_area",
         include_blank: false,
         required: true
       f.input :value
-      f.input :unit, as: :select, collection: ["ha", "%"], include_blank: false, default: 'ha'
+      f.input :unit, as: :select, collection: ["ha", "%"], include_blank: false, default: "ha"
       f.input :year, default: 2016
     end
 
-    f.inputs 'Location' do
+    f.inputs "Location" do
       f.input :location, as: :select
     end
 
@@ -53,8 +52,7 @@ ActiveAdmin.register RestorationPotential do
 
   controller do
     def csv_filename
-      'restoration_potentials.csv'
+      "restoration_potentials.csv"
     end
   end
-
 end
