@@ -2,13 +2,16 @@ class V2::WidgetsController < ApiController
   include PivotTableHelper
   include ApplicationHelper
 
+  CONVERSION_UNITS = {"km2" => 0.001, "ha" => 1, "m2" => 10000}.freeze
+
   # GET /v2/widgets/protected-areas
   def protected_areas
     # original area data is in hectares,
     # but we want to display it in square km
     # TODO: make this configurable https://github.com/mhuggins/ruby-measurement
-    @conversion_factor = convert_factor(params)
-    @unit = params[:units] || "ha"
+    @unit = CONVERSION_UNITS.keys.find { |unit| unit == params[:unit].to_s } || "ha"
+    @conversion_factor = CONVERSION_UNITS[@unit]
+
     # location_id here references location.location_id instead of location.id
     if params.has_key?(:location_id) && params[:location_id] != "worldwide"
       @location_id = params[:location_id]
@@ -85,8 +88,9 @@ class V2::WidgetsController < ApiController
       "protected" => "Protected",
       "remaining" => "Remaining"
     }
-    @conversion_factor = convert_factor(params)
-    @unit = params[:units] || "ha"
+
+    @unit = CONVERSION_UNITS.keys.find { |unit| unit == params[:unit].to_s } || "ha"
+    @conversion_factor = CONVERSION_UNITS[@unit]
 
     if params.has_key?(:location_id) && params[:location_id] != "worldwide"
       @location_id = params[:location_id]
@@ -303,22 +307,5 @@ class V2::WidgetsController < ApiController
     subquery = HabitatExtent.joins(:location).includes(:location).select("year, COALESCE(LAG(value, 1) OVER (PARTITION BY location.iso ORDER BY year ASC), value) value_prior, value, location.name, indicator, location.iso").where(location: {location_type: "country"}, indicator: "habitat_extent_area", year: [@start_year, @end_year]).order(:indicator, :year)
 
     @data = HabitatExtent.select("sum(value - value_prior) as value, ABS(sum(value - value_prior)) as abs_value, name,'net_change' indicator, iso").from(subquery).group(:name, :indicator, :iso).order("2 desc").limit(@limit)
-  end
-
-  private
-
-  def convert_factor(params)
-    logger.info "asdfasdf"
-    logger.error "asdfasdf"
-    @conversion_factor = if params.has_key?(:units)
-      case params[:units]
-      when "km2" then 0.001
-      when "ha" then 1
-      when "m2" then 10000
-      else 1
-      end
-    else
-      1
-    end
   end
 end

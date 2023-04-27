@@ -27,6 +27,7 @@ class Location < ApplicationRecord
   end
 
   def self.rank_by_mangrove_data_column(column_name, dir = "DESC", start_date = "1996-01-01", end_date = "2015-01-01", location_type = nil, limit = "5")
+    column_name = MangroveDatum.sanitize column_name
     data = MangroveDatum.joins("INNER JOIN locations on locations.id = mangrove_data.location_id")
       .select("mangrove_data.location_id, sum(#{column_name}) as #{column_name}, locations.location_type")
       .where.not(gain_m2: nil, location_id: Location.worldwide.id)

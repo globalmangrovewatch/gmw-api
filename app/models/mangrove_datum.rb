@@ -17,6 +17,7 @@ class MangroveDatum < ApplicationRecord
   end
 
   def self.rank_by(column_name, dir = "DESC", start_date = "1996", end_date = "2015", limit = "5")
+    column_name = sanitize column_name
     where.not("#{column_name} IS NULL")
       .where("date >= ? AND date <= ?", Date.strptime(start_date, "%Y"), Date.strptime(end_date, "%Y"))
       .order("#{column_name} #{dir}")
@@ -24,6 +25,7 @@ class MangroveDatum < ApplicationRecord
   end
 
   def self.dates_with_data(column_name)
+    column_name = sanitize column_name
     if column_name
       self.select("date").where.not("#{column_name} IS NULL").group("date")
     else
@@ -114,5 +116,9 @@ class MangroveDatum < ApplicationRecord
     end
 
     self
+  end
+
+  def self.sanitize(column_name)
+    sanitize_sql column_names.find { |c| c == column_name.to_s }
   end
 end

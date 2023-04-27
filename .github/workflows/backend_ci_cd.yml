@@ -16,7 +16,6 @@ jobs:
       - name: Install ruby + gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.2
           bundler-cache: true
 
       - name: Run RuboCop
@@ -33,8 +32,10 @@ jobs:
       - name: Install ruby + gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.2
           bundler-cache: true
+
+      - name: Run Brakeman
+        run: bundle exec brakeman
 
       - name: Run Bundle Audit
         run: bundle exec bundle-audit check --update
