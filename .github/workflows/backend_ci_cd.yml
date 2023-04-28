@@ -5,6 +5,48 @@ on:
   workflow_dispatch:
 
 jobs:
+  tests:
+    name: Run backend tests
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_NAME: mangrove-atlas-api_test
+      DATABASE_PASSWORD: postgres
+      DATABASE_USER: postgres
+      RAILS_ENV: test
+
+    services:
+      postgres:
+        image: postgis/postgis:14-master
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: ${{ env.DATABASE_USER }}
+          POSTGRES_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout️
+        uses: actions/checkout@v2
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt update
+          sudo bash -c "echo deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg 14 >> /etc/apt/sources.list.d/pgdg.list"
+          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+          sudo apt-get update
+          sudo apt-get -yqq install libpq-dev postgresql-client-14
+      - name: Install ruby + gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Setup database
+        run: |
+          bundle exec rails db:create
+          bundler exec rails db:schema:load
+      - name: Run tests
+        run: bundle exec rspec spec --fail-fast
+
   ruby_linter:
     name: Run backend rubocop
     runs-on: ubuntu-latest

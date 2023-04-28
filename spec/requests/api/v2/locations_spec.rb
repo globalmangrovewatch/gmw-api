@@ -1,6 +1,6 @@
 require "swagger_helper"
 
-RSpec.describe "api/v2/locations", type: :request do
+RSpec.describe "API V2 Locations", type: :request do
   path "/api/v2/locations" do
     get "Retrieves the data for the biodiversity widget" do
       tags "Locations"

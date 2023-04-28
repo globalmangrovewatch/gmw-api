@@ -1,6 +1,6 @@
 require "swagger_helper"
 
-RSpec.describe "api/v2/spatial_file", type: :request do
+RSpec.describe "API V2 File Converter", type: :request do
   path "/api/v2/spatial_file/converter" do
     post "Converts a geospatial format into a valid geojson" do
       tags "file_converter"

@@ -1,6 +1,6 @@
 require "swagger_helper"
 
-RSpec.describe "api/v2/widgets", type: :request do
+RSpec.describe "API V2 Widgets", type: :request do
   path "/api/v2/widgets/protected-areas" do
     get "Retrieves the data for the protected area widget" do
       tags "Widgets"

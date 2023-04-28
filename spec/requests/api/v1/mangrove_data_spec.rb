@@ -1,6 +1,6 @@
 require "swagger_helper"
 
-RSpec.describe "api/v1/locations/{location_id}/mangrove_data", type: :request do
+RSpec.describe "API V1 Mangrove Data", type: :request do
   path "/api/v1/locations/{location_id}/mangrove_data" do
     get "Retrieves the data for the orginal widgets" do
       tags "Locations"

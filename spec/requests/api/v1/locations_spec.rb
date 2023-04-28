@@ -1,6 +1,6 @@
 require "swagger_helper"
 
-RSpec.describe "api/v1/locations", type: :request do
+RSpec.describe "API V1 Locations", type: :request do
   path "/api/v1/locations" do
     get "Retrieves the data for the degradation and loss Treemap chart" do
       tags "Locations"
