@@ -8,6 +8,12 @@ RSpec.configure do |config|
   # to ensure that it's configured to serve Swagger from the same folder
   config.swagger_root = Rails.root.join("swagger").to_s
 
+  config.after :each, generate_swagger_example: true do |example|
+    example.metadata[:response][:content] = {
+      "application/json" => {example: JSON.parse(response.body, symbolize_names: true)}
+    }
+  end
+
   # Define one or more Swagger documents and provide global metadata for each one
   # When you run the 'rswag:specs:swaggerize' rake task, the complete Swagger will
   # be generated at the provided relative path under swagger_root
@@ -38,15 +44,15 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               location_id: {type: :string, nullable: true},
-              units: {type: :string, nullable: true},
+              unit: {type: :string, nullable: true},
+              units: {type: :object, nullable: true},
               years: {
                 type: :array,
                 items: {type: :number},
                 nullable: true
               },
               note: {type: :string, nullable: true}
-            },
-            required: [:unit, :note]
+            }
           },
           error_response: {
             type: :object,
@@ -111,25 +117,25 @@ RSpec.configure do |config|
           protected_areas: {
             type: :object,
             properties: {
-              id: {type: :string},
-              year: {type: :string},
-              total_area: {type: :string},
-              protected_area: {type: :string}
+              id: {type: :integer, nullable: true},
+              year: {type: :integer},
+              total_area: {type: :number},
+              protected_area: {type: :number}
             },
             required: []
           },
           biodiversity: {
             type: :object,
             properties: {
-              total: {type: :string},
-              threatened: {type: :string},
+              total: {type: :integer},
+              threatened: {type: :integer},
               categories: {
                 type: :object,
                 properties: {
-                  cr: {type: :string, nullable: true},
-                  en: {type: :string, nullable: true},
-                  nt: {type: :string, nullable: true},
-                  lc: {type: :string, nullable: true}
+                  cr: {type: :integer, nullable: true},
+                  en: {type: :integer, nullable: true},
+                  nt: {type: :integer, nullable: true},
+                  lc: {type: :integer, nullable: true}
                 }
               },
               species: {
@@ -137,7 +143,7 @@ RSpec.configure do |config|
                 items: {
                   type: :object,
                   properties: {
-                    id: {type: :number},
+                    id: {type: :integer},
                     scientific_name: {type: :string},
                     name: {type: :string, nullable: true},
                     iucn_url: {type: :string, nullable: true},
@@ -152,9 +158,9 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               restoration_potential_score: {type: :number},
-              restorable_area: {type: :number},
-              restorable_area_perc: {type: :number},
-              mangrove_area_extent: {type: :number}
+              restorable_area: {type: :number, nullable: true},
+              restorable_area_perc: {type: :number, nullable: true},
+              mangrove_area_extent: {type: :number, nullable: true}
             },
             required: [:restoration_potential_score, :restorable_area, :restorable_area_perc, :mangrove_area_extent]
           },
@@ -173,14 +179,14 @@ RSpec.configure do |config|
               category: {type: :string},
               value: {type: :number},
               percentage: {type: :number},
-              text: {type: :string}
+              description: {type: :string},
+              label: {type: :string}
             },
-            required: [:category, :value, :percentage, :text]
+            required: [:category, :value, :percentage, :description]
           },
           international_status: {
             type: :object,
             properties: {
-              location_id: {type: :integer},
               base_years: {type: :string},
               fow: {type: :string},
               frel: {type: :string},
@@ -197,11 +203,7 @@ RSpec.configure do |config|
               pledge_type: {type: :string},
               target_years: {type: :string},
               year_frel: {type: :string}
-            },
-            required: [:location_id, :base_years, :fow, :frel, :ipcc_wetlands_suplement,
-              :ndc, :ndc_adaptation, :ndc_blurb, :ndc_mitigation, :ndc_reduction_target,
-              :ndc_target, :ndc_target_url, :ndc_updated, :pledge_summary, :pledge_type,
-              :target_years, :year_frel]
+            }
           },
           ecosystem_service: {
             type: :object,

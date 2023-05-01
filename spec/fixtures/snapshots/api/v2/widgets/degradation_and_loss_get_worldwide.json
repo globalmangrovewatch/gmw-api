@@ -1,0 +1,38 @@
+{
+  "data": [
+    {
+      "indicator": "degraded_area",
+      "value": 68950.02,
+      "label": "Non-Restorable loss mangrove area"
+    },
+    {
+      "indicator": "lost_area",
+      "value": 13440.899999999994,
+      "label": "Total loss"
+    },
+    {
+      "indicator": "mangrove_area",
+      "value": 99388.06,
+      "label": "Mangrove area"
+    },
+    {
+      "indicator": "restorable_area",
+      "value": 85187.83,
+      "label": "Restorable loss mangrove area"
+    }
+  ],
+  "metadata": {
+    "location_id": "worldwide",
+    "year": [
+      2019,
+      2018
+    ],
+    "units": {
+      "degraded_area": "%",
+      "lost_area": "ha",
+      "mangrove_area": "ha"
+    },
+    "main_loss_driver": null,
+    "note": null
+  }
+}

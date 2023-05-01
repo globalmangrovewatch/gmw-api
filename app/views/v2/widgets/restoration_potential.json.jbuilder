@@ -5,9 +5,9 @@ restorable_area_perc = (restorable_area && mangrove_area) ? (restorable_area.val
 if @data.exists?
   json.data do
     json.restoration_potential_score restoration_potential_score
-    json.restorable_area restorable_area.value
+    json.restorable_area restorable_area&.value
     json.restorable_area_perc restorable_area_perc
-    json.mangrove_area_extent mangrove_area.value
+    json.mangrove_area_extent mangrove_area&.value
   end
 else
   json.data({})

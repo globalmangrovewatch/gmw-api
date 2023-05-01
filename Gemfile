@@ -72,8 +72,8 @@ group :development, :test do
   gem "debug", platforms: %i[mri mingw x64_mingw]
   gem "rspec-rails"
   gem "rswag-specs"
-  gem "database_cleaner"
-  gem "factory_bot"
+  gem "faker"
+  gem "factory_bot_rails"
 end
 
 group :development do
@@ -88,6 +88,8 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
+  gem "webmock"
+  gem "rspec-request_snapshot", github: "tsubik/rspec-request_snapshot", branch: "fix/ignore-order"
 end
 
 # Token auth

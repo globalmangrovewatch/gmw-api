@@ -1,6 +1,6 @@
 class V2::WidgetsController < ApiController
-  include PivotTableHelper
-  include ApplicationHelper
+  helper PivotTableHelper
+  helper ApplicationHelper
 
   CONVERSION_UNITS = {"km2" => 0.001, "ha" => 1, "m2" => 10000}.freeze
 
@@ -9,7 +9,7 @@ class V2::WidgetsController < ApiController
     # original area data is in hectares,
     # but we want to display it in square km
     # TODO: make this configurable https://github.com/mhuggins/ruby-measurement
-    @unit = CONVERSION_UNITS.keys.find { |unit| unit == params[:unit].to_s } || "ha"
+    @unit = CONVERSION_UNITS.keys.find { |unit| unit == params[:units].to_s } || "ha"
     @conversion_factor = CONVERSION_UNITS[@unit]
 
     # location_id here references location.location_id instead of location.id
@@ -89,7 +89,7 @@ class V2::WidgetsController < ApiController
       "remaining" => "Remaining"
     }
 
-    @unit = CONVERSION_UNITS.keys.find { |unit| unit == params[:unit].to_s } || "ha"
+    @unit = CONVERSION_UNITS.keys.find { |unit| unit == params[:units].to_s } || "ha"
     @conversion_factor = CONVERSION_UNITS[@unit]
 
     if params.has_key?(:location_id) && params[:location_id] != "worldwide"
