@@ -1,0 +1,14 @@
+{
+  "data": {
+    "id": 15078,
+    "iso": "TST",
+    "bounds": {
+    },
+    "location_type": "country",
+    "name": "Test Location",
+    "area_m2": 68950.02,
+    "perimeter_m": 68950.02,
+    "coast_length_m": 68950.02,
+    "location_id": "Location-1"
+  }
+}

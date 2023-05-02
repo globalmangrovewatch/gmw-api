@@ -93,26 +93,28 @@ RSpec.configure do |config|
           location_v2: {
             type: :object,
             properties: {
-              id: {type: :string},
-              createdAt: {type: :string},
-              state: {type: :string},
-              joiningDate: {type: :string},
-              homeAddress: {
-                type: :object,
-                properties: {
-                  address1: {type: :string},
-                  address2: {type: :string, nullable: true},
-                  city: {type: :string},
-                  state: {type: :string},
-                  postalCode: {type: :string}
-                },
-                required: []
-              },
-              medicareRequested: {type: :boolean},
-              compensationUsdCents: {type: :integer,
-                                     description: "compensation"}
+              id: {type: :integer},
+              created_at: {type: :string},
+              name: {type: :string},
+              location_type: {type: :string},
+              iso: {type: :string},
+              location_id: {type: :string, nullable: true},
+              coast_length_m: {type: :number, nullable: true},
+              area_m2: {type: :number, nullable: true}
             },
             required: []
+          },
+          specie: {
+            type: :object,
+            properties: {
+              id: {type: :integer},
+              scientific_name: {type: :string},
+              common_name: {type: :string, nullable: true},
+              name: {type: :string, nullable: true},
+              iucn_url: {type: :string, nullable: true},
+              red_list_cat: {type: :string},
+              location_ids: {type: :array, items: {type: :integer}}
+            }
           },
           protected_areas: {
             type: :object,
@@ -141,14 +143,7 @@ RSpec.configure do |config|
               species: {
                 type: :array,
                 items: {
-                  type: :object,
-                  properties: {
-                    id: {type: :integer},
-                    scientific_name: {type: :string},
-                    name: {type: :string, nullable: true},
-                    iucn_url: {type: :string, nullable: true},
-                    red_list_cat: {type: :string}
-                  }
+                  "$ref": "#/components/schemas/specie"
                 }
               }
             },

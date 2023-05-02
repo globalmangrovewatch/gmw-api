@@ -219,6 +219,79 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": {
+                    "type": "FeatureCollection",
+                    "features": [
+                      {
+                        "type": "Feature",
+                        "properties": {
+                          "id": "ID-1"
+                        },
+                        "geometry": {
+                          "type": "Polygon",
+                          "coordinates": [
+                            [
+                              [
+                                100.0,
+                                0.0
+                              ],
+                              [
+                                101.0,
+                                0.0
+                              ],
+                              [
+                                101.0,
+                                1.0
+                              ],
+                              [
+                                100.0,
+                                1.0
+                              ],
+                              [
+                                100.0,
+                                0.0
+                              ]
+                            ]
+                          ]
+                        }
+                      },
+                      {
+                        "type": "Feature",
+                        "properties": {
+                          "id": "ID-2"
+                        },
+                        "geometry": {
+                          "type": "Polygon",
+                          "coordinates": [
+                            [
+                              [
+                                100.0,
+                                0.0
+                              ],
+                              [
+                                101.0,
+                                0.0
+                              ],
+                              [
+                                101.0,
+                                1.0
+                              ],
+                              [
+                                100.0,
+                                1.0
+                              ],
+                              [
+                                100.0,
+                                0.0
+                              ]
+                            ]
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -231,16 +304,8 @@
               }
             }
           },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
+          "400": {
+            "description": "Bad Request"
           }
         },
         "requestBody": {
@@ -261,20 +326,48 @@
         "tags": [
           "Locations"
         ],
-        "parameters": [
-          {
-            "name": "location_id",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "meta": {
+                    "dates": [
+                      {
+                        "date": "2016-01-01"
+                      }
+                    ]
+                  },
+                  "data": [
+                    {
+                      "name": "Lome",
+                      "location_type": "cum",
+                      "iso": "cum",
+                      "bounds": {
+                      },
+                      "location_id": "Location-2",
+                      "coast_length_m": 98628.73,
+                      "perimeter_m": 98628.73,
+                      "area_m2": 98628.73,
+                      "id": 15135,
+                      "created_at": "2023-05-02T13:18:16.804Z"
+                    },
+                    {
+                      "name": "Kinshasa",
+                      "location_type": "voluptatem",
+                      "iso": "voluptatem",
+                      "bounds": {
+                      },
+                      "location_id": "Location-1",
+                      "coast_length_m": 68950.02,
+                      "perimeter_m": 68950.02,
+                      "area_m2": 68950.02,
+                      "id": 15134,
+                      "created_at": "2023-05-02T13:18:16.803Z"
+                    }
+                  ]
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -292,15 +385,76 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error 500",
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates a new location",
+        "tags": [
+          "Locations"
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
             "content": {
               "application/json": {
+                "example": {
+                  "data": {
+                    "id": 15141,
+                    "iso": "TST",
+                    "bounds": null,
+                    "location_type": "country",
+                    "name": "Test Location",
+                    "area_m2": null,
+                    "perimeter_m": null,
+                    "coast_length_m": null,
+                    "location_id": null
+                  }
+                },
                 "schema": {
                   "type": "object",
-                  "$ref": "#/components/schemas/error_response"
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/location_v2"
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/metadata"
+                    }
+                  }
                 }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "location_type": {
+                    "type": "string"
+                  },
+                  "iso": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "location_type",
+                  "iso"
+                ]
               }
             }
           }
@@ -328,6 +482,22 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": {
+                    "id": 15143,
+                    "iso": "voluptatem",
+                    "bounds": {
+                    },
+                    "location_type": "country",
+                    "name": "Kinshasa",
+                    "area_m2": 68950.02,
+                    "perimeter_m": 68950.02,
+                    "coast_length_m": 68950.02,
+                    "location_id": "Location-1",
+                    "geometry": {
+                    }
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -344,13 +514,170 @@
               }
             }
           },
-          "500": {
-            "description": "Error 500",
+          "400": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Updates the data of a location",
+        "tags": [
+          "Locations"
+        ],
+        "parameters": [
+          {
+            "name": "location_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": {
+                    "id": 15147,
+                    "iso": "TST",
+                    "bounds": {
+                    },
+                    "location_type": "country",
+                    "name": "Test Location",
+                    "area_m2": 68950.02,
+                    "perimeter_m": 68950.02,
+                    "coast_length_m": 68950.02,
+                    "location_id": "Location-1"
+                  }
+                },
                 "schema": {
                   "type": "object",
-                  "$ref": "#/components/schemas/error_response"
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/location_v2"
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/metadata"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "location_type": {
+                    "type": "string"
+                  },
+                  "iso": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "location_type",
+                  "iso"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes a location",
+        "tags": [
+          "Locations"
+        ],
+        "parameters": [
+          {
+            "name": "location_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/v2/species": {
+      "get": {
+        "summary": "Retrieves data for species",
+        "tags": [
+          "Species"
+        ],
+        "parameters": [
+          {
+            "name": "location_id",
+            "in": "query",
+            "description": "Location id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "scientific_name": "voluptatem",
+                      "common_name": "voluptatem",
+                      "iucn_url": "http://kutch-spencer.com/moises",
+                      "red_list_cat": "vu",
+                      "location_ids": [
+                        15150
+                      ]
+                    },
+                    {
+                      "scientific_name": "cum",
+                      "common_name": "cum",
+                      "iucn_url": "http://bartoletti.com/jeremiah_cronin",
+                      "red_list_cat": "lc",
+                      "location_ids": [
+
+                      ]
+                    }
+                  ]
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/specie"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -397,14 +724,14 @@
                 "example": {
                   "data": [
                     {
-                      "id": 2549,
+                      "id": 2567,
                       "year": 2016,
                       "total_area": 68950.02,
                       "protected_area": 68950.02
                     }
                   ],
                   "metadata": {
-                    "location_id": "14693",
+                    "location_id": "15155",
                     "units": {
                       "total_area": "ha",
                       "protected_area": "ha"
@@ -495,9 +822,9 @@
                     },
                     "species": [
                       {
-                        "id": 1001,
-                        "created_at": "2023-05-02T09:17:39.904Z",
-                        "updated_at": "2023-05-02T09:17:39.904Z",
+                        "id": 1051,
+                        "created_at": "2023-05-02T13:18:17.113Z",
+                        "updated_at": "2023-05-02T13:18:17.113Z",
                         "scientific_name": "voluptatem",
                         "common_name": "voluptatem",
                         "iucn_url": "http://kutch-spencer.com/moises",
@@ -568,7 +895,7 @@
                     "mangrove_area_extent": null
                   },
                   "metadata": {
-                    "location_id": "14719",
+                    "location_id": "15181",
                     "year": [
                       2019,
                       2018
@@ -645,7 +972,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "14747",
+                    "location_id": "15209",
                     "year": [
                       2019,
                       2018
@@ -727,7 +1054,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "14781",
+                    "location_id": "15243",
                     "unit": "ha",
                     "note": null
                   }
@@ -782,7 +1109,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "14795",
+                    "location_id": "15257",
                     "note": null
                   }
                 },
@@ -837,7 +1164,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "14803",
+                    "location_id": "15265",
                     "unit": "mt CO₂ e",
                     "note": null
                   }
@@ -894,7 +1221,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "14818",
+                    "location_id": "15280",
                     "units": {
                       "habitat_extent_area": "km2",
                       "linear_coverage": "km"
@@ -966,7 +1293,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "14836",
+                    "location_id": "15298",
                     "units": {
                       "net_change": "km2"
                     },
@@ -1040,7 +1367,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "14854",
+                    "location_id": "15316",
                     "units": {
                       "value": "tons/ha"
                     },
@@ -1108,7 +1435,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "14870",
+                    "location_id": "15332",
                     "units": {
                       "value": "m"
                     },
@@ -1173,7 +1500,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "14882",
+                    "location_id": "15344",
                     "units": {
                       "value": "CO2e/ha",
                       "toc": "t CO₂e",
@@ -1240,7 +1567,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "14893",
+                    "location_id": "15355",
                     "units": {
                       "value": "tCO2/ha"
                     },
@@ -1462,52 +1789,68 @@
         "type": "object",
         "properties": {
           "id": {
+            "type": "integer"
+          },
+          "created_at": {
             "type": "string"
           },
-          "createdAt": {
+          "name": {
             "type": "string"
           },
-          "state": {
+          "location_type": {
             "type": "string"
           },
-          "joiningDate": {
+          "iso": {
             "type": "string"
           },
-          "homeAddress": {
-            "type": "object",
-            "properties": {
-              "address1": {
-                "type": "string"
-              },
-              "address2": {
-                "type": "string",
-                "nullable": true
-              },
-              "city": {
-                "type": "string"
-              },
-              "state": {
-                "type": "string"
-              },
-              "postalCode": {
-                "type": "string"
-              }
-            },
-            "required": [
-
-            ]
+          "location_id": {
+            "type": "string",
+            "nullable": true
           },
-          "medicareRequested": {
-            "type": "boolean"
+          "coast_length_m": {
+            "type": "number",
+            "nullable": true
           },
-          "compensationUsdCents": {
-            "type": "integer",
-            "description": "compensation"
+          "area_m2": {
+            "type": "number",
+            "nullable": true
           }
         },
         "required": [
 
         ]
+      },
+      "specie": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "scientific_name": {
+            "type": "string"
+          },
+          "common_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "iucn_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "red_list_cat": {
+            "type": "string"
+          },
+          "location_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
       },
       "protected_areas": {
         "type": "object",
@@ -1563,26 +1906,7 @@
           "species": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "integer"
-                },
-                "scientific_name": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string",
-                  "nullable": true
-                },
-                "iucn_url": {
-                  "type": "string",
-                  "nullable": true
-                },
-                "red_list_cat": {
-                  "type": "string"
-                }
-              }
+              "$ref": "#/components/schemas/specie"
             }
           }
         },

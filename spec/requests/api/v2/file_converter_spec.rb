@@ -15,52 +15,62 @@ RSpec.describe "API V2 File Converter", type: :request do
               "$ref" => "#/components/schemas/file_converter"
             }
           }
-        example "application/json", :example_key, {
-          data: {
-            type: "FeatureCollection",
-            features: [
-              {
-                type: "Feature",
-                geometry: {
-                  type: "Polygon",
-                  coordinates: [
-                    [
-                      [
-                        -122.422,
-                        37.777
-                      ],
-                      [
-                        -122.422,
-                        37.777
-                      ],
-                      [
-                        -122.422,
-                        37.777
-                      ],
-                      [
-                        -122.422,
-                        37.777
-                      ],
-                      [
-                        -122.422,
-                        37.777
-                      ]
-                    ]
-                  ]
-                }
-              }
-            ]
-          }
-        }
+
+        context "when geojson file is provided", generate_swagger_example: true do
+          let(:file) { fixture_file_upload "dummy_geojson.json" }
+
+          run_test!
+        end
+
+        context "when zipfile is provided" do
+          let(:file) { fixture_file_upload "zip_with_geojson.zip" }
+
+          run_test!
+        end
+
+        context "when shapefile is provided" do
+          let(:geojson_file) { Tempfile.new }
+          let(:file) { fixture_file_upload "shapefile.zip" }
+
+          before do
+            geojson_file.write file_fixture("dummy_geojson.json").read
+            geojson_file.rewind
+            allow_any_instance_of(FileDataImport::Parser::Shp).to receive(:convert_to_geojson)
+            allow_any_instance_of(FileDataImport::Parser::Shp).to receive(:path_to_geojson_file).and_return(geojson_file.path)
+          end
+
+          after do
+            geojson_file.close
+            geojson_file.unlink
+          end
+
+          run_test!
+        end
+
+        context "when gpkg file is provided" do
+          let(:geojson_file) { Tempfile.new }
+          let(:file) { fixture_file_upload "dummy_geopackage.gpkg" }
+
+          before do
+            geojson_file.write file_fixture("dummy_geojson.json").read
+            geojson_file.rewind
+            allow_any_instance_of(FileDataImport::Parser::Gpkg).to receive(:convert_to_geojson)
+            allow_any_instance_of(FileDataImport::Parser::Gpkg).to receive(:path_to_geojson_file).and_return(geojson_file.path)
+          end
+
+          after do
+            geojson_file.close
+            geojson_file.unlink
+          end
+
+          run_test!
+        end
       end
 
-      response 500, "Error 500" do
-        schema :type => :object,
-          "$ref" => "#/components/schemas/error_response"
+      response 400, "Bad Request" do
+        let(:file) { fixture_file_upload "invalid_file.txt" }
 
-        example "application/json", :example_key, {
-          error: "1"
-        }
+        run_test!
       end
     end
   end

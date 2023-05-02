@@ -1,13 +1,8 @@
 class V2::LocationsController < ApiController
-  # deserializable_resource :location
   before_action :set_location, only: [:show, :update, :destroy]
 
   # GET /locations
   def index
-    # worldwide = Location.find_by(location_id: 'worldwide')
-    # @locations << worldwide if worldwide
-    # @locations += Location.all.where.not(location_id: 'worldwide').order(name: :asc)
-
     @locations = Location.where.not(
       location_type: "aoi"
     ).all.order(location_type: :asc, name: :asc, iso: :asc)
@@ -25,10 +20,10 @@ class V2::LocationsController < ApiController
     @location = Location.new(location_params)
 
     if @location.save
-      render :create, :created
+      render :create, status: :created
     else
       # json_response(@location.errors, :unprocessable_entity)
-      render :create, :unprocessable_entity
+      render :create, status: :unprocessable_entity
     end
   end
 
