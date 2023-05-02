@@ -2,7 +2,7 @@ class V2::WidgetsController < ApiController
   helper PivotTableHelper
   helper ApplicationHelper
 
-  CONVERSION_UNITS = {"km2" => 0.001, "ha" => 1, "m2" => 10000}.freeze
+  CONVERSION_UNITS = {"km2" => 0.01, "ha" => 1, "m2" => 10000}.freeze
 
   # GET /v2/widgets/protected-areas
   def protected_areas
