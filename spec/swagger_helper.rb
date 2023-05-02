@@ -218,50 +218,46 @@ RSpec.configure do |config|
             properties: {
               indicator: {type: :string},
               value: {type: :number},
-              year: {type: :number},
-              percentage: {type: :number}
+              year: {type: :number}
             },
-            required: [:indicator, :value, :year, :percentage]
+            required: [:indicator, :value, :year]
           },
           net_change: {
             type: :object,
             properties: {
-              indicator: {type: :string},
-              value: {type: :number},
+              net_change: {type: :number},
               year: {type: :number},
-              cum_sum: {type: :number}
+              gain: {type: :number, nullable: true},
+              loss: {type: :number, nullable: true}
             },
-            required: [:indicator, :value, :year, :percentage]
+            required: [:net_change, :year]
           },
           aboveground_biomass: {
             type: :object,
             properties: {
               indicator: {type: :string},
               value: {type: :number},
-              year: {type: :number},
-              percentage: {type: :number}
+              year: {type: :number}
             },
-            required: [:indicator, :value, :year, :percentage]
+            required: [:indicator, :value, :year]
           },
           tree_height: {
             type: :object,
             properties: {
               indicator: {type: :string},
               value: {type: :number},
-              year: {type: :number},
-              percentage: {type: :number}
+              year: {type: :number}
             },
-            required: [:indicator, :value, :year, :percentage]
+            required: [:indicator, :value, :year]
           },
           blue_carbon: {
             type: :object,
             properties: {
               indicator: {type: :string},
               value: {type: :number},
-              year: {type: :number},
-              percentage: {type: :number}
+              year: {type: :number}
             },
-            required: [:indicator, :value, :year, :percentage]
+            required: [:indicator, :value, :year]
           },
           mitigation_potentials: {
             type: :object,
@@ -278,10 +274,11 @@ RSpec.configure do |config|
             properties: {
               indicator: {type: :string},
               value: {type: :number},
-              year: {type: :number},
-              category: {type: :string}
+              abs_value: {type: :number},
+              name: {type: :string},
+              iso: {type: :string}
             },
-            required: [:indicator, :value, :year, :category]
+            required: [:indicator, :value]
           },
           file_converter: {
             type: :object,

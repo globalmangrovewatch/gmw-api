@@ -151,7 +151,7 @@ RSpec.describe "API V2 Widgets", type: :request do
         create :restoration_potential, location: location, year: 2019, indicator: "restorable_area"
       end
       let!(:restoration_potential_score) do
-        create :restoration_potential, location:location, year: 2019, indicator: "restoration_potential_score"
+        create :restoration_potential, location: location, year: 2019, indicator: "restoration_potential_score"
       end
       let!(:mangrove_area) do
         create :restoration_potential, year: 2019, indicator: "mangrove_area"
@@ -422,7 +422,7 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
-      parameter name: :location_id, in: :query, type: :string
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
 
       response 200, "Success" do
         schema type: :object,
@@ -436,22 +436,36 @@ RSpec.describe "API V2 Widgets", type: :request do
               "$ref" => "#/components/schemas/metadata"
             }
           }
-        example "application/json", :example_key, {
-          data: [{}],
-          metadata: {
-            location_id: "1"
-          }
-        }
-      end
 
-      response 500, "Error 500" do
-        schema :type => :object,
-          "$ref" => "#/components/schemas/error_response"
+        let(:location) { create :location }
+        let!(:ecosystem_service_1) { create :ecosystem_service, location: location }
+        let!(:ecosystem_service_2) { create :ecosystem_service }
 
-        example "application/json", :example_key, {
+        context "when location_id is used" do
+          let(:location_id) { location.id }
 
-          location_id: "1"
-        }
+          run_test!
+
+          it "matches snapshot", generate_swagger_example: true do
+            expect(response.body).to match_snapshot("api/v2/widgets/ecosystem_services_get_location")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([ecosystem_service_1.value])
+          end
+        end
+
+        context "when location_id is missing - use worldwide" do
+          run_test!
+
+          it "matches snapshot" do
+            expect(response.body).to match_snapshot("api/v2/widgets/ecosystem_services_get_worldwide")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to match_array([ecosystem_service_1.value, ecosystem_service_2.value])
+          end
+        end
       end
     end
   end
@@ -461,7 +475,14 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
-      parameter name: :location_id, in: :query, type: :string
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
+
+      let!(:worldwide) { create :location, :worldwide }
+      let(:country_location) { create :location, location_type: "country" }
+      let(:location) { create :location }
+      let!(:habitat_extent_1) { create :habitat_extent, location: country_location, indicator: "linear_coverage" }
+      let!(:habitat_extent_2) { create :habitat_extent, location: country_location, indicator: "habitat_extent_area" }
+      let!(:habitat_extent_3) { create :habitat_extent, location: location }
 
       response 200, "Success" do
         schema type: :object,
@@ -475,22 +496,32 @@ RSpec.describe "API V2 Widgets", type: :request do
               "$ref" => "#/components/schemas/metadata"
             }
           }
-        example "application/json", :example_key, {
-          data: [{}],
-          metadata: {
-            location_id: "1"
-          }
-        }
-      end
 
-      response 500, "Error 500" do
-        schema :type => :object,
-          "$ref" => "#/components/schemas/error_response"
+        context "when location_id is used" do
+          let(:location_id) { location.id }
 
-        example "application/json", :example_key, {
+          run_test!
 
-          location_id: "1"
-        }
+          it "matches snapshot", generate_swagger_example: true do
+            expect(response.body).to match_snapshot("api/v2/widgets/habitat_extent_get_location")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([habitat_extent_3.value])
+          end
+        end
+
+        context "when location_id is missing - use worldwide" do
+          run_test!
+
+          it "matches snapshot" do
+            expect(response.body).to match_snapshot("api/v2/widgets/habitat_extent_get_worldwide")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to match_array([habitat_extent_1.value, habitat_extent_2.value])
+          end
+        end
       end
     end
   end
@@ -500,7 +531,16 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
-      parameter name: :location_id, in: :query, type: :string
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
+
+      let!(:worldwide) { create :location, :worldwide }
+      let(:country_location) { create :location, location_type: "country" }
+      let(:location) { create :location }
+      let!(:habitat_extent_1) { create :habitat_extent, location: country_location, indicator: "habitat_extent_area", year: 2010 }
+      let!(:habitat_extent_2) { create :habitat_extent, location: country_location, indicator: "habitat_extent_area", year: 2020 }
+      let!(:habitat_extent_3) { create :habitat_extent, location: location, indicator: "habitat_extent_area", year: 2012 }
+      let!(:habitat_extent_4) { create :habitat_extent, location: location, indicator: "habitat_extent_area", year: 2013 }
+      let!(:ignored_habitat_extent) { create :habitat_extent, location: location, indicator: "linear_coverage" }
 
       response 200, "Success" do
         schema type: :object,
@@ -514,22 +554,32 @@ RSpec.describe "API V2 Widgets", type: :request do
               "$ref" => "#/components/schemas/metadata"
             }
           }
-        example "application/json", :example_key, {
-          data: [{}],
-          metadata: {
-            location_id: "1"
-          }
-        }
-      end
 
-      response 500, "Error 500" do
-        schema :type => :object,
-          "$ref" => "#/components/schemas/error_response"
+        context "when location_id is used" do
+          let(:location_id) { location.id }
 
-        example "application/json", :example_key, {
+          run_test!
 
-          location_id: "1"
-        }
+          it "matches snapshot", generate_swagger_example: true do
+            expect(response.body).to match_snapshot("api/v2/widgets/net_change_get_location")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("net_change")).to eq([0, habitat_extent_4.value - habitat_extent_3.value])
+          end
+        end
+
+        context "when location_id is missing - use worldwide" do
+          run_test!
+
+          it "matches snapshot" do
+            expect(response.body).to match_snapshot("api/v2/widgets/net_change_get_worldwide")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("net_change")).to eq([0, habitat_extent_2.value - habitat_extent_1.value])
+          end
+        end
       end
     end
   end
@@ -539,7 +589,14 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
-      parameter name: :location_id, in: :query, type: :string
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
+
+      let!(:worldwide) { create :location, :worldwide }
+      let(:country_location) { create :location, location_type: "country" }
+      let(:location) { create :location }
+      let!(:aboveground_biomass_1) { create :aboveground_biomass, location: country_location, indicator: "total" }
+      let!(:aboveground_biomass_2) { create :aboveground_biomass, location: country_location, indicator: "150-250" }
+      let!(:aboveground_biomass_3) { create :aboveground_biomass, location: location }
 
       response 200, "Success" do
         schema type: :object,
@@ -553,22 +610,32 @@ RSpec.describe "API V2 Widgets", type: :request do
               "$ref" => "#/components/schemas/metadata"
             }
           }
-        example "application/json", :example_key, {
-          data: [{}],
-          metadata: {
-            location_id: "1"
-          }
-        }
-      end
 
-      response 500, "Error 500" do
-        schema :type => :object,
-          "$ref" => "#/components/schemas/error_response"
+        context "when location_id is used" do
+          let(:location_id) { location.id }
 
-        example "application/json", :example_key, {
+          run_test!
 
-          location_id: "1"
-        }
+          it "matches snapshot", generate_swagger_example: true do
+            expect(response.body).to match_snapshot("api/v2/widgets/aboveground_biomass_get_location")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([aboveground_biomass_3.value])
+          end
+        end
+
+        context "when location_id is missing - use worldwide" do
+          run_test!
+
+          it "matches snapshot" do
+            expect(response.body).to match_snapshot("api/v2/widgets/aboveground_biomass_get_worldwide")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to match_array([aboveground_biomass_1.value, aboveground_biomass_2.value])
+          end
+        end
       end
     end
   end
@@ -578,7 +645,14 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
-      parameter name: :location_id, in: :query, type: :string
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
+
+      let(:country_location) { create :location, location_type: "country" }
+      let(:location) { create :location }
+      let!(:tree_height_1) { create :tree_height, location: country_location, year: 2020, indicator: "0-5" }
+      let!(:tree_height_2) { create :tree_height, location: country_location, year: 2022, indicator: "10-15" }
+      let!(:tree_height_3) { create :tree_height, location: location, indicator: "0-5" }
+      let!(:ignored_tree_height) { create :tree_height, location: country_location, year: 2020, indicator: "avg" }
 
       response 200, "Success" do
         schema type: :object,
@@ -592,22 +666,32 @@ RSpec.describe "API V2 Widgets", type: :request do
               "$ref" => "#/components/schemas/metadata"
             }
           }
-        example "application/json", :example_key, {
-          data: [{}],
-          metadata: {
-            location_id: "1"
-          }
-        }
-      end
 
-      response 500, "Error 500" do
-        schema :type => :object,
-          "$ref" => "#/components/schemas/error_response"
+        context "when location_id is used" do
+          let(:location_id) { location.id }
 
-        example "application/json", :example_key, {
+          run_test!
 
-          location_id: "1"
-        }
+          it "matches snapshot", generate_swagger_example: true do
+            expect(response.body).to match_snapshot("api/v2/widgets/tree_height_get_location")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([tree_height_3.value])
+          end
+        end
+
+        context "when location_id is missing - use worldwide" do
+          run_test!
+
+          it "matches snapshot" do
+            expect(response.body).to match_snapshot("api/v2/widgets/tree_height_get_worldwide")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to match_array([tree_height_1.value, tree_height_2.value])
+          end
+        end
       end
     end
   end
@@ -617,7 +701,14 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
-      parameter name: :location_id, in: :query, type: :string
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
+
+      let(:country_location) { create :location, location_type: "country" }
+      let(:location) { create :location }
+      let!(:blue_carbon_1) { create :blue_carbon, location: country_location }
+      let!(:blue_carbon_2) { create :blue_carbon, location: country_location }
+      let!(:blue_carbon_3) { create :blue_carbon, location: location }
+      let!(:ignored_blue_carbon) { create :blue_carbon, location: location, indicator: "toc" }
 
       response 200, "Success" do
         schema type: :object,
@@ -631,22 +722,32 @@ RSpec.describe "API V2 Widgets", type: :request do
               "$ref" => "#/components/schemas/metadata"
             }
           }
-        example "application/json", :example_key, {
-          data: [{}],
-          metadata: {
-            location_id: "1"
-          }
-        }
-      end
 
-      response 500, "Error 500" do
-        schema :type => :object,
-          "$ref" => "#/components/schemas/error_response"
+        context "when location_id is used" do
+          let(:location_id) { location.id }
 
-        example "application/json", :example_key, {
+          run_test!
 
-          location_id: "1"
-        }
+          it "matches snapshot", generate_swagger_example: true do
+            expect(response.body).to match_snapshot("api/v2/widgets/blue_carbon_get_location")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([blue_carbon_3.value])
+          end
+        end
+
+        context "when location_id is missing - use worldwide" do
+          run_test!
+
+          it "matches snapshot" do
+            expect(response.body).to match_snapshot("api/v2/widgets/blue_carbon_get_worldwide")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to match_array([blue_carbon_1.value, blue_carbon_2.value])
+          end
+        end
       end
     end
   end
@@ -656,7 +757,11 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
-      parameter name: :location_id, in: :query, type: :string
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
+
+      let(:location) { create :location }
+      let!(:mitigation_potential_1) { create :mitigation_potential, location: location }
+      let!(:mitigation_potential_2) { create :mitigation_potential }
 
       response 200, "Success" do
         schema type: :object,
@@ -670,22 +775,32 @@ RSpec.describe "API V2 Widgets", type: :request do
               "$ref" => "#/components/schemas/metadata"
             }
           }
-        example "application/json", :example_key, {
-          data: [{}],
-          metadata: {
-            location_id: "1"
-          }
-        }
-      end
 
-      response 500, "Error 500" do
-        schema :type => :object,
-          "$ref" => "#/components/schemas/error_response"
+        context "when location_id is used" do
+          let(:location_id) { location.id }
 
-        example "application/json", :example_key, {
+          run_test!
 
-          location_id: "1"
-        }
+          it "matches snapshot", generate_swagger_example: true do
+            expect(response.body).to match_snapshot("api/v2/widgets/mitigation_potentials_get_location")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([mitigation_potential_1.value])
+          end
+        end
+
+        context "when location_id is missing - use worldwide" do
+          run_test!
+
+          it "matches snapshot" do
+            expect(response.body).to match_snapshot("api/v2/widgets/mitigation_potentials_get_worldwide")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to match_array([mitigation_potential_1.value, mitigation_potential_2.value])
+          end
+        end
       end
     end
   end
@@ -695,9 +810,14 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
-      parameter name: :location_id, in: :query, type: :string
-      parameter name: :start_year, in: :query, type: :integer, default: 2007
-      parameter name: :end_year, in: :query, type: :integer, default: 2020
+      parameter name: :start_year, in: :query, type: :integer, description: "Location id. Default: first year that data exists for", required: false
+      parameter name: :end_year, in: :query, type: :integer, description: "Location id. Default: last year that dat exists for", required: false
+
+      let(:location) { create :location, location_type: "country" }
+      let!(:habitat_extent_1) { create :habitat_extent, location: location, indicator: "habitat_extent_area", year: 2010 }
+      let!(:habitat_extent_2) { create :habitat_extent, location: location, indicator: "habitat_extent_area", year: 2015 }
+      let!(:habitat_extent_3) { create :habitat_extent, location: location, indicator: "habitat_extent_area", year: 2020 }
+      let!(:ignored_habitat_extent) { create :habitat_extent, indicator: "linear_coverage" }
 
       response 200, "Success" do
         schema type: :object,
@@ -711,22 +831,25 @@ RSpec.describe "API V2 Widgets", type: :request do
               "$ref" => "#/components/schemas/metadata"
             }
           }
-        example "application/json", :example_key, {
-          data: [{}],
-          metadata: {
-            location_id: "1"
-          }
-        }
-      end
 
-      response 500, "Error 500" do
-        schema :type => :object,
-          "$ref" => "#/components/schemas/error_response"
+        run_test!
 
-        example "application/json", :example_key, {
+        it "matches snapshot", generate_swagger_example: true do
+          expect(response.body).to match_snapshot("api/v2/widgets/country_ranking")
+        end
 
-          location_id: "1"
-        }
+        it "returns the correct data" do
+          expect(response_json["data"].pluck("abs_value")).to eq([(habitat_extent_1.value - habitat_extent_3.value).abs])
+        end
+
+        context "when filtered just for specific year" do
+          let(:start_year) { habitat_extent_1.year }
+          let(:end_year) { habitat_extent_2.year }
+
+          it "returns the correct data" do
+            expect(response_json["data"].pluck("abs_value")).to eq([(habitat_extent_1.value - habitat_extent_2.value).abs])
+          end
+        end
       end
     end
   end

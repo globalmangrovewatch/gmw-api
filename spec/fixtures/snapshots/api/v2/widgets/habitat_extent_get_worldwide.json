@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "year": 2021,
+      "indicator": "habitat_extent_area",
+      "value": 98628.73
+    },
+    {
+      "year": 2016,
+      "indicator": "linear_coverage",
+      "value": 68950.02
+    }
+  ],
+  "metadata": {
+    "location_id": "worldwide",
+    "units": {
+      "habitat_extent_area": "km2",
+      "linear_coverage": "km"
+    },
+    "year": [
+      2021,
+      2016
+    ],
+    "note": null,
+    "total_area": 0.06895002,
+    "total_lenght": 68.95002000000001
+  }
+}
