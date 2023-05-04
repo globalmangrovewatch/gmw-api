@@ -1,12 +1,11 @@
 ActiveAdmin.register Location do
-
   controller do
     def scoped_collection
       Location.unscoped
     end
 
     def csv_filename
-      'locations.csv'
+      "locations.csv"
     end
   end
 
@@ -32,7 +31,7 @@ ActiveAdmin.register Location do
   end
 
   form do |f|
-    f.inputs 'Details' do
+    f.inputs "Details" do
       f.inputs :name
       f.inputs :location_id
       f.inputs :location_type
@@ -43,15 +42,14 @@ ActiveAdmin.register Location do
       f.inputs :perimeter_m
       f.inputs :coast_length_m
     end
-    
 
-    f.inputs 'Species' do
+    f.inputs "Species" do
       f.input :species, collection: Specie.all.pluck(:common_name, :id)
     end
 
     actions
   end
-  
+
   csv do
     column :name
     column :location_type
@@ -63,5 +61,4 @@ ActiveAdmin.register Location do
     column :coast_length_m
     column :location_id
   end
-  
 end

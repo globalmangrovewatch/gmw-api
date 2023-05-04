@@ -1,12 +1,18 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.configure do |config|
   # Specify a root folder where Swagger JSON files are generated
   # NOTE: If you're using the rswag-api to serve API descriptions, you'll need
   # to ensure that it's configured to serve Swagger from the same folder
-  config.swagger_root = Rails.root.join('swagger').to_s
+  config.swagger_root = Rails.root.join("swagger").to_s
+
+  config.after :each, generate_swagger_example: true do |example|
+    example.metadata[:response][:content] = {
+      "application/json" => {example: JSON.parse(response.body, symbolize_names: true)}
+    }
+  end
 
   # Define one or more Swagger documents and provide global metadata for each one
   # When you run the 'rswag:specs:swaggerize' rake task, the complete Swagger will
@@ -15,21 +21,21 @@ RSpec.configure do |config|
   # document below. You can override this behavior by adding a swagger_doc tag to the
   # the root example_group in your specs, e.g. describe '...', swagger_doc: 'v2/swagger.json'
   config.swagger_docs = {
-    'v2/swagger.json' => {
-      openapi: '3.0.1',
+    "v2/swagger.json" => {
+      openapi: "3.0.1",
       info: {
-        title: 'API docs',
-        version: 'v2'
+        title: "API docs",
+        version: "v2"
       },
       paths: {},
       servers: [
         {
-          url: 'https://mangrove-atlas-api-staging.herokuapp.com',
-          description: 'staging api url'
+          url: "https://mangrove-atlas-api-staging.herokuapp.com",
+          description: "staging api url"
         },
         {
-          url: 'https://mangrove-atlas-api.herokuapp.com',
-          description: 'production api url'
+          url: "https://mangrove-atlas-api.herokuapp.com",
+          description: "production api url"
         }
       ],
       components: {
@@ -38,15 +44,15 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               location_id: {type: :string, nullable: true},
-              units: {type: :string, nullable: true},
+              unit: {type: :string, nullable: true},
+              units: {type: :object, nullable: true},
               years: {
-                type: :array, 
-                items: {type: :number}, 
+                type: :array,
+                items: {type: :number},
                 nullable: true
               },
               note: {type: :string, nullable: true}
-            },
-            required: [:unit, :note]
+            }
           },
           error_response: {
             type: :object,
@@ -55,8 +61,8 @@ RSpec.configure do |config|
                 type: :object,
                 properties: {
                   message: {type: :string, nullable: true}
-                },
-              },
+                }
+              }
             },
             required: [:error]
           },
@@ -76,75 +82,70 @@ RSpec.configure do |config|
                   state: {type: :string},
                   postalCode: {type: :string}
                 },
-                required:[]
+                required: []
               },
               medicareRequested: {type: :boolean},
               compensationUsdCents: {type: :integer,
-                                     description: 'compensation'},
+                                     description: "compensation"}
             },
             required: []
           },
           location_v2: {
             type: :object,
             properties: {
-              id: {type: :string},
-              createdAt: {type: :string},
-              state: {type: :string},
-              joiningDate: {type: :string},
-              homeAddress: {
-                type: :object,
-                properties: {
-                  address1: {type: :string},
-                  address2: {type: :string, nullable: true},
-                  city: {type: :string},
-                  state: {type: :string},
-                  postalCode: {type: :string}
-                },
-                required:[]
-              },
-              medicareRequested: {type: :boolean},
-              compensationUsdCents: {type: :integer,
-                                     description: 'compensation'},
+              id: {type: :integer},
+              created_at: {type: :string},
+              name: {type: :string},
+              location_type: {type: :string},
+              iso: {type: :string},
+              location_id: {type: :string, nullable: true},
+              coast_length_m: {type: :number, nullable: true},
+              area_m2: {type: :number, nullable: true}
             },
             required: []
+          },
+          specie: {
+            type: :object,
+            properties: {
+              id: {type: :integer},
+              scientific_name: {type: :string},
+              common_name: {type: :string, nullable: true},
+              name: {type: :string, nullable: true},
+              iucn_url: {type: :string, nullable: true},
+              red_list_cat: {type: :string},
+              location_ids: {type: :array, items: {type: :integer}}
+            }
           },
           protected_areas: {
             type: :object,
             properties: {
-              id: {type: :string},
-              year: {type: :string},
-              total_area: {type: :string},
-              protected_area: {type: :string},
+              id: {type: :integer, nullable: true},
+              year: {type: :integer},
+              total_area: {type: :number},
+              protected_area: {type: :number}
             },
             required: []
           },
           biodiversity: {
             type: :object,
             properties: {
-              total: {type: :string},
-              threatened: {type: :string},
+              total: {type: :integer},
+              threatened: {type: :integer},
               categories: {
                 type: :object,
                 properties: {
-                  cr: {type: :string, nullable: true},
-                  en: {type: :string, nullable: true},
-                  nt: {type: :string, nullable: true},
-                  lc: {type: :string, nullable: true}
-                },
+                  cr: {type: :integer, nullable: true},
+                  en: {type: :integer, nullable: true},
+                  nt: {type: :integer, nullable: true},
+                  lc: {type: :integer, nullable: true}
+                }
               },
               species: {
                 type: :array,
                 items: {
-                  type: :object,
-                  properties: {
-                    id: {type: :number},
-                    scientific_name: {type: :string},
-                    name: {type: :string, nullable: true},
-                    iucn_url: {type: :string, nullable: true},
-                    red_list_cat: {type: :string},
-                  },
-                },
-              },
+                  "$ref": "#/components/schemas/specie"
+                }
+              }
             },
             required: [:total, :threatened, :categories]
           },
@@ -152,9 +153,9 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               restoration_potential_score: {type: :number},
-              restorable_area: {type: :number},
-              restorable_area_perc: {type: :number},
-              mangrove_area_extent: {type: :number},
+              restorable_area: {type: :number, nullable: true},
+              restorable_area_perc: {type: :number, nullable: true},
+              mangrove_area_extent: {type: :number, nullable: true}
             },
             required: [:restoration_potential_score, :restorable_area, :restorable_area_perc, :mangrove_area_extent]
           },
@@ -163,8 +164,8 @@ RSpec.configure do |config|
             properties: {
               indicator: {type: :string},
               label: {type: :string},
-              value: {type: :number},
-              },
+              value: {type: :number}
+            },
             required: [:indicator, :value]
           },
           blue_carbon_investment: {
@@ -173,41 +174,37 @@ RSpec.configure do |config|
               category: {type: :string},
               value: {type: :number},
               percentage: {type: :number},
-              text: {type: :string},
+              description: {type: :string},
+              label: {type: :string}
             },
-            required: [:category, :value, :percentage, :text]
+            required: [:category, :value, :percentage, :description]
           },
-        international_status: {
+          international_status: {
             type: :object,
             properties: {
-                location_id: {type: :integer},
-                base_years: {type: :string},
-                fow: {type: :string},
-                frel: {type: :string},
-                ipcc_wetlands_suplement: {type: :string},
-                ndc: {type: :string},
-                ndc_adaptation: {type: :string},
-                ndc_blurb: {type: :string},
-                ndc_mitigation: {type: :string},
-                ndc_reduction_target: {type: :string},
-                ndc_target: {type: :string},
-                ndc_target_url: {type: :string},
-                ndc_updated: {type: :string},
-                pledge_summary: {type: :string},
-                pledge_type: {type: :string},
-                target_years: {type: :string},
-                year_frel: {type: :string}
-              },
-            required: [:location_id, :base_years, :fow, :frel, :ipcc_wetlands_suplement,
-              :ndc, :ndc_adaptation, :ndc_blurb, :ndc_mitigation, :ndc_reduction_target,
-              :ndc_target, :ndc_target_url, :ndc_updated, :pledge_summary, :pledge_type,
-              :target_years, :year_frel]
+              base_years: {type: :string},
+              fow: {type: :string},
+              frel: {type: :string},
+              ipcc_wetlands_suplement: {type: :string},
+              ndc: {type: :string},
+              ndc_adaptation: {type: :string},
+              ndc_blurb: {type: :string},
+              ndc_mitigation: {type: :string},
+              ndc_reduction_target: {type: :string},
+              ndc_target: {type: :string},
+              ndc_target_url: {type: :string},
+              ndc_updated: {type: :string},
+              pledge_summary: {type: :string},
+              pledge_type: {type: :string},
+              target_years: {type: :string},
+              year_frel: {type: :string}
+            }
           },
           ecosystem_service: {
             type: :object,
             properties: {
               indicator: {type: :string},
-              value: {type: :number},
+              value: {type: :number}
             },
             required: [:indicator, :value]
           },
@@ -216,50 +213,46 @@ RSpec.configure do |config|
             properties: {
               indicator: {type: :string},
               value: {type: :number},
-              year: {type: :number},
-              percentage: {type: :number},
+              year: {type: :number}
             },
-            required: [:indicator, :value, :year, :percentage]
+            required: [:indicator, :value, :year]
           },
           net_change: {
             type: :object,
             properties: {
-              indicator: {type: :string},
-              value: {type: :number},
+              net_change: {type: :number},
               year: {type: :number},
-              cum_sum: {type: :number},
+              gain: {type: :number, nullable: true},
+              loss: {type: :number, nullable: true}
             },
-            required: [:indicator, :value, :year, :percentage]
+            required: [:net_change, :year]
           },
           aboveground_biomass: {
             type: :object,
             properties: {
               indicator: {type: :string},
               value: {type: :number},
-              year: {type: :number},
-              percentage: {type: :number},
+              year: {type: :number}
             },
-            required: [:indicator, :value, :year, :percentage]
+            required: [:indicator, :value, :year]
           },
           tree_height: {
             type: :object,
             properties: {
               indicator: {type: :string},
               value: {type: :number},
-              year: {type: :number},
-              percentage: {type: :number},
+              year: {type: :number}
             },
-            required: [:indicator, :value, :year, :percentage]
+            required: [:indicator, :value, :year]
           },
           blue_carbon: {
             type: :object,
             properties: {
               indicator: {type: :string},
               value: {type: :number},
-              year: {type: :number},
-              percentage: {type: :number},
+              year: {type: :number}
             },
-            required: [:indicator, :value, :year, :percentage]
+            required: [:indicator, :value, :year]
           },
           mitigation_potentials: {
             type: :object,
@@ -267,7 +260,7 @@ RSpec.configure do |config|
               indicator: {type: :string},
               value: {type: :number},
               year: {type: :number},
-              category: {type: :string},
+              category: {type: :string}
             },
             required: [:indicator, :value, :year, :category]
           },
@@ -276,24 +269,25 @@ RSpec.configure do |config|
             properties: {
               indicator: {type: :string},
               value: {type: :number},
-              year: {type: :number},
-              category: {type: :string},
+              abs_value: {type: :number},
+              name: {type: :string},
+              iso: {type: :string}
             },
-            required: [:indicator, :value, :year, :category]
+            required: [:indicator, :value]
           },
           file_converter: {
             type: :object,
             properties: {
               type: {type: :string},
               features: {
-                type: :array, 
-                items: {type: :object}, 
+                type: :array,
+                items: {type: :object},
                 nullable: false
-              },
+              }
             },
             required: [:type, :features]
-          },
-        },
+          }
+        }
       }
     }
   }

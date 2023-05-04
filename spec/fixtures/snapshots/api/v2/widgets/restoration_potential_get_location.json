@@ -1,0 +1,21 @@
+{
+  "data": {
+    "restoration_potential_score": 98.63,
+    "restorable_area": 68.96,
+    "restorable_area_perc": null,
+    "mangrove_area_extent": null
+  },
+  "metadata": {
+    "location_id": "1485",
+    "year": [
+      2019,
+      2018
+    ],
+    "units": {
+      "restoration_potential_score": "%",
+      "restorable_area": "%",
+      "mangrove_area": null
+    },
+    "note": null
+  }
+}

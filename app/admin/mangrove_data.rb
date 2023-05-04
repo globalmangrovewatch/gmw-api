@@ -1,6 +1,5 @@
 ActiveAdmin.register MangroveDatum do
-
-  #active_admin_import
+  # active_admin_import
 
   permit_params :date, :gain_m2, :loss_m2, :length_m, :area_m2, :hmax_m, :agb_mgha_1,
     :hba_m, :location_id, :con_hotspot_summary_km2, :net_change_m2, :agb_hist_mgha_1,
@@ -17,9 +16,8 @@ ActiveAdmin.register MangroveDatum do
   end
 
   form do |f|
-    f.inputs 'Details'
+    f.inputs "Details"
 
     actions
   end
-  
 end

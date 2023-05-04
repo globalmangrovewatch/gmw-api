@@ -1,5 +1,4 @@
 ActiveAdmin.register Typology do
-
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -24,19 +23,19 @@ ActiveAdmin.register Typology do
   })
 
   permit_params :mangrove_types, :value, :unit, :location_id
- 
+
   form do |f|
-    f.inputs 'Details' do
-      f.input :mangrove_types, as: :select, 
+    f.inputs "Details" do
+      f.input :mangrove_types, as: :select,
         collection: ["estuary", "delta", "lagoon", "fringe"],
-        default: 'estuary',
+        default: "estuary",
         include_blank: false,
         required: true
       f.input :value
-      f.input :unit, default: 'ha'
+      f.input :unit, default: "ha"
     end
 
-    f.inputs 'Location' do
+    f.inputs "Location" do
       f.input :location, as: :select
     end
 
@@ -52,8 +51,7 @@ ActiveAdmin.register Typology do
 
   controller do
     def csv_filename
-      'typology.csv'
+      "typology.csv"
     end
   end
-  
 end

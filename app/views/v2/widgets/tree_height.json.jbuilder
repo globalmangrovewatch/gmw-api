@@ -9,7 +9,7 @@ end
 json.metadata do
   json.location_id @location_id
   json.units do
-    json.value 'm'
+    json.value "m"
   end
   json.year @data.pluck(:year).uniq.sort.reverse
   json.note nil

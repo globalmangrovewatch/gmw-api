@@ -14,7 +14,7 @@ module FileDataImport
       def feature_collection
         raise NotImplementedError, "You need to implement foreach_with_line method."
       end
-      
+
       def clean_up
         raise NotImplementedError, "You need to implement clean_up method."
       end

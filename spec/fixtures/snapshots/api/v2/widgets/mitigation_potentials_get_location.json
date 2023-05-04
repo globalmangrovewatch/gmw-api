@@ -1,0 +1,20 @@
+{
+  "data": [
+    {
+      "year": 2016,
+      "indicator": "Reduce mangrove loss",
+      "category": "Other",
+      "value": 68950.02
+    }
+  ],
+  "metadata": {
+    "location_id": "7714",
+    "units": {
+      "value": "tCO2/ha"
+    },
+    "year": [
+      2016
+    ],
+    "note": null
+  }
+}

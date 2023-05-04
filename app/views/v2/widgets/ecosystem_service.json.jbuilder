@@ -7,6 +7,6 @@ end
 
 json.metadata do
   json.location_id @location_id
-  json.unit 'mt CO₂ e'
+  json.unit "mt CO₂ e"
   json.note nil
 end

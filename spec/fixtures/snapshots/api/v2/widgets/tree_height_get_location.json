@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "year": 2016,
+      "indicator": "0-5",
+      "value": 99388.06
+    }
+  ],
+  "metadata": {
+    "location_id": "13556",
+    "units": {
+      "value": "m"
+    },
+    "year": [
+      2016
+    ],
+    "note": null,
+    "avg_height": [
+
+    ]
+  }
+}

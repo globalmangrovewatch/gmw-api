@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "category": "carbon_10",
+      "value": 68950.02,
+      "percentage": 100.0,
+      "description": "      68,950.0 (± 3447.501)",
+      "label": "at $10/ton"
+    }
+  ],
+  "metadata": {
+    "location_id": "1795",
+    "unit": "ha",
+    "note": null
+  }
+}

@@ -10,7 +10,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def record_not_unique(exception)
     value = exception.message.split(")=(")[1].split(")")[0]
     # TODO: Remove when email verification is in place
-    render json: { "error": "'%s' already exists." % [value] }, status: :unprocessable_entity
+    render json: {error: "'%s' already exists." % [value]}, status: :unprocessable_entity
   end
 
   def respond_with(resource, _opts = {})
@@ -21,22 +21,22 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def update_success
-    render json: { message: 'User profile updated sucessfully.' }
+    render json: {message: "User profile updated sucessfully."}
   end
 
   def register_success
-    render json: { message: 'Signed up sucessfully.' }
+    render json: {message: "Signed up sucessfully."}
   end
 
   def process_failed
     render json: {
-      message: "#{resource.errors.full_messages.to_sentence}"
+      message: resource.errors.full_messages.to_sentence.to_s
     }, status: :unprocessable_entity
   end
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up) { |u| u.permit(:name, :email, :password)}
-    devise_parameter_sanitizer.permit(:account_update) { |u| u.permit(:name, :email, :password, :current_password)}
+    devise_parameter_sanitizer.permit(:sign_up) { |u| u.permit(:name, :email, :password) }
+    devise_parameter_sanitizer.permit(:account_update) { |u| u.permit(:name, :email, :password, :current_password) }
   end
 
   def update_resource(resource, params)
@@ -46,5 +46,4 @@ class Users::RegistrationsController < Devise::RegistrationsController
     # Allows user to update registration information without password.
     resource.update_without_password(params.except("current_password"))
   end
-
 end

@@ -1,5 +1,4 @@
 ActiveAdmin.register AbovegroundBiomass do
-
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -15,7 +14,7 @@ ActiveAdmin.register AbovegroundBiomass do
   #   permitted
   # end
   menu parent: "Widgets"
-  
+
   active_admin_import({
     before_import: ->(importer) {
       AbovegroundBiomass.delete_all
@@ -23,10 +22,10 @@ ActiveAdmin.register AbovegroundBiomass do
   })
 
   permit_params :indicator, :value, :year, :location_id
- 
+
   form do |f|
-    f.inputs 'Details' do
-      f.input :indicator, as: :select, 
+    f.inputs "Details" do
+      f.input :indicator, as: :select,
         collection: AbovegroundBiomass.indicators,
         default: AbovegroundBiomass.indicators.first,
         include_blank: false,
@@ -35,7 +34,7 @@ ActiveAdmin.register AbovegroundBiomass do
       f.input :year, required: true
     end
 
-    f.inputs 'Location' do
+    f.inputs "Location" do
       f.input :location, as: :select
     end
 
@@ -51,8 +50,7 @@ ActiveAdmin.register AbovegroundBiomass do
 
   controller do
     def csv_filename
-      'aboveground_biomass.csv'
+      "aboveground_biomass.csv"
     end
   end
-  
 end

@@ -1,0 +1,20 @@
+{
+  "data": [
+    {
+      "id": 265,
+      "year": 2016,
+      "total_area": 68950.02,
+      "protected_area": 68950.02
+    }
+  ],
+  "metadata": {
+    "location_id": "265",
+    "units": {
+      "total_area": "ha",
+      "protected_area": "ha"
+    },
+    "year": [
+      2016
+    ]
+  }
+}

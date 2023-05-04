@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "year": 2016,
+      "indicator": "Reduce mangrove loss",
+      "category": "Other",
+      "value": 68950.02
+    },
+    {
+      "year": 2021,
+      "indicator": "Reduce deforestation",
+      "category": "Mangrove",
+      "value": 98628.73
+    }
+  ],
+  "metadata": {
+    "location_id": "worldwide",
+    "units": {
+      "value": "tCO2/ha"
+    },
+    "year": [
+      2021,
+      2016
+    ],
+    "note": null
+  }
+}

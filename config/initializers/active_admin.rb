@@ -223,7 +223,7 @@ ActiveAdmin.setup do |config|
   #
   # Force the use of quotes
   # config.csv_options = { force_quotes: true }
-  config.csv_options = { humanize_name: false }
+  config.csv_options = {humanize_name: false}
 
   # == Menu System
   #

@@ -1,0 +1,23 @@
+{
+  "data": [
+    {
+      "category": "carbon_5",
+      "value": 98628.73,
+      "percentage": 58.85515317425389,
+      "description": "      98,628.7 (±4931.4365)",
+      "label": "at $5/ton"
+    },
+    {
+      "category": "carbon_10",
+      "value": 68950.02,
+      "percentage": 41.14484682574611,
+      "description": "      68,950.0 (±3447.501)",
+      "label": "at $10/ton"
+    }
+  ],
+  "metadata": {
+    "location_id": "worldwide",
+    "unit": "ha",
+    "note": null
+  }
+}

@@ -9,8 +9,8 @@ end
 json.metadata do
   json.location_id @location_id
   json.units do
-    json.habitat_extent_area 'km2'
-    json.linear_coverage 'km'
+    json.habitat_extent_area "km2"
+    json.linear_coverage "km"
   end
   json.year @data.pluck(:year).uniq.sort.reverse
   json.note nil

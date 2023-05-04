@@ -6,6 +6,6 @@ class CreateLandscapesOrganizations < ActiveRecord::Migration[7.0]
 
       t.timestamps
     end
-    add_index :landscapes_organizations, [:landscape_id, :organization_id], unique: true, name: 'idx_u_landscapes_organizations'
+    add_index :landscapes_organizations, [:landscape_id, :organization_id], unique: true, name: "idx_u_landscapes_organizations"
   end
 end

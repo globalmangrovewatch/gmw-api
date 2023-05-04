@@ -1,5 +1,4 @@
 ActiveAdmin.register BlueCarbonInvestment do
-
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -24,15 +23,15 @@ ActiveAdmin.register BlueCarbonInvestment do
   })
 
   permit_params :location_id, :category, :area, :description
- 
+
   form do |f|
-    f.inputs 'Details' do
+    f.inputs "Details" do
       f.input :category
       f.input :area
       f.input :description
     end
 
-    f.inputs 'Location' do
+    f.inputs "Location" do
       f.input :location, as: :select
     end
 
@@ -48,8 +47,7 @@ ActiveAdmin.register BlueCarbonInvestment do
 
   controller do
     def csv_filename
-      'blue_carbon_investments.csv'
+      "blue_carbon_investments.csv"
     end
   end
-  
 end
