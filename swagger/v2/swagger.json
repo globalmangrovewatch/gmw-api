@@ -150,8 +150,8 @@
                       "coast_length_m": 98628.73,
                       "perimeter_m": 98628.73,
                       "area_m2": 98628.73,
-                      "id": 16109,
-                      "created_at": "2023-05-09T08:53:21.880Z"
+                      "id": 701,
+                      "created_at": "2023-05-11T08:23:13.174Z"
                     },
                     {
                       "name": "Kinshasa",
@@ -163,8 +163,8 @@
                       "coast_length_m": 68950.02,
                       "perimeter_m": 68950.02,
                       "area_m2": 68950.02,
-                      "id": 16108,
-                      "created_at": "2023-05-09T08:53:21.878Z"
+                      "id": 700,
+                      "created_at": "2023-05-11T08:23:13.173Z"
                     }
                   ]
                 },
@@ -212,7 +212,7 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "id": 16115,
+                    "id": 707,
                     "iso": "voluptatem",
                     "bounds": {
                     },
@@ -278,7 +278,7 @@
                       "iucn_url": "http://kutch-spencer.com/moises",
                       "red_list_cat": "vu",
                       "location_ids": [
-                        16119
+                        711
                       ]
                     },
                     {
@@ -348,14 +348,14 @@
                 "example": {
                   "data": [
                     {
-                      "id": 2639,
+                      "id": 57,
                       "year": 2016,
                       "total_area": 68950.02,
                       "protected_area": 68950.02
                     }
                   ],
                   "metadata": {
-                    "location_id": "16124",
+                    "location_id": "716",
                     "units": {
                       "total_area": "ha",
                       "protected_area": "ha"
@@ -446,9 +446,9 @@
                     },
                     "species": [
                       {
-                        "id": 1123,
-                        "created_at": "2023-05-09T08:53:22.135Z",
-                        "updated_at": "2023-05-09T08:53:22.135Z",
+                        "id": 41,
+                        "created_at": "2023-05-11T08:23:13.457Z",
+                        "updated_at": "2023-05-11T08:23:13.457Z",
                         "scientific_name": "voluptatem",
                         "common_name": "voluptatem",
                         "iucn_url": "http://kutch-spencer.com/moises",
@@ -519,7 +519,7 @@
                     "mangrove_area_extent": null
                   },
                   "metadata": {
-                    "location_id": "16150",
+                    "location_id": "742",
                     "year": [
                       2019,
                       2018
@@ -596,7 +596,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16178",
+                    "location_id": "770",
                     "year": [
                       2019,
                       2018
@@ -678,7 +678,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16212",
+                    "location_id": "804",
                     "unit": "ha",
                     "note": null
                   }
@@ -733,7 +733,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16226",
+                    "location_id": "818",
                     "note": null
                   }
                 },
@@ -788,7 +788,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16234",
+                    "location_id": "826",
                     "unit": "mt CO₂ e",
                     "note": null
                   }
@@ -845,7 +845,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16249",
+                    "location_id": "841",
                     "units": {
                       "habitat_extent_area": "km2",
                       "linear_coverage": "km"
@@ -917,7 +917,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16267",
+                    "location_id": "859",
                     "units": {
                       "net_change": "km2"
                     },
@@ -991,7 +991,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16285",
+                    "location_id": "877",
                     "units": {
                       "value": "tons/ha"
                     },
@@ -1059,7 +1059,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16301",
+                    "location_id": "893",
                     "units": {
                       "value": "m"
                     },
@@ -1124,7 +1124,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16313",
+                    "location_id": "905",
                     "units": {
                       "value": "CO2e/ha",
                       "toc": "t CO₂e",
@@ -1191,7 +1191,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16324",
+                    "location_id": "916",
                     "units": {
                       "value": "tCO2/ha"
                     },
@@ -1286,6 +1286,64 @@
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/country_ranking"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/metadata"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/widgets/drivers_of_change": {
+      "get": {
+        "summary": "Retrieves the data for the drivers of change widget",
+        "tags": [
+          "Widgets"
+        ],
+        "parameters": [
+          {
+            "name": "location_id",
+            "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "variable": "npc_pct",
+                      "primary_driver": "Settlement",
+                      "value": 68950.02
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "936",
+                    "units": {
+                      "value": "%"
+                    }
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/drivers_of_change"
                       }
                     },
                     "metadata": {
@@ -1823,6 +1881,20 @@
           "indicator",
           "value"
         ]
+      },
+      "drivers_of_change": {
+        "type": "object",
+        "properties": {
+          "variable": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "primary_driver": {
+            "type": "string"
+          }
+        }
       },
       "file_converter": {
         "type": "object",
