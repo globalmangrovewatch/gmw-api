@@ -862,8 +862,9 @@ RSpec.describe "API V2 Widgets", type: :request do
       parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
 
       let(:location) { create :location }
+      let(:worldwide) { create :location, :worldwide }
       let!(:drivers_of_change_1) { create :drivers_of_change, location: location }
-      let!(:drivers_of_change_2) { create :drivers_of_change }
+      let!(:drivers_of_change_2) { create :drivers_of_change, location: worldwide }
 
       response 200, "Success" do
         schema type: :object,
@@ -900,7 +901,7 @@ RSpec.describe "API V2 Widgets", type: :request do
           end
 
           it "returns correct data" do
-            expect(response_json["data"].pluck("value")).to be_empty
+            expect(response_json["data"].pluck("value")).to eq([drivers_of_change_2.value])
           end
         end
       end

@@ -1,6 +1,10 @@
 {
   "data": [
-
+    {
+      "variable": "erosion_pct",
+      "primary_driver": "NPC",
+      "value": 98628.73
+    }
   ],
   "metadata": {
     "location_id": "worldwide",

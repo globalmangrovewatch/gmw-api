@@ -316,7 +316,7 @@ class V2::WidgetsController < ApiController
       @data = DriversOfChange.includes(:location).where location_id: @location_id
     else
       @location_id = "worldwide"
-      @data = []
+      @data = DriversOfChange.joins(:location).where location: {location_id: @location_id}
     end
   end
 end

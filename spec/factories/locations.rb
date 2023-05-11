@@ -30,6 +30,7 @@ FactoryBot.define do
   end
 
   trait :worldwide do
+    location_id { "worldwide" }
     location_type { "worldwide" }
   end
 end
