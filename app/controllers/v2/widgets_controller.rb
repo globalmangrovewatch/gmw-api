@@ -308,4 +308,21 @@ class V2::WidgetsController < ApiController
 
     @data = HabitatExtent.select("sum(value - value_prior) as value, ABS(sum(value - value_prior)) as abs_value, name,'net_change' indicator, iso").from(subquery).group(:name, :indicator, :iso).order("2 desc").limit(@limit)
   end
+
+  def sites_filters
+  end
+
+  def sites
+    @data = Site.select(
+      "sites.*,
+      ST_AsGeoJSON(sites.area) as site_area,
+      ST_AsGeoJSON(ST_Centroid(sites.area)) as site_centroid"
+    ).includes(:landscape)
+    @data = @data.at_organizations params[:organization] if params[:organization].present?
+    @data = @data.with_registration_intervention_answer "3.1", params[:ecological_aim] if params[:ecological_aim].present?
+    @data = @data.with_registration_intervention_answer "3.2", params[:socioeconomic_aim] if params[:socioeconomic_aim].present?
+    @data = @data.where id: RegistrationInterventionAnswer.with_selected_category("4.2", params[:cause_of_decline]).select(:site_id) if params[:cause_of_decline].present?
+    @data = @data.with_registration_intervention_answer "6.2", params[:intervention_type] if params[:intervention_type].present?
+    @data = @data.with_registration_intervention_answer "6.4", params[:community_activities] if params[:community_activities].present?
+  end
 end
