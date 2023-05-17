@@ -307,6 +307,17 @@ class V2::WidgetsController < ApiController
     @data = HabitatExtent.select("sum(value - value_prior) as value, ABS(sum(value - value_prior)) as abs_value, name,'net_change' indicator, iso").from(subquery).group(:name, :indicator, :iso).order("2 desc").limit(@limit)
   end
 
+  # GET /v2/widgets/drivers_of_change
+  def drivers_of_change
+    if params.has_key?(:location_id) && params[:location_id] != "worldwide"
+      @location_id = params[:location_id]
+      @data = DriversOfChange.includes(:location).where location_id: @location_id
+    else
+      @location_id = "worldwide"
+      @data = DriversOfChange.joins(:location).where location: {location_id: @location_id}
+    end
+  end
+
   def sites_filters
   end
 

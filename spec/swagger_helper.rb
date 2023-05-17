@@ -275,6 +275,14 @@ RSpec.configure do |config|
             },
             required: [:indicator, :value]
           },
+          drivers_of_change: {
+            type: :object,
+            properties: {
+              variable: {type: :string},
+              value: {type: :number},
+              primary_driver: {type: :string}
+            }
+          },
           sites_filters: {
             type: :object,
             properties: {

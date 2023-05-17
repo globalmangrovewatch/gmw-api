@@ -854,6 +854,60 @@ RSpec.describe "API V2 Widgets", type: :request do
     end
   end
 
+  path "/api/v2/widgets/drivers_of_change" do
+    get "Retrieves the data for the drivers of change widget" do
+      tags "Widgets"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
+
+      let(:location) { create :location }
+      let(:worldwide) { create :location, :worldwide }
+      let!(:drivers_of_change_1) { create :drivers_of_change, location: location }
+      let!(:drivers_of_change_2) { create :drivers_of_change, location: worldwide }
+
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {
+              type: :array,
+              items: {"$ref" => "#/components/schemas/drivers_of_change"}
+            },
+            metadata: {
+              :type => :object,
+              "$ref" => "#/components/schemas/metadata"
+            }
+          }
+
+        context "when location_id is used" do
+          let(:location_id) { location.id }
+
+          run_test!
+
+          it "matches snapshot", generate_swagger_example: true do
+            expect(response.body).to match_snapshot("api/v2/widgets/drivers_of_change_get_location")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([drivers_of_change_1.value])
+          end
+        end
+
+        context "when location_id is missing - use worldwide" do
+          run_test!
+
+          it "matches snapshot" do
+            expect(response.body).to match_snapshot("api/v2/widgets/drivers_of_change_get_worldwide")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([drivers_of_change_2.value])
+          end
+        end
+      end
+    end
+  end
+
   path "/api/v2/widgets/sites_filters" do
     get "Retrieves the data used for filtering sites" do
       tags "Widgets"

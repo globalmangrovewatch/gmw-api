@@ -37,6 +37,7 @@ Rails.application.routes.draw do
       get "/widgets/blue_carbon", to: "widgets#blue_carbon"
       get "/widgets/mitigation_potentials", to: "widgets#mitigation_potencials"
       get "/widgets/country_ranking", to: "widgets#country_ranking"
+      get "/widgets/drivers_of_change", to: "widgets#drivers_of_change"
       get "/widgets/sites_filters", to: "widgets#sites_filters"
       get "/widgets/sites", to: "widgets#sites"
 
