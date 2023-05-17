@@ -936,12 +936,12 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
-      parameter name: :organization, in: :query, type: :string, description: "Organization name", required: false
-      parameter name: :ecological_aim, in: :query, type: :string, required: false
-      parameter name: :socioeconomic_aim, in: :query, type: :string, required: false
-      parameter name: :cause_of_decline, in: :query, type: :string, required: false
-      parameter name: :intervention_type, in: :query, type: :string, required: false
-      parameter name: :community_activities, in: :query, type: :string, required: false
+      parameter name: :organization, in: :query, type: :array, items: {type: :string}, description: "Organization name", required: false
+      parameter name: :ecological_aim, in: :query, type: :array, items: {type: :string}, required: false
+      parameter name: :socioeconomic_aim, in: :query, type: :array, items: {type: :string}, required: false
+      parameter name: :cause_of_decline, in: :query, type: :array, items: {type: :string}, required: false
+      parameter name: :intervention_type, in: :query, type: :array, items: {type: :string}, required: false
+      parameter name: :community_activities, in: :query, type: :array, items: {type: :string}, required: false
 
       let(:organization_1) { create :organization }
       let(:landscape_1) { create :landscape, organizations: [organization_1] }
@@ -1024,7 +1024,7 @@ RSpec.describe "API V2 Widgets", type: :request do
         end
 
         context "when used organization filter" do
-          let(:organization) { organization_1.organization_name }
+          let(:organization) { [organization_1.organization_name] }
 
           it "contains only sites for given organization" do
             expect(response_json["data"].pluck("id")).to eq([site_1.id])
@@ -1032,7 +1032,7 @@ RSpec.describe "API V2 Widgets", type: :request do
         end
 
         context "when used ecological_aim filter" do
-          let(:ecological_aim) { "Increase native flora/vegetation (non-mangrove)" }
+          let(:ecological_aim) { ["Increase native flora/vegetation (non-mangrove)"] }
 
           it "contains only sites for given ecological_aim" do
             expect(response_json["data"].pluck("id")).to eq([site_2.id])
@@ -1040,7 +1040,7 @@ RSpec.describe "API V2 Widgets", type: :request do
         end
 
         context "when used socioeconomic_aim filter" do
-          let(:socioeconomic_aim) { "Tourism and recreation" }
+          let(:socioeconomic_aim) { ["Tourism and recreation"] }
 
           it "contains only sites for given socioeconomic_aim" do
             expect(response_json["data"].pluck("id")).to eq([site_2.id])
@@ -1048,7 +1048,7 @@ RSpec.describe "API V2 Widgets", type: :request do
         end
 
         context "when used cause_of_decline filter" do
-          let(:cause_of_decline) { "Residential %26 commercial development" }
+          let(:cause_of_decline) { ["Residential %26 commercial development"] }
 
           it "contains only sites for given cause_of_decline" do
             expect(response_json["data"].pluck("id")).to eq([site_2.id])
@@ -1056,7 +1056,7 @@ RSpec.describe "API V2 Widgets", type: :request do
         end
 
         context "when used intervention_type filter" do
-          let(:intervention_type) { "Vegetation clearance and suppression" }
+          let(:intervention_type) { ["Vegetation clearance and suppression"] }
 
           it "contains only sites for given intervention_type" do
             expect(response_json["data"].pluck("id")).to eq([site_3.id])
@@ -1064,7 +1064,7 @@ RSpec.describe "API V2 Widgets", type: :request do
         end
 
         context "when used community_activities filter" do
-          let(:community_activities) { "Formal mangrove protection" }
+          let(:community_activities) { ["Formal mangrove protection"] }
 
           it "contains only sites for given community_activities" do
             expect(response_json["data"].pluck("id")).to eq([site_3.id])
@@ -1072,9 +1072,9 @@ RSpec.describe "API V2 Widgets", type: :request do
         end
 
         context "when using multiple filters together" do
-          let(:ecological_aim) { "Increase native flora/vegetation (non-mangrove)" }
-          let(:socioeconomic_aim) { "Tourism and recreation" }
-          let(:cause_of_decline) { "Residential %26 commercial development" }
+          let(:ecological_aim) { ["Increase native flora/vegetation (non-mangrove)"] }
+          let(:socioeconomic_aim) { ["Tourism and recreation"] }
+          let(:cause_of_decline) { ["Residential %26 commercial development"] }
 
           it "contains only sites for given filters" do
             expect(response_json["data"].pluck("id")).to eq([site_2.id])
