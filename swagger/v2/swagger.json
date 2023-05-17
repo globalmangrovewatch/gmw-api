@@ -150,8 +150,8 @@
                       "coast_length_m": 98628.73,
                       "perimeter_m": 98628.73,
                       "area_m2": 98628.73,
-                      "id": 16109,
-                      "created_at": "2023-05-09T08:53:21.880Z"
+                      "id": 5,
+                      "created_at": "2023-05-17T07:08:21.673Z"
                     },
                     {
                       "name": "Kinshasa",
@@ -163,8 +163,8 @@
                       "coast_length_m": 68950.02,
                       "perimeter_m": 68950.02,
                       "area_m2": 68950.02,
-                      "id": 16108,
-                      "created_at": "2023-05-09T08:53:21.878Z"
+                      "id": 4,
+                      "created_at": "2023-05-17T07:08:21.671Z"
                     }
                   ]
                 },
@@ -212,7 +212,7 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "id": 16115,
+                    "id": 11,
                     "iso": "voluptatem",
                     "bounds": {
                     },
@@ -278,7 +278,7 @@
                       "iucn_url": "http://kutch-spencer.com/moises",
                       "red_list_cat": "vu",
                       "location_ids": [
-                        16119
+                        15
                       ]
                     },
                     {
@@ -348,14 +348,14 @@
                 "example": {
                   "data": [
                     {
-                      "id": 2639,
+                      "id": 3,
                       "year": 2016,
                       "total_area": 68950.02,
                       "protected_area": 68950.02
                     }
                   ],
                   "metadata": {
-                    "location_id": "16124",
+                    "location_id": "20",
                     "units": {
                       "total_area": "ha",
                       "protected_area": "ha"
@@ -446,9 +446,9 @@
                     },
                     "species": [
                       {
-                        "id": 1123,
-                        "created_at": "2023-05-09T08:53:22.135Z",
-                        "updated_at": "2023-05-09T08:53:22.135Z",
+                        "id": 11,
+                        "created_at": "2023-05-17T07:08:22.007Z",
+                        "updated_at": "2023-05-17T07:08:22.007Z",
                         "scientific_name": "voluptatem",
                         "common_name": "voluptatem",
                         "iucn_url": "http://kutch-spencer.com/moises",
@@ -519,7 +519,7 @@
                     "mangrove_area_extent": null
                   },
                   "metadata": {
-                    "location_id": "16150",
+                    "location_id": "46",
                     "year": [
                       2019,
                       2018
@@ -596,7 +596,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16178",
+                    "location_id": "74",
                     "year": [
                       2019,
                       2018
@@ -678,7 +678,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16212",
+                    "location_id": "108",
                     "unit": "ha",
                     "note": null
                   }
@@ -733,7 +733,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16226",
+                    "location_id": "122",
                     "note": null
                   }
                 },
@@ -783,12 +783,12 @@
                 "example": {
                   "data": [
                     {
-                      "indicator": "voluptatem",
+                      "indicator": "clams",
                       "value": 68950.02
                     }
                   ],
                   "metadata": {
-                    "location_id": "16234",
+                    "location_id": "130",
                     "unit": "mt CO₂ e",
                     "note": null
                   }
@@ -845,7 +845,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16249",
+                    "location_id": "145",
                     "units": {
                       "habitat_extent_area": "km2",
                       "linear_coverage": "km"
@@ -917,7 +917,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16267",
+                    "location_id": "163",
                     "units": {
                       "net_change": "km2"
                     },
@@ -991,7 +991,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16285",
+                    "location_id": "181",
                     "units": {
                       "value": "tons/ha"
                     },
@@ -1059,7 +1059,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16301",
+                    "location_id": "197",
                     "units": {
                       "value": "m"
                     },
@@ -1124,7 +1124,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16313",
+                    "location_id": "209",
                     "units": {
                       "value": "CO2e/ha",
                       "toc": "t CO₂e",
@@ -1191,7 +1191,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "16324",
+                    "location_id": "220",
                     "units": {
                       "value": "tCO2/ha"
                     },
@@ -1232,7 +1232,7 @@
           {
             "name": "start_year",
             "in": "query",
-            "description": "Location id. Default: first year that data exists for",
+            "description": "Start year. Default: first year that data exists for",
             "required": false,
             "schema": {
               "type": "integer"
@@ -1241,7 +1241,7 @@
           {
             "name": "end_year",
             "in": "query",
-            "description": "Location id. Default: last year that dat exists for",
+            "description": "End year. Default: last year that dat exists for",
             "required": false,
             "schema": {
               "type": "integer"
@@ -1291,6 +1291,285 @@
                     "metadata": {
                       "type": "object",
                       "$ref": "#/components/schemas/metadata"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/widgets/sites_filters": {
+      "get": {
+        "summary": "Retrieves the data used for filtering sites",
+        "tags": [
+          "Widgets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "organization": [
+                      "Organization 1"
+                    ],
+                    "intervention_type": [
+                      "Restore hydrology - excavate channels",
+                      "Restore hydrology - remove or breach aquaculture pond walls",
+                      "Restore hydrology - clear channel blockages",
+                      "Restore hydrology - reconnection of upstream flows restricted by dams, road crossings etc.",
+                      "Trap sediments (e.g., with fence barriers)",
+                      "Reduce wave energy (e.g., bamboo walls, offshore reefs, breakwaters)",
+                      "Reprofile and change the elevation of the soil, relative to sea level",
+                      "Activities to reduce salinity",
+                      "Exclusion fences",
+                      "Vegetation clearance and suppression",
+                      "Remove debris",
+                      "Remove seaweed or algae from seedlings",
+                      "Remove excess sand/sediment",
+                      "Planting",
+                      "Broadcast collected propagules onto an incoming tide",
+                      "Large scale broadcasting of propagules from the air or boats",
+                      "Assisted natural regeneration",
+                      "None",
+                      "Other"
+                    ],
+                    "cause_of_decline": [
+                      "Residential & commercial development",
+                      "Agriculture & aquaculture",
+                      "Energy production & mining",
+                      "Transportation & service corridors",
+                      "Biological resource use",
+                      "Human intrusions & disturbance",
+                      "Natural system modifications",
+                      "Invasive & other problematic species, genes & diseases",
+                      "Pollution",
+                      "Geological events",
+                      "Climate change & severe weather",
+                      "Other options"
+                    ],
+                    "ecological_aim": [
+                      "Increase mangrove area",
+                      "Improve mangrove condition/halt or reduce degradation",
+                      "Increase mangrove species richness",
+                      "Offset mangrove loss from another area",
+                      "Habitat protection",
+                      "Increase native fauna/wildlife",
+                      "Increase native flora/vegetation (non-mangrove)",
+                      "Reduce invasive species",
+                      "Increase ecological resilience",
+                      "Increase habitat connectivity",
+                      "Restore hydrological connectivity",
+                      "Improve sediment dynamics",
+                      "Improve nutrient cycling",
+                      "Increase carbon storage and sequestration",
+                      "None",
+                      "Unknown",
+                      "Other"
+                    ],
+                    "socioeconomic_aim": [
+                      "Enhance fisheries/restore fishing grounds",
+                      "Provide sustainable timber resources",
+                      "Provide sustainable non-timber products",
+                      "Improve water quality",
+                      "Prevent or ameliorate pollution",
+                      "Coastal storm or flood protection",
+                      "Erosion control or coastal stability",
+                      "Carbon offsets/trading",
+                      "Tourism and recreation",
+                      "Land reclamation",
+                      "Generate employment and income",
+                      "Promote women's equal representation and participation in employment",
+                      "Safeguard cultural or spiritual importance",
+                      "Safeguard traditional practises",
+                      "Increase food security",
+                      "Secure management rights and land tenure",
+                      "Improve local community health",
+                      "Coastal beautification or aesthetic value",
+                      "Support local community natural resource management institutions",
+                      "Encourage community involvement",
+                      "Education/raise environmental awareness",
+                      "Sustainable financing",
+                      "None",
+                      "Unknown",
+                      "Other"
+                    ],
+                    "community_activities": [
+                      "Livelihood activities",
+                      "Securing tenure arrangement",
+                      "Management activities",
+                      "Strengthening mangrove governance",
+                      "Environmental education",
+                      "Formal mangrove protection",
+                      "Training and capacity building",
+                      "None",
+                      "Other"
+                    ]
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/sites_filters"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/widgets/sites": {
+      "get": {
+        "summary": "Retrieves the data for the sites",
+        "tags": [
+          "Widgets"
+        ],
+        "parameters": [
+          {
+            "name": "organization",
+            "in": "query",
+            "description": "Organization name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ecological_aim",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "socioeconomic_aim",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cause_of_decline",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "intervention_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "community_activities",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "id": 18,
+                      "site_name": "Site 1",
+                      "landscape_id": 18,
+                      "landscape_name": "Landscape 1",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 19,
+                      "site_name": "Site 2",
+                      "landscape_id": 19,
+                      "landscape_name": "Landscape 2",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 20,
+                      "site_name": "Site 3",
+                      "landscape_id": 20,
+                      "landscape_name": "Landscape 3",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 21,
+                      "site_name": "Site 4",
+                      "landscape_id": 21,
+                      "landscape_name": "Landscape 4",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 22,
+                      "site_name": "Site 5",
+                      "landscape_id": 22,
+                      "landscape_name": "Landscape 5",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 23,
+                      "site_name": "Site 6",
+                      "landscape_id": 23,
+                      "landscape_name": "Landscape 6",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 24,
+                      "site_name": "Site 7",
+                      "landscape_id": 24,
+                      "landscape_name": "Landscape 7",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 25,
+                      "site_name": "Site 8",
+                      "landscape_id": 25,
+                      "landscape_name": "Landscape 8",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 26,
+                      "site_name": "Site 9",
+                      "landscape_id": 26,
+                      "landscape_name": "Landscape 9",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    }
+                  ]
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/sites"
+                      }
                     }
                   }
                 }
@@ -1823,6 +2102,70 @@
           "indicator",
           "value"
         ]
+      },
+      "sites_filters": {
+        "type": "object",
+        "properties": {
+          "organization": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "intervention_type": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cause_of_decline": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ecological_aim": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "socioeconomic_aim": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "community_activities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "sites": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "site_name": {
+            "type": "string"
+          },
+          "landscape_id": {
+            "type": "integer"
+          },
+          "landscape_name": {
+            "type": "string"
+          },
+          "site_area": {
+            "type": "string"
+          },
+          "site_centroid": {
+            "type": "string"
+          }
+        }
       },
       "file_converter": {
         "type": "object",
