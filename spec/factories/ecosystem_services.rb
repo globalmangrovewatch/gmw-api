@@ -5,8 +5,7 @@ FactoryBot.define do
       Faker::Number.decimal
     end
     sequence(:indicator) do |n|
-      Faker::Config.random = Random.new(n)
-      Faker::Lorem.word
+      EcosystemService.indicators.keys.sample random: Random.new(n)
     end
     location
   end

@@ -46,7 +46,7 @@ RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
   config.request_snapshots_dir = "spec/fixtures/snapshots"
-  config.request_snapshots_dynamic_attributes = %w[id location_id location_ids created_at updated_at]
+  config.request_snapshots_dynamic_attributes = %w[id location_id location_ids landscape_id created_at updated_at]
   config.request_snapshots_ignore_order = %w[data]
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your

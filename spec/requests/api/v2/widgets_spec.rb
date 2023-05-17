@@ -810,8 +810,8 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
-      parameter name: :start_year, in: :query, type: :integer, description: "Location id. Default: first year that data exists for", required: false
-      parameter name: :end_year, in: :query, type: :integer, description: "Location id. Default: last year that dat exists for", required: false
+      parameter name: :start_year, in: :query, type: :integer, description: "Start year. Default: first year that data exists for", required: false
+      parameter name: :end_year, in: :query, type: :integer, description: "End year. Default: last year that dat exists for", required: false
 
       let(:location) { create :location, location_type: "country" }
       let!(:habitat_extent_1) { create :habitat_extent, location: location, indicator: "habitat_extent_area", year: 2010 }
@@ -902,6 +902,182 @@ RSpec.describe "API V2 Widgets", type: :request do
 
           it "returns correct data" do
             expect(response_json["data"].pluck("value")).to eq([drivers_of_change_2.value])
+          end
+        end
+      end
+    end
+  end
+
+  path "/api/v2/widgets/sites_filters" do
+    get "Retrieves the data used for filtering sites" do
+      tags "Widgets"
+      consumes "application/json"
+      produces "application/json"
+
+      let!(:organization) { create :organization }
+
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {"$ref" => "#/components/schemas/sites_filters"}
+          }
+
+        run_test!
+
+        it "matches snapshot", generate_swagger_example: true do
+          expect(response.body).to match_snapshot("api/v2/widgets/sites_filters")
+        end
+      end
+    end
+  end
+
+  path "/api/v2/widgets/sites" do
+    get "Retrieves the data for the sites" do
+      tags "Widgets"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :organization, in: :query, type: :string, description: "Organization name", required: false
+      parameter name: :ecological_aim, in: :query, type: :string, required: false
+      parameter name: :socioeconomic_aim, in: :query, type: :string, required: false
+      parameter name: :cause_of_decline, in: :query, type: :string, required: false
+      parameter name: :intervention_type, in: :query, type: :string, required: false
+      parameter name: :community_activities, in: :query, type: :string, required: false
+
+      let(:organization_1) { create :organization }
+      let(:landscape_1) { create :landscape, organizations: [organization_1] }
+      let(:registration_intervention_answer_1) do
+        create :registration_intervention_answer,
+          question_id: "3.1",
+          answer_value: {
+            "selectedValues" => ["Increase native flora/vegetation (non-mangrove)", "Increase habitat connectivity"],
+            "otherValue" => "test",
+            "isOtherChecked" => true,
+            "aimStakeholderBenefits" => {}
+          }
+      end
+      let(:registration_intervention_answer_2) do
+        create :registration_intervention_answer,
+          question_id: "3.2",
+          answer_value: {
+            "selectedValues" => ["Tourism and recreation", "Safeguard cultural or spiritual importance", "Unknown", "None"],
+            "isOtherChecked" => false
+          }
+      end
+      let(:registration_intervention_answer_3) do
+        create :registration_intervention_answer,
+          question_id: "4.2",
+          answer_value: [
+            {"mainCauseLabel" => "Residential & commercial development",
+             "mainCauseAnswers" => [{"mainCauseAnswer" => "Housing & urban areas", "levelOfDegredation" => "Moderate"}]},
+            {"mainCauseLabel" => "Agriculture & aquaculture",
+             "subCauses" =>
+                    [{"subCauseLabel" => "Marine & freshwater aquaculture",
+                      "subCauseAnswers" => [{"subCauseAnswer" => "Shrimp aquaculture", "levelOfDegredation" => "High"}]}]},
+            {"mainCauseLabel" => "Natural system modifications",
+             "subCauses" =>
+                    [{"subCauseLabel" => "Dams & water management/use",
+                      "subCauseAnswers" =>
+                        [{"subCauseAnswer" => "Reduced sediment flows", "levelOfDegredation" => "High"},
+                          {"subCauseAnswer" => "Reduction in flows/altered hydrology", "levelOfDegredation" => "High"}]}]},
+            {"mainCauseLabel" => "Climate change & severe weather",
+             "mainCauseAnswers" =>
+                    [{"mainCauseAnswer" => "Sea level change", "levelOfDegredation" => "Low"},
+                      {"mainCauseAnswer" => "Storms & flooding", "levelOfDegredation" => "Moderate"}]}
+          ]
+      end
+      let(:registration_intervention_answer_4) do
+        create :registration_intervention_answer,
+          question_id: "6.2",
+          answer_value: {
+            "selectedValues" => ["Vegetation clearance and suppression"], "isOtherChecked" => true, "otherValue" => "planting"
+          }
+      end
+      let(:registration_intervention_answer_5) do
+        create :registration_intervention_answer,
+          question_id: "6.4",
+          answer_value: {
+            "selectedValues" => ["Formal mangrove protection ", "None"], "isOtherChecked" => false
+          }
+      end
+      let!(:site_1) { create :site, landscape: landscape_1 }
+      let!(:site_2) { create :site, registration_intervention_answers: [registration_intervention_answer_1, registration_intervention_answer_2, registration_intervention_answer_3] }
+      let!(:site_3) { create :site, registration_intervention_answers: [registration_intervention_answer_4, registration_intervention_answer_5] }
+      let!(:site_4) { create :site }
+
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {
+              type: :array,
+              items: {"$ref" => "#/components/schemas/sites"}
+            }
+          }
+
+        run_test!
+
+        it "matches snapshot", generate_swagger_example: true do
+          expect(response.body).to match_snapshot("api/v2/widgets/sites")
+        end
+
+        it "contains all available sites" do
+          expect(response_json["data"].pluck("id")).to match_array(Site.pluck(:id))
+        end
+
+        context "when used organization filter" do
+          let(:organization) { organization_1.organization_name }
+
+          it "contains only sites for given organization" do
+            expect(response_json["data"].pluck("id")).to eq([site_1.id])
+          end
+        end
+
+        context "when used ecological_aim filter" do
+          let(:ecological_aim) { "Increase native flora/vegetation (non-mangrove)" }
+
+          it "contains only sites for given ecological_aim" do
+            expect(response_json["data"].pluck("id")).to eq([site_2.id])
+          end
+        end
+
+        context "when used socioeconomic_aim filter" do
+          let(:socioeconomic_aim) { "Tourism and recreation" }
+
+          it "contains only sites for given socioeconomic_aim" do
+            expect(response_json["data"].pluck("id")).to eq([site_2.id])
+          end
+        end
+
+        context "when used cause_of_decline filter" do
+          let(:cause_of_decline) { "Residential %26 commercial development" }
+
+          it "contains only sites for given cause_of_decline" do
+            expect(response_json["data"].pluck("id")).to eq([site_2.id])
+          end
+        end
+
+        context "when used intervention_type filter" do
+          let(:intervention_type) { "Vegetation clearance and suppression" }
+
+          it "contains only sites for given intervention_type" do
+            expect(response_json["data"].pluck("id")).to eq([site_3.id])
+          end
+        end
+
+        context "when used community_activities filter" do
+          let(:community_activities) { "Formal mangrove protection" }
+
+          it "contains only sites for given community_activities" do
+            expect(response_json["data"].pluck("id")).to eq([site_3.id])
+          end
+        end
+
+        context "when using multiple filters together" do
+          let(:ecological_aim) { "Increase native flora/vegetation (non-mangrove)" }
+          let(:socioeconomic_aim) { "Tourism and recreation" }
+          let(:cause_of_decline) { "Residential %26 commercial development" }
+
+          it "contains only sites for given filters" do
+            expect(response_json["data"].pluck("id")).to eq([site_2.id])
           end
         end
       end

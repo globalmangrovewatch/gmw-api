@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_11_080152) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_15_102127) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -228,7 +228,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_11_080152) do
   create_table "registration_intervention_answers", force: :cascade do |t|
     t.bigint "site_id", null: false
     t.string "question_id"
-    t.json "answer_value"
+    t.jsonb "answer_value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["site_id"], name: "index_registration_intervention_answers_on_site_id"

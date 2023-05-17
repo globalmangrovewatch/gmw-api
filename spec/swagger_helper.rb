@@ -283,6 +283,28 @@ RSpec.configure do |config|
               primary_driver: {type: :string}
             }
           },
+          sites_filters: {
+            type: :object,
+            properties: {
+              organization: {type: :array, items: {type: :string}},
+              intervention_type: {type: :array, items: {type: :string}},
+              cause_of_decline: {type: :array, items: {type: :string}},
+              ecological_aim: {type: :array, items: {type: :string}},
+              socioeconomic_aim: {type: :array, items: {type: :string}},
+              community_activities: {type: :array, items: {type: :string}}
+            }
+          },
+          sites: {
+            type: :object,
+            properties: {
+              id: {type: :integer},
+              site_name: {type: :string},
+              landscape_id: {type: :integer},
+              landscape_name: {type: :string},
+              site_area: {type: :string},
+              site_centroid: {type: :string}
+            }
+          },
           file_converter: {
             type: :object,
             properties: {

@@ -130,9 +130,7 @@ class V2::WidgetsController < ApiController
   def ecosystem_service
     if params.has_key?(:location_id) && params[:location_id] != "worldwide"
       @location_id = params[:location_id]
-      @data = EcosystemService.select("indicator, location_id, value, sum(value) over () as total_value").where(
-        location_id: params[:location_id]
-      )
+      @data = EcosystemService.select("indicator, location_id, value").where(location_id: params[:location_id])
     else
       @data = EcosystemService.select("indicator, sum(value) as value").group("indicator")
       @location_id = "worldwide"
@@ -318,5 +316,22 @@ class V2::WidgetsController < ApiController
       @location_id = "worldwide"
       @data = DriversOfChange.joins(:location).where location: {location_id: @location_id}
     end
+  end
+
+  def sites_filters
+  end
+
+  def sites
+    @data = Site.select(
+      "sites.*,
+      ST_AsGeoJSON(sites.area) as site_area,
+      ST_AsGeoJSON(ST_Centroid(sites.area)) as site_centroid"
+    ).includes(:landscape)
+    @data = @data.at_organizations params[:organization] if params[:organization].present?
+    @data = @data.with_registration_intervention_answer "3.1", params[:ecological_aim] if params[:ecological_aim].present?
+    @data = @data.with_registration_intervention_answer "3.2", params[:socioeconomic_aim] if params[:socioeconomic_aim].present?
+    @data = @data.where id: RegistrationInterventionAnswer.with_selected_category("4.2", params[:cause_of_decline]).select(:site_id) if params[:cause_of_decline].present?
+    @data = @data.with_registration_intervention_answer "6.2", params[:intervention_type] if params[:intervention_type].present?
+    @data = @data.with_registration_intervention_answer "6.4", params[:community_activities] if params[:community_activities].present?
   end
 end
