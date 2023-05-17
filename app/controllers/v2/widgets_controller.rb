@@ -130,9 +130,7 @@ class V2::WidgetsController < ApiController
   def ecosystem_service
     if params.has_key?(:location_id) && params[:location_id] != "worldwide"
       @location_id = params[:location_id]
-      @data = EcosystemService.select("indicator, location_id, value, sum(value) over () as total_value").where(
-        location_id: params[:location_id]
-      )
+      @data = EcosystemService.select("indicator, location_id, value").where(location_id: params[:location_id])
     else
       @data = EcosystemService.select("indicator, sum(value) as value").group("indicator")
       @location_id = "worldwide"

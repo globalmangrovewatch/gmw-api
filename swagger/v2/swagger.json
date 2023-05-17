@@ -5,206 +5,6 @@
     "version": "v2"
   },
   "paths": {
-    "/api/v1/locations": {
-      "get": {
-        "summary": "Retrieves the data for the degradation and loss Treemap chart",
-        "tags": [
-          "Locations"
-        ],
-        "parameters": [
-          {
-            "name": "rank_by",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "dir",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "start_date",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "end_date",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "location_type",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/location_v1"
-                      }
-                    },
-                    "metadata": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/metadata"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/locations/{location_id}": {
-      "get": {
-        "summary": "Retrieves the data for the degradation and loss Treemap chart",
-        "tags": [
-          "Locations"
-        ],
-        "parameters": [
-          {
-            "name": "location_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/location_v1"
-                      }
-                    },
-                    "metadata": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/metadata"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/locations/{location_id}/mangrove_data": {
-      "get": {
-        "summary": "Retrieves the data for the orginal widgets",
-        "tags": [
-          "Locations"
-        ],
-        "parameters": [
-          {
-            "name": "location_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "year",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/degradation_and_loss"
-                      }
-                    },
-                    "metadata": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/metadata"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v2/spatial_file/converter": {
       "post": {
         "summary": "Converts a geospatial format into a valid geojson",
@@ -350,8 +150,8 @@
                       "coast_length_m": 98628.73,
                       "perimeter_m": 98628.73,
                       "area_m2": 98628.73,
-                      "id": 1765,
-                      "created_at": "2023-05-16T09:25:35.759Z"
+                      "id": 5,
+                      "created_at": "2023-05-17T07:08:21.673Z"
                     },
                     {
                       "name": "Kinshasa",
@@ -363,8 +163,8 @@
                       "coast_length_m": 68950.02,
                       "perimeter_m": 68950.02,
                       "area_m2": 68950.02,
-                      "id": 1764,
-                      "created_at": "2023-05-16T09:25:35.758Z"
+                      "id": 4,
+                      "created_at": "2023-05-17T07:08:21.671Z"
                     }
                   ]
                 },
@@ -383,78 +183,6 @@
                     }
                   }
                 }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Creates a new location",
-        "tags": [
-          "Locations"
-        ],
-        "parameters": [
-
-        ],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "example": {
-                  "data": {
-                    "id": 1771,
-                    "iso": "TST",
-                    "bounds": null,
-                    "location_type": "country",
-                    "name": "Test Location",
-                    "area_m2": null,
-                    "perimeter_m": null,
-                    "coast_length_m": null,
-                    "location_id": null
-                  }
-                },
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/location_v2"
-                    },
-                    "metadata": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/metadata"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "location_type": {
-                    "type": "string"
-                  },
-                  "iso": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "name",
-                  "location_type",
-                  "iso"
-                ]
               }
             }
           }
@@ -484,7 +212,7 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "id": 1773,
+                    "id": 11,
                     "iso": "voluptatem",
                     "bounds": {
                     },
@@ -513,110 +241,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Not Found"
-          }
-        }
-      },
-      "put": {
-        "summary": "Updates the data of a location",
-        "tags": [
-          "Locations"
-        ],
-        "parameters": [
-          {
-            "name": "location_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "example": {
-                  "data": {
-                    "id": 1777,
-                    "iso": "TST",
-                    "bounds": {
-                    },
-                    "location_type": "country",
-                    "name": "Test Location",
-                    "area_m2": 68950.02,
-                    "perimeter_m": 68950.02,
-                    "coast_length_m": 68950.02,
-                    "location_id": "Location-1"
-                  }
-                },
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/location_v2"
-                    },
-                    "metadata": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/metadata"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Not Found"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "location_type": {
-                    "type": "string"
-                  },
-                  "iso": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "name",
-                  "location_type",
-                  "iso"
-                ]
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Deletes a location",
-        "tags": [
-          "Locations"
-        ],
-        "parameters": [
-          {
-            "name": "location_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
           },
           "400": {
             "description": "Not Found"
@@ -654,7 +278,7 @@
                       "iucn_url": "http://kutch-spencer.com/moises",
                       "red_list_cat": "vu",
                       "location_ids": [
-                        1780
+                        15
                       ]
                     },
                     {
@@ -724,14 +348,14 @@
                 "example": {
                   "data": [
                     {
-                      "id": 147,
+                      "id": 3,
                       "year": 2016,
                       "total_area": 68950.02,
                       "protected_area": 68950.02
                     }
                   ],
                   "metadata": {
-                    "location_id": "1785",
+                    "location_id": "20",
                     "units": {
                       "total_area": "ha",
                       "protected_area": "ha"
@@ -822,9 +446,9 @@
                     },
                     "species": [
                       {
-                        "id": 91,
-                        "created_at": "2023-05-16T09:25:36.114Z",
-                        "updated_at": "2023-05-16T09:25:36.114Z",
+                        "id": 11,
+                        "created_at": "2023-05-17T07:08:22.007Z",
+                        "updated_at": "2023-05-17T07:08:22.007Z",
                         "scientific_name": "voluptatem",
                         "common_name": "voluptatem",
                         "iucn_url": "http://kutch-spencer.com/moises",
@@ -895,7 +519,7 @@
                     "mangrove_area_extent": null
                   },
                   "metadata": {
-                    "location_id": "1811",
+                    "location_id": "46",
                     "year": [
                       2019,
                       2018
@@ -972,7 +596,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "1839",
+                    "location_id": "74",
                     "year": [
                       2019,
                       2018
@@ -1054,7 +678,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "1873",
+                    "location_id": "108",
                     "unit": "ha",
                     "note": null
                   }
@@ -1109,7 +733,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "1887",
+                    "location_id": "122",
                     "note": null
                   }
                 },
@@ -1159,12 +783,12 @@
                 "example": {
                   "data": [
                     {
-                      "indicator": "voluptatem",
+                      "indicator": "clams",
                       "value": 68950.02
                     }
                   ],
                   "metadata": {
-                    "location_id": "1895",
+                    "location_id": "130",
                     "unit": "mt CO₂ e",
                     "note": null
                   }
@@ -1221,7 +845,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "1910",
+                    "location_id": "145",
                     "units": {
                       "habitat_extent_area": "km2",
                       "linear_coverage": "km"
@@ -1293,7 +917,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "1928",
+                    "location_id": "163",
                     "units": {
                       "net_change": "km2"
                     },
@@ -1367,7 +991,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "1946",
+                    "location_id": "181",
                     "units": {
                       "value": "tons/ha"
                     },
@@ -1435,7 +1059,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "1962",
+                    "location_id": "197",
                     "units": {
                       "value": "m"
                     },
@@ -1500,7 +1124,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "1974",
+                    "location_id": "209",
                     "units": {
                       "value": "CO2e/ha",
                       "toc": "t CO₂e",
@@ -1567,7 +1191,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "1985",
+                    "location_id": "220",
                     "units": {
                       "value": "tCO2/ha"
                     },
@@ -1865,73 +1489,73 @@
                 "example": {
                   "data": [
                     {
-                      "id": 618,
+                      "id": 18,
                       "site_name": "Site 1",
-                      "landscape_id": 618,
+                      "landscape_id": 18,
                       "landscape_name": "Landscape 1",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 619,
+                      "id": 19,
                       "site_name": "Site 2",
-                      "landscape_id": 619,
+                      "landscape_id": 19,
                       "landscape_name": "Landscape 2",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 620,
+                      "id": 20,
                       "site_name": "Site 3",
-                      "landscape_id": 620,
+                      "landscape_id": 20,
                       "landscape_name": "Landscape 3",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 621,
+                      "id": 21,
                       "site_name": "Site 4",
-                      "landscape_id": 621,
+                      "landscape_id": 21,
                       "landscape_name": "Landscape 4",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 622,
+                      "id": 22,
                       "site_name": "Site 5",
-                      "landscape_id": 622,
+                      "landscape_id": 22,
                       "landscape_name": "Landscape 5",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 623,
+                      "id": 23,
                       "site_name": "Site 6",
-                      "landscape_id": 623,
+                      "landscape_id": 23,
                       "landscape_name": "Landscape 6",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 624,
+                      "id": 24,
                       "site_name": "Site 7",
-                      "landscape_id": 624,
+                      "landscape_id": 24,
                       "landscape_name": "Landscape 7",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 625,
+                      "id": 25,
                       "site_name": "Site 8",
-                      "landscape_id": 625,
+                      "landscape_id": 25,
                       "landscape_name": "Landscape 8",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 626,
+                      "id": 26,
                       "site_name": "Site 9",
-                      "landscape_id": 626,
+                      "landscape_id": 26,
                       "landscape_name": "Landscape 9",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
