@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_11_080152) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -80,6 +80,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
     t.text "main_loss_driver"
     t.string "indicator", null: false
     t.index ["location_id"], name: "index_degradation_treemaps_on_location_id"
+  end
+
+  create_table "drivers_of_changes", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "variable", null: false
+    t.float "value", null: false
+    t.string "primary_driver", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_drivers_of_changes_on_location_id"
   end
 
   create_table "ecosystem_services", force: :cascade do |t|
@@ -316,6 +326,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
   add_foreign_key "blue_carbon_investments", "locations"
   add_foreign_key "blue_carbons", "locations"
   add_foreign_key "degradation_treemaps", "locations"
+  add_foreign_key "drivers_of_changes", "locations"
   add_foreign_key "ecosystem_services", "locations"
   add_foreign_key "habitat_extents", "locations"
   add_foreign_key "international_statuses", "locations"

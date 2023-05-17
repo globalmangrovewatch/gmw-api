@@ -37,6 +37,7 @@ Rails.application.routes.draw do
       get "/widgets/blue_carbon", to: "widgets#blue_carbon"
       get "/widgets/mitigation_potentials", to: "widgets#mitigation_potencials"
       get "/widgets/country_ranking", to: "widgets#country_ranking"
+      get "/widgets/drivers_of_change", to: "widgets#drivers_of_change"
 
       ## Geometry file conversion
       post "/spatial_file/converter", to: "file_converter#convert"

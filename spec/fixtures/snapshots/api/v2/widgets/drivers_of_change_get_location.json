@@ -1,0 +1,15 @@
+{
+  "data": [
+    {
+      "variable": "npc_pct",
+      "primary_driver": "Settlement",
+      "value": 68950.02
+    }
+  ],
+  "metadata": {
+    "location_id": "598",
+    "units": {
+      "value": "%"
+    }
+  }
+}
