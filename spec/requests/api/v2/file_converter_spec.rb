@@ -29,22 +29,15 @@ RSpec.describe "API V2 File Converter", type: :request do
         end
 
         context "when shapefile is provided" do
-          let(:geojson_file) { Tempfile.new }
           let(:file) { fixture_file_upload "shapefile.zip" }
 
-          before do
-            geojson_file.write file_fixture("dummy_geojson.json").read
-            geojson_file.rewind
-            allow_any_instance_of(FileDataImport::Parser::Shp).to receive(:convert_to_geojson)
-            allow_any_instance_of(FileDataImport::Parser::Shp).to receive(:path_to_geojson_file).and_return(geojson_file.path)
-          end
-
-          after do
-            geojson_file.close
-            geojson_file.unlink
-          end
-
           run_test!
+
+          context "when shapefile has spaces" do
+            let(:file) { fixture_file_upload "shapefile_with_spaces.zip" }
+
+            run_test!
+          end
         end
 
         context "when gpkg file is provided" do
