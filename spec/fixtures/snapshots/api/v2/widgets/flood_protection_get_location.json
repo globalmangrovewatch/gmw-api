@@ -1,0 +1,13 @@
+{
+  "data": [
+    {
+      "indicator": "population",
+      "period": "25_year",
+      "value": 68950.02,
+      "unit": "people"
+    }
+  ],
+  "metadata": {
+    "location_id": "37"
+  }
+}

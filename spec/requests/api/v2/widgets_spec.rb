@@ -1083,4 +1083,58 @@ RSpec.describe "API V2 Widgets", type: :request do
       end
     end
   end
+
+  path "/api/v2/widgets/flood_protection" do
+    get "Retrieves the data for the flood protection widget" do
+      tags "Widgets"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
+
+      let(:location) { create :location }
+      let(:worldwide) { create :location, :worldwide }
+      let!(:flood_protection_1) { create :flood_protection, location: location }
+      let!(:flood_protection_2) { create :flood_protection, location: worldwide }
+
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {
+              type: :array,
+              items: {"$ref" => "#/components/schemas/flood_protection"}
+            },
+            metadata: {
+              :type => :object,
+              "$ref" => "#/components/schemas/metadata"
+            }
+          }
+
+        context "when location_id is used" do
+          let(:location_id) { location.id }
+
+          run_test!
+
+          it "matches snapshot", generate_swagger_example: true do
+            expect(response.body).to match_snapshot("api/v2/widgets/flood_protection_get_location")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([flood_protection_1.value])
+          end
+        end
+
+        context "when location_id is missing - use worldwide" do
+          run_test!
+
+          it "matches snapshot" do
+            expect(response.body).to match_snapshot("api/v2/widgets/flood_protection_get_worldwide")
+          end
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([flood_protection_2.value])
+          end
+        end
+      end
+    end
+  end
 end

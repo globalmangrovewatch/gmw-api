@@ -1,0 +1,13 @@
+{
+  "data": [
+    {
+      "indicator": "area",
+      "period": "annual",
+      "value": 98628.73,
+      "unit": "km2"
+    }
+  ],
+  "metadata": {
+    "location_id": "worldwide"
+  }
+}

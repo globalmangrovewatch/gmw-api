@@ -334,4 +334,15 @@ class V2::WidgetsController < ApiController
     @data = @data.with_registration_intervention_answer "6.2", params[:intervention_type] if params[:intervention_type].present?
     @data = @data.with_registration_intervention_answer "6.4", params[:community_activities] if params[:community_activities].present?
   end
+
+  # GET /v2/widgets/flood_protections
+  def flood_protection
+    if params.has_key?(:location_id) && params[:location_id] != "worldwide"
+      @location_id = params[:location_id]
+      @data = FloodProtection.includes(:location).where location_id: @location_id
+    else
+      @location_id = "worldwide"
+      @data = FloodProtection.joins(:location).where location: {location_id: @location_id}
+    end
+  end
 end

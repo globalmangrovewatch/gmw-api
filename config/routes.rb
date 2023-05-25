@@ -40,6 +40,7 @@ Rails.application.routes.draw do
       get "/widgets/drivers_of_change", to: "widgets#drivers_of_change"
       get "/widgets/sites_filters", to: "widgets#sites_filters"
       get "/widgets/sites", to: "widgets#sites"
+      get "/widgets/flood_protection", to: "widgets#flood_protection"
 
       ## Geometry file conversion
       post "/spatial_file/converter", to: "file_converter#convert"

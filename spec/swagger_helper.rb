@@ -305,6 +305,15 @@ RSpec.configure do |config|
               site_centroid: {type: :string}
             }
           },
+          flood_protection: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
+              period: {type: :string},
+              value: {type: :number},
+              unit: {type: :string}
+            }
+          },
           file_converter: {
             type: :object,
             properties: {
