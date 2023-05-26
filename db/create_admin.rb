@@ -33,4 +33,3 @@ puts "Admin user created"
 puts "=================="
 puts "name: %s" % name
 puts "email: %s" % email
-puts "password: %s" % password
