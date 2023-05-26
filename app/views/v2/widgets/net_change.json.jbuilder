@@ -10,7 +10,7 @@ end
 json.metadata do
   json.location_id @location_id
   json.units do
-    json.net_change 'km2'
+    json.net_change "km2"
   end
   json.year [1996,
     2007,

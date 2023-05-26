@@ -1,5 +1,4 @@
 ActiveAdmin.register SpeciesLocation do
-
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -28,7 +27,7 @@ ActiveAdmin.register SpeciesLocation do
   index do
     selectable_column
     id_column
-    column 'Specie' do |location_specie|
+    column "Specie" do |location_specie|
       link_to location_specie.specie.common_name, admin_species_path(location_specie)
     end
     column :location
@@ -37,7 +36,7 @@ ActiveAdmin.register SpeciesLocation do
   end
 
   form do |f|
-    f.inputs 'Details' do
+    f.inputs "Details" do
       f.input :specie, collection: Specie.all.pluck(:common_name, :id)
       f.input :location
     end
@@ -52,8 +51,7 @@ ActiveAdmin.register SpeciesLocation do
 
   controller do
     def csv_filename
-      'species_locations.csv'
+      "species_locations.csv"
     end
   end
-  
 end

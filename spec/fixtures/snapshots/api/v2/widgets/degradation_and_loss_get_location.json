@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "indicator": "degraded_area",
+      "value": 68950.02,
+      "label": "Non-Restorable loss mangrove area"
+    },
+    {
+      "indicator": "lost_area",
+      "value": 13440.899999999994,
+      "label": "Total loss"
+    }
+  ],
+  "metadata": {
+    "location_id": "1377",
+    "year": [
+      2019,
+      2018
+    ],
+    "units": {
+      "degraded_area": "%",
+      "lost_area": "ha",
+      "mangrove_area": "ha"
+    },
+    "main_loss_driver": "Enim repellat pariatur est.",
+    "note": null
+  }
+}

@@ -1,5 +1,4 @@
 ActiveAdmin.register WidgetProtectedAreas do
-
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -17,7 +16,7 @@ ActiveAdmin.register WidgetProtectedAreas do
 
   permit_params :year, :total_area, :protected_area, :location_id
 
-  menu label: 'Proteted areas', parent: 'Widgets'
+  menu label: "Proteted areas", parent: "Widgets"
 
   index do
     selectable_column
@@ -31,14 +30,14 @@ ActiveAdmin.register WidgetProtectedAreas do
   end
 
   form do |f|
-    f.inputs 'Details' do
+    f.inputs "Details" do
       f.input :year, required: true
       f.input :total_area, required: true
       f.input :protected_area, required: true
     end
 
-    f.inputs 'Location' do
-      f.input :location_id , as: :select, collection: Location.all.pluck(:name, :location_id)
+    f.inputs "Location" do
+      f.input :location_id, as: :select, collection: Location.all.pluck(:name, :location_id)
     end
 
     actions
@@ -53,8 +52,7 @@ ActiveAdmin.register WidgetProtectedAreas do
 
   controller do
     def csv_filename
-      'protected_areas.csv'
+      "protected_areas.csv"
     end
   end
-  
 end

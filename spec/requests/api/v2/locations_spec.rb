@@ -1,143 +1,91 @@
-require 'swagger_helper'
+require "swagger_helper"
 
-RSpec.describe 'api/v2/locations', type: :request do
-    path '/api/v2/locations' do
-        get 'Retrieves the data for the biodiversity widget' do
-            tags 'Locations'
-            consumes 'application/json'
-            produces 'application/json'
-            parameter name: :location_id, in: :query, type: :string
-            
-            response 200, 'Success' do
-                schema type: :object,
-                properties:{
-                    data:{
-                        type: :array,
-                        items: {'$ref' => '#/components/schemas/location_v2'}
-                    },
-                    metadata: {
-                        type: :object, 
-                        '$ref' => '#/components/schemas/metadata'
-                    }
-                }
-                example 'application/json', :example_key, {
-                    data: [{
+RSpec.describe "API V2 Locations", type: :request do
+  path "/api/v2/locations" do
+    get "Retrieves the data for the biodiversity widget" do
+      tags "Locations"
+      consumes "application/json"
+      produces "application/json"
 
-                    }],
-                    metadata: {
-                        location_id: '1',
-                    }
-                }
-            end
+      let!(:location_1) { create :location }
+      let!(:location_2) { create :location }
+      let!(:habitat_extent) { create :habitat_extent, location: location_1 }
+      let!(:ignored_location) { create :location, location_type: "aoi" }
 
-            response 500, 'Error 500' do
-                schema type: :object,
-                '$ref' => '#/components/schemas/error_response' 
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {
+              type: :array,
+              items: {"$ref" => "#/components/schemas/location_v2"}
+            },
+            metadata: {
+              :type => :object,
+              "$ref" => "#/components/schemas/metadata"
+            }
+          }
 
-                example 'application/json', :example_key, {
-                    
-                        location_id: '1',
-                }
-            end
+        run_test!
+
+        it "matches snapshot", generate_swagger_example: true do
+          expect(response.body).to match_snapshot("api/v2/locations/index")
         end
 
-        # post 'Creates a new location' do
-        #     tags 'Locations'
-        #     consumes 'application/json'
-        #     produces 'application/json'
-            
-        #     response 200, 'Ok' do
-        #         schema type: :object,
-        #         properties: {
-        #             id: { type: :integer },
-        #             title: { type: :string },
-        #             content: { type: :string }
-        #         },
-        #         required: [ 'id', 'title', 'content' ]
-        #     end
-        #     response 404, 'blog not found' do
-        #         example 'application/json', :example_key, {
-        #             error: 'Not found'
-        #           }
-        #     end
-        # end
+        it "ignores aoi location types" do
+          expect(response_json["data"].pluck("id")).not_to include(ignored_location.id)
+        end
+      end
     end
-    path '/api/v2/locations/{location_id}', type: :request do
-        get 'Retrieves the data for the biodiversity widget' do
-            tags 'Locations'
-            consumes 'application/json'
-            produces 'application/json'
-            parameter name: :location_id, in: :path, type: :string
-            
-            response 200, 'Success' do
-                schema type: :object,
-                properties:{
-                    data:{
-                    type: :object,
-                    '$ref' => '#/components/schemas/location_v2'
-                    },
-                    metadata: {
-                        type: :object, 
-                        '$ref' => '#/components/schemas/metadata'
-                    }
-                }
-                example 'application/json', :example_key, {
-                    data: [{
+  end
 
-                    }],
-                    metadata: {
-                        location_id: '1',
-                    }
-                }
-            end
+  path "/api/v2/locations/{location_id}", type: :request do
+    get "Retrieves the data for the biodiversity widget" do
+      tags "Locations"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :location_id, in: :path, type: :string, required: true
 
-            response 500, 'Error 500' do
-                schema type: :object,
-                '$ref' => '#/components/schemas/error_response' 
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {
+              :type => :object,
+              "$ref" => "#/components/schemas/location_v2"
+            },
+            metadata: {
+              :type => :object,
+              "$ref" => "#/components/schemas/metadata"
+            }
+          }
 
-                example 'application/json', :example_key, {
-                    
-                        location_id: '1',
-                }
-            end
+        context "when searching by country iso" do
+          let(:location) { create :location, location_type: "country" }
+          let(:location_id) { location.iso }
+
+          run_test!
+
+          it "matches snapshot", generate_swagger_example: true do
+            expect(response.body).to match_snapshot("api/v2/locations/show")
+          end
         end
 
-        # put 'Updates the data  of a location' do
-        #     tags 'Locations'
-        #     consumes 'application/json'
-        #     produces 'application/json'
-        #     parameter name: :location_id, in: :path, type: :string
-        #     response 200, 'Ok' do
-        #         example 'application/json', :example_key, {
-        #             id: 1,
-        #             title: 'Hello world!',
-        #             content: '...'
-        #           }
-        #     end
-        #     response 404, 'error' do
-        #         example 'application/json', :example_key, {
-        #             error: 'Not found'
-        #           }
-        #     end
-        # end
+        context "when searching by location_id" do
+          let(:location) { create :location, location_type: "country" }
+          let(:location_id) { location.location_id }
 
-        # delete 'Deletes a location' do
-        #     tags 'Locations'
-        #     consumes 'application/json'
-        #     produces 'application/json'
-        #     parameter name: :location_id, in: :path, type: :string
-        #     response 200, 'Ok' do
-        #         example 'application/json', :example_key, {
-        #             id: 1,
-        #             title: 'Hello world!',
-        #             content: '...'
-        #           }
-        #     end
-        #     response 404, 'error' do
-        #         example 'application/json', :example_key, {
-        #             error: 'Not found'
-        #           }
-        #     end
-        # end
+          run_test!
+
+          it "matches snapshot" do
+            expect(response.body).to match_snapshot("api/v2/locations/show")
+          end
+        end
+
+        response 400, "Not Found" do
+          let(:location_id) { "WRONG_ID" }
+
+          run_test!
+        end
+      end
     end
+  end
 end

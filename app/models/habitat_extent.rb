@@ -1,5 +1,5 @@
 class HabitatExtent < ApplicationRecord
-    belongs_to :location
+  belongs_to :location
 
-    attr_accessor :cum_sum
+  attr_accessor :cum_sum
 end

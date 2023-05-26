@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "year": 2019,
+      "indicator": "linear_coverage",
+      "value": 99388.06
+    }
+  ],
+  "metadata": {
+    "location_id": "11831",
+    "units": {
+      "habitat_extent_area": "km2",
+      "linear_coverage": "km"
+    },
+    "year": [
+      2019
+    ],
+    "note": null,
+    "total_area": 0.09938805999999999,
+    "total_lenght": 99.38806
+  }
+}

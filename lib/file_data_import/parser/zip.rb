@@ -12,7 +12,7 @@ module FileDataImport
 
         ::Zip::File.open(path_to_file) do |zip_file|
           zip_file.each do |file|
-            file_path = File.join(folder_path, file.name)
+            file_path = File.join(folder_path, file.name.sub(" ", "_"))
             zip_file.extract(file, file_path)
           end
         end
@@ -43,14 +43,14 @@ module FileDataImport
       end
 
       def extracted_file_extname
-        @extracted_file_extname = File.extname(path_to_extracted_file)[1..-1]
+        @extracted_file_extname = File.extname(path_to_extracted_file)[1..]
       end
 
       def feature_collection(&block)
-        #return unless block_given?
+        # return unless block_given?
         extract_zip
         parser.feature_collection(&block)
-        #clean_up_files
+        # clean_up_files
       end
 
       def clean_up_files

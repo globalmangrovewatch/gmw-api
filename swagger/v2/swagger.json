@@ -5,206 +5,6 @@
     "version": "v2"
   },
   "paths": {
-    "/api/v1/locations": {
-      "get": {
-        "summary": "Retrieves the data for the degradation and loss Treemap chart",
-        "tags": [
-          "Locations"
-        ],
-        "parameters": [
-          {
-            "name": "rank_by",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "dir",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "start_date",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "end_date",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "location_type",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/location_v1"
-                      }
-                    },
-                    "metadata": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/metadata"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/locations/{location_id}": {
-      "get": {
-        "summary": "Retrieves the data for the degradation and loss Treemap chart",
-        "tags": [
-          "Locations"
-        ],
-        "parameters": [
-          {
-            "name": "location_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/location_v1"
-                      }
-                    },
-                    "metadata": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/metadata"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/locations/{location_id}/mangrove_data": {
-      "get": {
-        "summary": "Retrieves the data for the orginal widgets",
-        "tags": [
-          "Locations"
-        ],
-        "parameters": [
-          {
-            "name": "location_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "year",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/degradation_and_loss"
-                      }
-                    },
-                    "metadata": {
-                      "type": "object",
-                      "$ref": "#/components/schemas/metadata"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v2/spatial_file/converter": {
       "post": {
         "summary": "Converts a geospatial format into a valid geojson",
@@ -219,6 +19,79 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": {
+                    "type": "FeatureCollection",
+                    "features": [
+                      {
+                        "type": "Feature",
+                        "properties": {
+                          "id": "ID-1"
+                        },
+                        "geometry": {
+                          "type": "Polygon",
+                          "coordinates": [
+                            [
+                              [
+                                100.0,
+                                0.0
+                              ],
+                              [
+                                101.0,
+                                0.0
+                              ],
+                              [
+                                101.0,
+                                1.0
+                              ],
+                              [
+                                100.0,
+                                1.0
+                              ],
+                              [
+                                100.0,
+                                0.0
+                              ]
+                            ]
+                          ]
+                        }
+                      },
+                      {
+                        "type": "Feature",
+                        "properties": {
+                          "id": "ID-2"
+                        },
+                        "geometry": {
+                          "type": "Polygon",
+                          "coordinates": [
+                            [
+                              [
+                                100.0,
+                                0.0
+                              ],
+                              [
+                                101.0,
+                                0.0
+                              ],
+                              [
+                                101.0,
+                                1.0
+                              ],
+                              [
+                                100.0,
+                                1.0
+                              ],
+                              [
+                                100.0,
+                                0.0
+                              ]
+                            ]
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -231,16 +104,8 @@
               }
             }
           },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
+          "400": {
+            "description": "Bad Request"
           }
         },
         "requestBody": {
@@ -261,20 +126,48 @@
         "tags": [
           "Locations"
         ],
-        "parameters": [
-          {
-            "name": "location_id",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "meta": {
+                    "dates": [
+                      {
+                        "date": "2016-01-01"
+                      }
+                    ]
+                  },
+                  "data": [
+                    {
+                      "name": "Lome",
+                      "location_type": "cum",
+                      "iso": "cum",
+                      "bounds": {
+                      },
+                      "location_id": "Location-2",
+                      "coast_length_m": 98628.73,
+                      "perimeter_m": 98628.73,
+                      "area_m2": 98628.73,
+                      "id": 735,
+                      "created_at": "2023-05-17T10:28:05.367Z"
+                    },
+                    {
+                      "name": "Kinshasa",
+                      "location_type": "voluptatem",
+                      "iso": "voluptatem",
+                      "bounds": {
+                      },
+                      "location_id": "Location-1",
+                      "coast_length_m": 68950.02,
+                      "perimeter_m": 68950.02,
+                      "area_m2": 68950.02,
+                      "id": 734,
+                      "created_at": "2023-05-17T10:28:05.365Z"
+                    }
+                  ]
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -289,17 +182,6 @@
                       "$ref": "#/components/schemas/metadata"
                     }
                   }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
                 }
               }
             }
@@ -328,6 +210,22 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": {
+                    "id": 741,
+                    "iso": "voluptatem",
+                    "bounds": {
+                    },
+                    "location_type": "country",
+                    "name": "Kinshasa",
+                    "area_m2": 68950.02,
+                    "perimeter_m": 68950.02,
+                    "coast_length_m": 68950.02,
+                    "location_id": "Location-1",
+                    "geometry": {
+                    }
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -344,13 +242,66 @@
               }
             }
           },
-          "500": {
-            "description": "Error 500",
+          "400": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/v2/species": {
+      "get": {
+        "summary": "Retrieves data for species",
+        "tags": [
+          "Species"
+        ],
+        "parameters": [
+          {
+            "name": "location_id",
+            "in": "query",
+            "description": "Location id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "scientific_name": "voluptatem",
+                      "common_name": "voluptatem",
+                      "iucn_url": "http://kutch-spencer.com/moises",
+                      "red_list_cat": "vu",
+                      "location_ids": [
+                        745
+                      ]
+                    },
+                    {
+                      "scientific_name": "cum",
+                      "common_name": "cum",
+                      "iucn_url": "http://bartoletti.com/jeremiah_cronin",
+                      "red_list_cat": "lc",
+                      "location_ids": [
+
+                      ]
+                    }
+                  ]
+                },
                 "schema": {
                   "type": "object",
-                  "$ref": "#/components/schemas/error_response"
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/specie"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -368,6 +319,8 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -380,6 +333,8 @@
               "ha",
               "m"
             ],
+            "description": "Units of result. Default: ha",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -390,6 +345,26 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "id": 57,
+                      "year": 2016,
+                      "total_area": 68950.02,
+                      "protected_area": 68950.02
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "750",
+                    "units": {
+                      "total_area": "ha",
+                      "protected_area": "ha"
+                    },
+                    "year": [
+                      2016
+                    ]
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -407,18 +382,36 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v2/widgets/protected-areas/import": {
+      "post": {
+        "summary": "Uploads the data for Protected areas",
+        "tags": [
+          "Widgets"
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "Import was successful"
           },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
+          "400": {
+            "description": "Location was not found"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "file"
               }
             }
-          }
+          },
+          "required": true
         }
       }
     },
@@ -432,6 +425,8 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -442,6 +437,30 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": {
+                    "total": 1,
+                    "threatened": 1,
+                    "categories": {
+                      "vu": 1
+                    },
+                    "species": [
+                      {
+                        "id": 57,
+                        "created_at": "2023-05-17T10:28:05.942Z",
+                        "updated_at": "2023-05-17T10:28:05.942Z",
+                        "scientific_name": "voluptatem",
+                        "common_name": "voluptatem",
+                        "iucn_url": "http://kutch-spencer.com/moises",
+                        "red_list_cat": "vu"
+                      }
+                    ]
+                  },
+                  "metadata": {
+                    "unit": null,
+                    "note": "nº of species"
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -454,17 +473,6 @@
                       "$ref": "#/components/schemas/metadata"
                     }
                   }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
                 }
               }
             }
@@ -482,6 +490,8 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -489,6 +499,8 @@
           {
             "name": "year",
             "in": "query",
+            "description": "Year. Default: last year which contains data",
+            "required": false,
             "schema": {
               "type": "integer"
             }
@@ -499,6 +511,27 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": {
+                    "restoration_potential_score": 98.63,
+                    "restorable_area": 68.96,
+                    "restorable_area_perc": null,
+                    "mangrove_area_extent": null
+                  },
+                  "metadata": {
+                    "location_id": "776",
+                    "year": [
+                      2019,
+                      2018
+                    ],
+                    "units": {
+                      "restoration_potential_score": "%",
+                      "restorable_area": "%",
+                      "mangrove_area": null
+                    },
+                    "note": null
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -511,17 +544,6 @@
                       "$ref": "#/components/schemas/metadata"
                     }
                   }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
                 }
               }
             }
@@ -539,6 +561,8 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -546,6 +570,8 @@
           {
             "name": "year",
             "in": "query",
+            "description": "Year. Default: last year which contains data",
+            "required": false,
             "schema": {
               "type": "integer"
             }
@@ -556,6 +582,34 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "indicator": "degraded_area",
+                      "value": 68950.02,
+                      "label": "Non-Restorable loss mangrove area"
+                    },
+                    {
+                      "indicator": "lost_area",
+                      "value": 13440.899999999994,
+                      "label": "Total loss"
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "804",
+                    "year": [
+                      2019,
+                      2018
+                    ],
+                    "units": {
+                      "degraded_area": "%",
+                      "lost_area": "ha",
+                      "mangrove_area": "ha"
+                    },
+                    "main_loss_driver": "Enim repellat pariatur est.",
+                    "note": null
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -573,17 +627,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
           }
         }
       }
@@ -598,15 +641,24 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "year",
+            "name": "units",
             "in": "query",
+            "enum": [
+              "km2",
+              "ha",
+              "m"
+            ],
+            "description": "Units of result. Default: ha",
+            "required": false,
             "schema": {
-              "type": "integer"
+              "type": "string"
             }
           }
         ],
@@ -615,6 +667,22 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "category": "carbon_10",
+                      "value": 68950.02,
+                      "percentage": 100.0,
+                      "description": "      68,950.0 (± 3447.501)",
+                      "label": "at $10/ton"
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "838",
+                    "unit": "ha",
+                    "note": null
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -632,17 +700,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
           }
         }
       }
@@ -657,6 +714,8 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -667,6 +726,17 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "ndc_target_url": "voluptatem"
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "852",
+                    "note": null
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -684,17 +754,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
           }
         }
       }
@@ -709,6 +768,8 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -719,6 +780,19 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "indicator": "clams",
+                      "value": 68950.02
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "860",
+                    "unit": "mt CO₂ e",
+                    "note": null
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -736,17 +810,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
           }
         }
       }
@@ -761,6 +824,8 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -771,6 +836,28 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "year": 2019,
+                      "indicator": "linear_coverage",
+                      "value": 99388.06
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "875",
+                    "units": {
+                      "habitat_extent_area": "km2",
+                      "linear_coverage": "km"
+                    },
+                    "year": [
+                      2019
+                    ],
+                    "note": null,
+                    "total_area": 0.09938805999999999,
+                    "total_lenght": 99.38806
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -788,17 +875,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
           }
         }
       }
@@ -813,6 +889,8 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -823,6 +901,44 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "year": 2012,
+                      "net_change": 0.0,
+                      "gain": null,
+                      "loss": null
+                    },
+                    {
+                      "year": 2013,
+                      "net_change": -14200.229999999996,
+                      "gain": null,
+                      "loss": null
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "893",
+                    "units": {
+                      "net_change": "km2"
+                    },
+                    "year": [
+                      1996,
+                      2007,
+                      2008,
+                      2009,
+                      2010,
+                      2015,
+                      2016,
+                      2017,
+                      2018,
+                      2019,
+                      2020
+                    ],
+                    "note": null,
+                    "total_area": 0.09938805999999999,
+                    "total_lenght": 99.38806
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -840,17 +956,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
           }
         }
       }
@@ -865,6 +970,8 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -875,6 +982,31 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "year": 2019,
+                      "indicator": "150-250",
+                      "value": 99388.06
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "911",
+                    "units": {
+                      "value": "tons/ha"
+                    },
+                    "year": [
+                      2019
+                    ],
+                    "note": null,
+                    "total_aboveground_biomass": [
+
+                    ],
+                    "avg_aboveground_biomass": [
+
+                    ]
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -892,17 +1024,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
           }
         }
       }
@@ -917,6 +1038,8 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -927,6 +1050,28 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "year": 2016,
+                      "indicator": "0-5",
+                      "value": 99388.06
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "927",
+                    "units": {
+                      "value": "m"
+                    },
+                    "year": [
+                      2016
+                    ],
+                    "note": null,
+                    "avg_height": [
+
+                    ]
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -944,17 +1089,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
           }
         }
       }
@@ -969,6 +1103,8 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -979,6 +1115,29 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "year": 2019,
+                      "indicator": "molestiae",
+                      "value": 99388.06
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "939",
+                    "units": {
+                      "value": "CO2e/ha",
+                      "toc": "t CO₂e",
+                      "soc": "t CO₂e",
+                      "agb": "t CO₂e"
+                    },
+                    "year": [
+                      2019
+                    ],
+                    "note": null,
+                    "toc": 85187.83
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -996,17 +1155,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
           }
         }
       }
@@ -1021,6 +1169,8 @@
           {
             "name": "location_id",
             "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -1031,6 +1181,26 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "year": 2016,
+                      "indicator": "Reduce mangrove loss",
+                      "category": "Other",
+                      "value": 68950.02
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "950",
+                    "units": {
+                      "value": "tCO2/ha"
+                    },
+                    "year": [
+                      2016
+                    ],
+                    "note": null
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -1048,17 +1218,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error 500",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/error_response"
-                }
-              }
-            }
           }
         }
       }
@@ -1071,16 +1230,10 @@
         ],
         "parameters": [
           {
-            "name": "location_id",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "start_year",
             "in": "query",
-            "default": 2007,
+            "description": "Start year. Default: first year that data exists for",
+            "required": false,
             "schema": {
               "type": "integer"
             }
@@ -1088,7 +1241,8 @@
           {
             "name": "end_year",
             "in": "query",
-            "default": 2020,
+            "description": "End year. Default: last year that dat exists for",
+            "required": false,
             "schema": {
               "type": "integer"
             }
@@ -1099,6 +1253,32 @@
             "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "value": 30438.039999999994,
+                      "abs_value": 30438.039999999994,
+                      "name": "Kinshasa",
+                      "indicator": "net_change",
+                      "iso": "voluptatem",
+                      "id": null
+                    }
+                  ],
+                  "metadata": {
+                    "units": {
+                      "value": "km2"
+                    },
+                    "years": [
+                      2010,
+                      2015,
+                      2016,
+                      2020
+                    ],
+                    "start_year": 2010,
+                    "end_year": 2020,
+                    "note": null
+                  }
+                },
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -1116,14 +1296,358 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "Error 500",
+          }
+        }
+      }
+    },
+    "/api/v2/widgets/drivers_of_change": {
+      "get": {
+        "summary": "Retrieves the data for the drivers of change widget",
+        "tags": [
+          "Widgets"
+        ],
+        "parameters": [
+          {
+            "name": "location_id",
+            "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
             "content": {
               "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "variable": "npc_pct",
+                      "primary_driver": "Settlement",
+                      "value": 68950.02
+                    }
+                  ],
+                  "metadata": {
+                    "location_id": "970",
+                    "units": {
+                      "value": "%"
+                    }
+                  }
+                },
                 "schema": {
                   "type": "object",
-                  "$ref": "#/components/schemas/error_response"
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/drivers_of_change"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/metadata"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/widgets/sites_filters": {
+      "get": {
+        "summary": "Retrieves the data used for filtering sites",
+        "tags": [
+          "Widgets"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "organization": [
+                      "Organization 1"
+                    ],
+                    "intervention_type": [
+                      "Restore hydrology - excavate channels",
+                      "Restore hydrology - remove or breach aquaculture pond walls",
+                      "Restore hydrology - clear channel blockages",
+                      "Restore hydrology - reconnection of upstream flows restricted by dams, road crossings etc.",
+                      "Trap sediments (e.g., with fence barriers)",
+                      "Reduce wave energy (e.g., bamboo walls, offshore reefs, breakwaters)",
+                      "Reprofile and change the elevation of the soil, relative to sea level",
+                      "Activities to reduce salinity",
+                      "Exclusion fences",
+                      "Vegetation clearance and suppression",
+                      "Remove debris",
+                      "Remove seaweed or algae from seedlings",
+                      "Remove excess sand/sediment",
+                      "Planting",
+                      "Broadcast collected propagules onto an incoming tide",
+                      "Large scale broadcasting of propagules from the air or boats",
+                      "Assisted natural regeneration",
+                      "None",
+                      "Other"
+                    ],
+                    "cause_of_decline": [
+                      "Residential & commercial development",
+                      "Agriculture & aquaculture",
+                      "Energy production & mining",
+                      "Transportation & service corridors",
+                      "Biological resource use",
+                      "Human intrusions & disturbance",
+                      "Natural system modifications",
+                      "Invasive & other problematic species, genes & diseases",
+                      "Pollution",
+                      "Geological events",
+                      "Climate change & severe weather",
+                      "Other options"
+                    ],
+                    "ecological_aim": [
+                      "Increase mangrove area",
+                      "Improve mangrove condition/halt or reduce degradation",
+                      "Increase mangrove species richness",
+                      "Offset mangrove loss from another area",
+                      "Habitat protection",
+                      "Increase native fauna/wildlife",
+                      "Increase native flora/vegetation (non-mangrove)",
+                      "Reduce invasive species",
+                      "Increase ecological resilience",
+                      "Increase habitat connectivity",
+                      "Restore hydrological connectivity",
+                      "Improve sediment dynamics",
+                      "Improve nutrient cycling",
+                      "Increase carbon storage and sequestration",
+                      "None",
+                      "Unknown",
+                      "Other"
+                    ],
+                    "socioeconomic_aim": [
+                      "Enhance fisheries/restore fishing grounds",
+                      "Provide sustainable timber resources",
+                      "Provide sustainable non-timber products",
+                      "Improve water quality",
+                      "Prevent or ameliorate pollution",
+                      "Coastal storm or flood protection",
+                      "Erosion control or coastal stability",
+                      "Carbon offsets/trading",
+                      "Tourism and recreation",
+                      "Land reclamation",
+                      "Generate employment and income",
+                      "Promote women's equal representation and participation in employment",
+                      "Safeguard cultural or spiritual importance",
+                      "Safeguard traditional practises",
+                      "Increase food security",
+                      "Secure management rights and land tenure",
+                      "Improve local community health",
+                      "Coastal beautification or aesthetic value",
+                      "Support local community natural resource management institutions",
+                      "Encourage community involvement",
+                      "Education/raise environmental awareness",
+                      "Sustainable financing",
+                      "None",
+                      "Unknown",
+                      "Other"
+                    ],
+                    "community_activities": [
+                      "Livelihood activities",
+                      "Securing tenure arrangement",
+                      "Management activities",
+                      "Strengthening mangrove governance",
+                      "Environmental education",
+                      "Formal mangrove protection",
+                      "Training and capacity building",
+                      "None",
+                      "Other"
+                    ]
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/sites_filters"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/widgets/sites": {
+      "get": {
+        "summary": "Retrieves the data for the sites",
+        "tags": [
+          "Widgets"
+        ],
+        "parameters": [
+          {
+            "name": "organization",
+            "in": "query",
+            "items": {
+              "type": "string"
+            },
+            "description": "Organization name",
+            "required": false,
+            "schema": {
+              "type": "array"
+            }
+          },
+          {
+            "name": "ecological_aim",
+            "in": "query",
+            "items": {
+              "type": "string"
+            },
+            "required": false,
+            "schema": {
+              "type": "array"
+            }
+          },
+          {
+            "name": "socioeconomic_aim",
+            "in": "query",
+            "items": {
+              "type": "string"
+            },
+            "required": false,
+            "schema": {
+              "type": "array"
+            }
+          },
+          {
+            "name": "cause_of_decline",
+            "in": "query",
+            "items": {
+              "type": "string"
+            },
+            "required": false,
+            "schema": {
+              "type": "array"
+            }
+          },
+          {
+            "name": "intervention_type",
+            "in": "query",
+            "items": {
+              "type": "string"
+            },
+            "required": false,
+            "schema": {
+              "type": "array"
+            }
+          },
+          {
+            "name": "community_activities",
+            "in": "query",
+            "items": {
+              "type": "string"
+            },
+            "required": false,
+            "schema": {
+              "type": "array"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "id": 304,
+                      "site_name": "Site 1",
+                      "landscape_id": 304,
+                      "landscape_name": "Landscape 1",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 305,
+                      "site_name": "Site 2",
+                      "landscape_id": 305,
+                      "landscape_name": "Landscape 2",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 306,
+                      "site_name": "Site 3",
+                      "landscape_id": 306,
+                      "landscape_name": "Landscape 3",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 307,
+                      "site_name": "Site 4",
+                      "landscape_id": 307,
+                      "landscape_name": "Landscape 4",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 308,
+                      "site_name": "Site 5",
+                      "landscape_id": 308,
+                      "landscape_name": "Landscape 5",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 309,
+                      "site_name": "Site 6",
+                      "landscape_id": 309,
+                      "landscape_name": "Landscape 6",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 310,
+                      "site_name": "Site 7",
+                      "landscape_id": 310,
+                      "landscape_name": "Landscape 7",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 311,
+                      "site_name": "Site 8",
+                      "landscape_id": 311,
+                      "landscape_name": "Landscape 8",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    },
+                    {
+                      "id": 312,
+                      "site_name": "Site 9",
+                      "landscape_id": 312,
+                      "landscape_name": "Landscape 9",
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                    }
+                  ]
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/sites"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1151,8 +1675,12 @@
             "type": "string",
             "nullable": true
           },
-          "units": {
+          "unit": {
             "type": "string",
+            "nullable": true
+          },
+          "units": {
+            "type": "object",
             "nullable": true
           },
           "years": {
@@ -1166,11 +1694,7 @@
             "type": "string",
             "nullable": true
           }
-        },
-        "required": [
-          "unit",
-          "note"
-        ]
+        }
       },
       "error_response": {
         "type": "object",
@@ -1244,67 +1768,84 @@
         "type": "object",
         "properties": {
           "id": {
+            "type": "integer"
+          },
+          "created_at": {
             "type": "string"
           },
-          "createdAt": {
+          "name": {
             "type": "string"
           },
-          "state": {
+          "location_type": {
             "type": "string"
           },
-          "joiningDate": {
+          "iso": {
             "type": "string"
           },
-          "homeAddress": {
-            "type": "object",
-            "properties": {
-              "address1": {
-                "type": "string"
-              },
-              "address2": {
-                "type": "string",
-                "nullable": true
-              },
-              "city": {
-                "type": "string"
-              },
-              "state": {
-                "type": "string"
-              },
-              "postalCode": {
-                "type": "string"
-              }
-            },
-            "required": [
-
-            ]
+          "location_id": {
+            "type": "string",
+            "nullable": true
           },
-          "medicareRequested": {
-            "type": "boolean"
+          "coast_length_m": {
+            "type": "number",
+            "nullable": true
           },
-          "compensationUsdCents": {
-            "type": "integer",
-            "description": "compensation"
+          "area_m2": {
+            "type": "number",
+            "nullable": true
           }
         },
         "required": [
 
         ]
       },
+      "specie": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "scientific_name": {
+            "type": "string"
+          },
+          "common_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "iucn_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "red_list_cat": {
+            "type": "string"
+          },
+          "location_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
       "protected_areas": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "integer",
+            "nullable": true
           },
           "year": {
-            "type": "string"
+            "type": "integer"
           },
           "total_area": {
-            "type": "string"
+            "type": "number"
           },
           "protected_area": {
-            "type": "string"
+            "type": "number"
           }
         },
         "required": [
@@ -1315,28 +1856,28 @@
         "type": "object",
         "properties": {
           "total": {
-            "type": "string"
+            "type": "integer"
           },
           "threatened": {
-            "type": "string"
+            "type": "integer"
           },
           "categories": {
             "type": "object",
             "properties": {
               "cr": {
-                "type": "string",
+                "type": "integer",
                 "nullable": true
               },
               "en": {
-                "type": "string",
+                "type": "integer",
                 "nullable": true
               },
               "nt": {
-                "type": "string",
+                "type": "integer",
                 "nullable": true
               },
               "lc": {
-                "type": "string",
+                "type": "integer",
                 "nullable": true
               }
             }
@@ -1344,26 +1885,7 @@
           "species": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "number"
-                },
-                "scientific_name": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string",
-                  "nullable": true
-                },
-                "iucn_url": {
-                  "type": "string",
-                  "nullable": true
-                },
-                "red_list_cat": {
-                  "type": "string"
-                }
-              }
+              "$ref": "#/components/schemas/specie"
             }
           }
         },
@@ -1380,13 +1902,16 @@
             "type": "number"
           },
           "restorable_area": {
-            "type": "number"
+            "type": "number",
+            "nullable": true
           },
           "restorable_area_perc": {
-            "type": "number"
+            "type": "number",
+            "nullable": true
           },
           "mangrove_area_extent": {
-            "type": "number"
+            "type": "number",
+            "nullable": true
           }
         },
         "required": [
@@ -1426,7 +1951,10 @@
           "percentage": {
             "type": "number"
           },
-          "text": {
+          "description": {
+            "type": "string"
+          },
+          "label": {
             "type": "string"
           }
         },
@@ -1434,15 +1962,12 @@
           "category",
           "value",
           "percentage",
-          "text"
+          "description"
         ]
       },
       "international_status": {
         "type": "object",
         "properties": {
-          "location_id": {
-            "type": "integer"
-          },
           "base_years": {
             "type": "string"
           },
@@ -1491,26 +2016,7 @@
           "year_frel": {
             "type": "string"
           }
-        },
-        "required": [
-          "location_id",
-          "base_years",
-          "fow",
-          "frel",
-          "ipcc_wetlands_suplement",
-          "ndc",
-          "ndc_adaptation",
-          "ndc_blurb",
-          "ndc_mitigation",
-          "ndc_reduction_target",
-          "ndc_target",
-          "ndc_target_url",
-          "ndc_updated",
-          "pledge_summary",
-          "pledge_type",
-          "target_years",
-          "year_frel"
-        ]
+        }
       },
       "ecosystem_service": {
         "type": "object",
@@ -1538,39 +2044,35 @@
           },
           "year": {
             "type": "number"
-          },
-          "percentage": {
-            "type": "number"
           }
         },
         "required": [
           "indicator",
           "value",
-          "year",
-          "percentage"
+          "year"
         ]
       },
       "net_change": {
         "type": "object",
         "properties": {
-          "indicator": {
-            "type": "string"
-          },
-          "value": {
+          "net_change": {
             "type": "number"
           },
           "year": {
             "type": "number"
           },
-          "cum_sum": {
-            "type": "number"
+          "gain": {
+            "type": "number",
+            "nullable": true
+          },
+          "loss": {
+            "type": "number",
+            "nullable": true
           }
         },
         "required": [
-          "indicator",
-          "value",
-          "year",
-          "percentage"
+          "net_change",
+          "year"
         ]
       },
       "aboveground_biomass": {
@@ -1584,16 +2086,12 @@
           },
           "year": {
             "type": "number"
-          },
-          "percentage": {
-            "type": "number"
           }
         },
         "required": [
           "indicator",
           "value",
-          "year",
-          "percentage"
+          "year"
         ]
       },
       "tree_height": {
@@ -1607,16 +2105,12 @@
           },
           "year": {
             "type": "number"
-          },
-          "percentage": {
-            "type": "number"
           }
         },
         "required": [
           "indicator",
           "value",
-          "year",
-          "percentage"
+          "year"
         ]
       },
       "blue_carbon": {
@@ -1630,16 +2124,12 @@
           },
           "year": {
             "type": "number"
-          },
-          "percentage": {
-            "type": "number"
           }
         },
         "required": [
           "indicator",
           "value",
-          "year",
-          "percentage"
+          "year"
         ]
       },
       "mitigation_potentials": {
@@ -1674,19 +2164,98 @@
           "value": {
             "type": "number"
           },
-          "year": {
+          "abs_value": {
             "type": "number"
           },
-          "category": {
+          "name": {
+            "type": "string"
+          },
+          "iso": {
             "type": "string"
           }
         },
         "required": [
           "indicator",
-          "value",
-          "year",
-          "category"
+          "value"
         ]
+      },
+      "drivers_of_change": {
+        "type": "object",
+        "properties": {
+          "variable": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "primary_driver": {
+            "type": "string"
+          }
+        }
+      },
+      "sites_filters": {
+        "type": "object",
+        "properties": {
+          "organization": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "intervention_type": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cause_of_decline": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ecological_aim": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "socioeconomic_aim": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "community_activities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "sites": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "site_name": {
+            "type": "string"
+          },
+          "landscape_id": {
+            "type": "integer"
+          },
+          "landscape_name": {
+            "type": "string"
+          },
+          "site_area": {
+            "type": "string"
+          },
+          "site_centroid": {
+            "type": "string"
+          }
+        }
       },
       "file_converter": {
         "type": "object",

@@ -1,0 +1,34 @@
+{
+  "data": [
+    {
+      "year": 2016,
+      "indicator": "total",
+      "value": 68950.02
+    },
+    {
+      "year": 2021,
+      "indicator": "150-250",
+      "value": 98628.73
+    }
+  ],
+  "metadata": {
+    "location_id": "worldwide",
+    "units": {
+      "value": "tons/ha"
+    },
+    "year": [
+      2021,
+      2016
+    ],
+    "note": null,
+    "total_aboveground_biomass": [
+      {
+        "year": 2016,
+        "value": 68950.02
+      }
+    ],
+    "avg_aboveground_biomass": [
+
+    ]
+  }
+}

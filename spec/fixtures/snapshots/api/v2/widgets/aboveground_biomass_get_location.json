@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "year": 2019,
+      "indicator": "150-250",
+      "value": 99388.06
+    }
+  ],
+  "metadata": {
+    "location_id": "12631",
+    "units": {
+      "value": "tons/ha"
+    },
+    "year": [
+      2019
+    ],
+    "note": null,
+    "total_aboveground_biomass": [
+
+    ],
+    "avg_aboveground_biomass": [
+
+    ]
+  }
+}

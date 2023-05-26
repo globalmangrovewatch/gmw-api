@@ -1,5 +1,4 @@
 ActiveAdmin.register InternationalStatus do
-
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -24,20 +23,20 @@ ActiveAdmin.register InternationalStatus do
   })
 
   permit_params :indicator, :value, :location_id
- 
+
   form do |f|
-    f.inputs 'Details' do
-      f.input :indicator, as: :select, 
+    f.inputs "Details" do
+      f.input :indicator, as: :select,
         collection: InternationalStatus.indicators,
         default: InternationalStatus.indicators.first,
         include_blank: false,
         required: true
       f.input :value, as: :string,
-        include_blank: true, 
+        include_blank: true,
         required: true
     end
 
-    f.inputs 'Location' do
+    f.inputs "Location" do
       f.input :location, as: :select
     end
 
@@ -52,8 +51,7 @@ ActiveAdmin.register InternationalStatus do
 
   controller do
     def csv_filename
-      'international_status.csv'
+      "international_status.csv"
     end
   end
-  
 end

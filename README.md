@@ -19,6 +19,30 @@ To install run `bundle install`. And start application running `rails s`.
 
 API documentation is available at `/api-docs`.
 
+### Run rswag to generate API documentation
+
+`SWAGGER_DRY_RUN=0 rake rswag:specs:swaggerize`
+
+## Replace snapshot files
+
+On the first run, the `match_snapshot` matcher will always return success and it will store a snapshot file. On the next runs, it will compare the response with the file content.
+
+If you need to replace snapshots, run the specs with:
+
+`REPLACE_SNAPSHOTS=true bundle exec rspec`
+
+If you only need to add, remove or replace data without replacing the whole snapshot:
+
+`CONSERVATIVE_UPDATE_SNAPSHOTS=true bundle exec rspec`
+
+## Run linters
+
+`bin/rails standard`
+
+To fix linter issues
+
+`bin/rails standard:fix`
+
 ## Deploy to staging
 
 Merge your code in `develop` branch.
@@ -33,12 +57,6 @@ And deploy:
 
 ```
 git push heroku develop:master
-```
-
-## Generating the documentation
-
-```
-rails rswag
 ```
 
 ## Mailer setting
