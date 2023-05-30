@@ -204,7 +204,7 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               indicator: {type: :string},
-              value: {type: :number}
+              value: {type: :number, nullable: true}
             },
             required: [:indicator, :value]
           },

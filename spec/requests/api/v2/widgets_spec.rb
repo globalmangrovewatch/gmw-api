@@ -452,7 +452,8 @@ RSpec.describe "API V2 Widgets", type: :request do
           end
 
           it "returns correct data" do
-            expect(response_json["data"].pluck("value")).to eq([ecosystem_service_1.value])
+            expect(response_json["data"].pluck("indicator")).to match_array(EcosystemService.indicators.keys)
+            expect(response_json["data"].pluck("value").compact).to eq([ecosystem_service_1.value])
           end
         end
 
@@ -464,14 +465,16 @@ RSpec.describe "API V2 Widgets", type: :request do
           end
 
           it "returns correct data" do
-            expect(response_json["data"].pluck("value")).to match_array([ecosystem_service_1.value, ecosystem_service_2.value])
+            expect(response_json["data"].pluck("indicator")).to match_array(EcosystemService.indicators.keys)
+            expect(response_json["data"].pluck("value").compact).to match_array([ecosystem_service_1.value, ecosystem_service_2.value])
           end
 
           context "when filtering by slug" do
             let(:slug) { "restoration-value" }
 
             it "returns correct data" do
-              expect(response_json["data"].pluck("value")).to eq([ecosystem_service_2.value])
+              expect(response_json["data"].pluck("indicator")).to match_array(%w[AGB SOC])
+              expect(response_json["data"].pluck("value")).to match_array([nil, ecosystem_service_2.value])
             end
           end
         end

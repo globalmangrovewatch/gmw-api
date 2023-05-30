@@ -1,7 +1,7 @@
 json.data do
-  json.array! @data do |datum|
-    json.indicator datum.indicator
-    json.value datum.value
+  json.array! @indicators do |indicator|
+    json.indicator indicator
+    json.value @data.find { |d| d.indicator == indicator }&.value
   end
 end
 

@@ -1,12 +1,28 @@
 {
   "data": [
     {
-      "indicator": "bivalve",
-      "value": 68950.02
-    },
-    {
       "indicator": "AGB",
       "value": 98628.73
+    },
+    {
+      "indicator": "SOC",
+      "value": null
+    },
+    {
+      "indicator": "fish",
+      "value": null
+    },
+    {
+      "indicator": "shrimp",
+      "value": null
+    },
+    {
+      "indicator": "crab",
+      "value": null
+    },
+    {
+      "indicator": "bivalve",
+      "value": 68950.02
     }
   ],
   "metadata": {
