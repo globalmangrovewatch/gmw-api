@@ -5,9 +5,9 @@ class EcosystemService < ApplicationRecord
     "AGB" => "AGB",
     "SOC" => "SOC",
     "fish" => "fish",
-    "shrimps" => "shrimps",
-    "crabs" => "crabs",
-    "clams" => "clams"
+    "shrimp" => "shrimp",
+    "crab" => "crab",
+    "bivalve" => "bivalve"
   }, default: "SOC", prefix: true
 
   validates_presence_of :indicator, :value
