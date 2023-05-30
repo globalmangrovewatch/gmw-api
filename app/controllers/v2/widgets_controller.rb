@@ -128,6 +128,7 @@ class V2::WidgetsController < ApiController
 
   # GET /v2/widgets/ecosystem_services
   def ecosystem_service
+    slugs = {"restoration-value" => %w[AGB SOC], "fisheries" => %w[fish shrimp crab bivalve]}
     if params.has_key?(:location_id) && params[:location_id] != "worldwide"
       @location_id = params[:location_id]
       @data = EcosystemService.select("indicator, location_id, value").where(location_id: params[:location_id])
@@ -135,6 +136,7 @@ class V2::WidgetsController < ApiController
       @data = EcosystemService.select("indicator, sum(value) as value").group("indicator")
       @location_id = "worldwide"
     end
+    @data = @data.where indicator: slugs[params[:slug]] if params[:slug].present? && slugs[params[:slug]].present?
   end
 
   # GET /v2/widgets/habitat_extent

@@ -423,6 +423,7 @@ RSpec.describe "API V2 Widgets", type: :request do
       consumes "application/json"
       produces "application/json"
       parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
+      parameter name: :slug, in: :query, type: :string, description: "Slug of the ecosystem service. Default: all", required: false
 
       response 200, "Success" do
         schema type: :object,
@@ -438,8 +439,8 @@ RSpec.describe "API V2 Widgets", type: :request do
           }
 
         let(:location) { create :location }
-        let!(:ecosystem_service_1) { create :ecosystem_service, location: location }
-        let!(:ecosystem_service_2) { create :ecosystem_service }
+        let!(:ecosystem_service_1) { create :ecosystem_service, location: location, indicator: "bivalve" }
+        let!(:ecosystem_service_2) { create :ecosystem_service, indicator: "AGB" }
 
         context "when location_id is used" do
           let(:location_id) { location.id }
@@ -464,6 +465,14 @@ RSpec.describe "API V2 Widgets", type: :request do
 
           it "returns correct data" do
             expect(response_json["data"].pluck("value")).to match_array([ecosystem_service_1.value, ecosystem_service_2.value])
+          end
+
+          context "when filtering by slug" do
+            let(:slug) { "restoration-value" }
+
+            it "returns correct data" do
+              expect(response_json["data"].pluck("value")).to eq([ecosystem_service_2.value])
+            end
           end
         end
       end
