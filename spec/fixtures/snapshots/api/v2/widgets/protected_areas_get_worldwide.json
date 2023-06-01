@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "id": null,
+      "year": 2016,
+      "total_area": 68950.02,
+      "protected_area": 68950.02
+    },
+    {
+      "id": null,
+      "year": 2021,
+      "total_area": 98628.73,
+      "protected_area": 98628.73
+    }
+  ],
+  "metadata": {
+    "location_id": "worldwide",
+    "units": {
+      "total_area": "ha",
+      "protected_area": "ha"
+    },
+    "year": [
+      2021,
+      2016
+    ]
+  }
+}

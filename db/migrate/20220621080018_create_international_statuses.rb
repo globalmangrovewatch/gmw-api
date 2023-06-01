@@ -4,7 +4,7 @@ class CreateInternationalStatuses < ActiveRecord::Migration[7.0]
       t.references :location, null: false, foreign_key: true
       t.string :indicator
       t.float :value
-      
+
       t.timestamps
     end
   end

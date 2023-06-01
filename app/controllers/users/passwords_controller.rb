@@ -16,11 +16,10 @@ class Users::PasswordsController < Devise::PasswordsController
       render json: {
         message: "The password was reset successfully"
       }
-    else 
+    else
       render json: {
         error: resource.errors
       }
     end
   end
-
 end

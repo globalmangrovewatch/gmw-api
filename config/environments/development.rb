@@ -3,7 +3,7 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
   # config.log_level = :debug
-  config.web_console.whitelisted_ips = '172.19.0.1'
+  config.web_console.whitelisted_ips = "172.19.0.1"
   # In the development environment your application's code is reloaded any time
   # it changes. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
@@ -71,7 +71,7 @@ Rails.application.configure do
   # config.action_cable.disable_request_forgery_protection = true
 
   # mailer
-  config.action_mailer.default_url_options = { host: ENV["MAILER_DEFAULT_HOST"], port: 3000 }
+  config.action_mailer.default_url_options = {host: ENV["MAILER_DEFAULT_HOST"], port: 3000}
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = { :address => ENV["SMTP_ADDRESS"], :port => 1025 }
+  config.action_mailer.smtp_settings = {address: ENV["SMTP_ADDRESS"], port: 1025}
 end

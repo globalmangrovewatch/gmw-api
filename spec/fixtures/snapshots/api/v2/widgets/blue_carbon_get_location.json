@@ -1,0 +1,23 @@
+{
+  "data": [
+    {
+      "year": 2019,
+      "indicator": "molestiae",
+      "value": 99388.06
+    }
+  ],
+  "metadata": {
+    "location_id": "7217",
+    "units": {
+      "value": "CO2e/ha",
+      "toc": "t CO₂e",
+      "soc": "t CO₂e",
+      "agb": "t CO₂e"
+    },
+    "year": [
+      2019
+    ],
+    "note": null,
+    "toc": 85187.83
+  }
+}

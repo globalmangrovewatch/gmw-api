@@ -1,199 +1,205 @@
 class V2::ReportController < MrttApiController
-    def answers_by_site
-        site_id = report_params[:site_id]
-        @site_id, @registration_intervention_answers, @monitoring_answers = get_answers_by_site(site_id)
+  def answers_by_site
+    site_id = report_params[:site_id]
+    @site_id, @registration_intervention_answers, @monitoring_answers = get_answers_by_site(site_id)
+  end
+
+  def answers
+    @answers = []
+    Site.all.each { |site|
+      site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id)
+      @answers.push({
+        "site_id" => site_id,
+        "registration_intervention_answers" => registration_intervention_answers,
+        "monitoring_answers" => monitoring_answers
+      })
+    }
+  end
+
+  def get_answers_by_site(site_id)
+    site = Site.find(site_id)
+    landscape = site.landscape
+    organization_ids = landscape.organization_ids
+    registration_intervention_answers = site.registration_intervention_answers
+
+    # Non-admin and non-members are allowed to view answers on public section of the form
+    # Instead of returning: insufficient_privilege && return
+    # We restrict the sections instead
+    @restricted_sections = []
+    if !(current_user.is_admin || current_user.is_member_of_any(organization_ids))
+      @restricted_sections = (
+          if site.section_data_visibility
+            site.section_data_visibility.map { |key, value| (value == "private") ? key : nil }.select { |i| !i.nil? }
+          else
+            []
+          end
+        )
     end
 
-    def answers
-        @answers = []
-        Site.all.each { |site|
-            site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id)
-            @answers.push({
-                "site_id" => site_id,
-                "registration_intervention_answers" => registration_intervention_answers,
-                "monitoring_answers" => monitoring_answers
-            })
+    monitoring_events = {}
+    site.monitoring_answers.each { |answer|
+      if !monitoring_events.key?(answer.uuid)
+        monitoring_events[answer.uuid] = {
+          "uuid" => answer.uuid,
+          "form_type" => answer.form_type,
+          "monitoring_date" => answer.monitoring_date,
+          "answers" => {}
         }
-    end
+      end
+      if !@restricted_sections.include?(answer.question_id.split(".")[0])
+        monitoring_events[answer.uuid]["answers"][answer.question_id] = answer.answer_value
+      end
+    }
 
-    def get_answers_by_site(site_id)
-        site = Site.find(site_id)
-        landscape = site.landscape
-        organization_ids = landscape.organization_ids
-        registration_intervention_answers = site.registration_intervention_answers
+    monitoring_answers = []
+    monitoring_events.each { |key, value|
+      monitoring_answers.push(value)
+    }
+    [site.id, registration_intervention_answers, monitoring_answers]
+  end
 
-        # Non-admin and non-members are allowed to view answers on public section of the form
-        # Instead of returning: insufficient_privilege && return
-        # We restrict the sections instead
-        @restricted_sections = []
-        if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
-            @restricted_sections = (
-                site.section_data_visibility ?
-                    site.section_data_visibility.map{|key, value| value == "private" ? key : nil }.select{|i| i != nil} :
-                    []
-            )
-        end
+  def answers_as_xlsx
+      # prep
+      empty_answer = "---"
+      question_key_ids = {
+          "registration": ['1.1a', '1.1b', '1.1c', '1.2', '1.3', '2.1', '2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8', '2.9', '3.1', '3.2', '3.3', '4.1', '4.2', '5.1', '5.2', '5.2a', '5.2b', '5.2c', '5.3', '5.3a', '5.3b', '5.3c', '5.3d', '5.3e', '5.3f', '5.3g', '5.4', '5.5'],
+          "intervention": ['6.1', '6.2', '6.2a', '6.2b', '6.2c', '6.3', '6.3a', '6.4', '7.1', '7.2', '7.3', '7.4', '7.5', '7.5a', '7.6'],
+          "monitoring": ['8.1', '8.2', '8.3', '8.4', '8.4a', '8.4b', '8.4c', '8.5', '8.5a', '8.6', '8.7', '8.8', '8.9', '8.10', '9.1', '9.2', '9.2a', '9.3', '9.3a', '9.3b', '9.4', '9.5', '10.1', '10.1a', '10.1b', '10.2', '10.3', '10.3a', '10.4', '10.4a', '10.5', '10.6', '10.6a', '10.7', '10.8']
+      }
+      
+      columns = ["site_id", "site_name"]
+      registration_sheet_columns = columns + question_key_ids[:registration]
+      intervention_sheet_columns = columns + question_key_ids[:intervention]
+      monitoring_sheet_columns = columns + question_key_ids[:monitoring]
 
-        monitoring_events = {}
-        site.monitoring_answers.each { |answer|
-            if not monitoring_events.key?(answer.uuid)
-                monitoring_events[answer.uuid] = {
-                    "uuid" => answer.uuid,
-                    "form_type" => answer.form_type,
-                    "monitoring_date" => answer.monitoring_date,
-                    "answers" => {}
-                }
-            end
-            if not @restricted_sections.include?(answer.question_id.split(".")[0])
-                monitoring_events[answer.uuid]["answers"][answer.question_id] = answer.answer_value
-            end
-        }
+      # initialize workbook
+      p = Axlsx::Package.new
+      wb = p.workbook
 
-        monitoring_answers = []
-        monitoring_events.each { |key, value|
-            monitoring_answers.push(value)
-        }
-        return site.id, registration_intervention_answers, monitoring_answers
-    end
+      # create styles
+      style_header = wb.styles.add_style({:alignment => {:vertical => :center, :horizontal => :center, :wrap_text => true}, :bg_color => "000000", :fg_color => "FFFFFF"})    
+      style_row = wb.styles.add_style({:alignment => {:vertical => :top}})    
 
-    def answers_as_xlsx
-        # prep
-        empty_answer = "---"
-        question_key_ids = {
-            "registration": ['1.1a', '1.1b', '1.1c', '1.2', '1.3', '2.1', '2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8', '2.9', '3.1', '3.2', '3.3', '4.1', '4.2', '5.1', '5.2', '5.2a', '5.2b', '5.2c', '5.3', '5.3a', '5.3b', '5.3c', '5.3d', '5.3e', '5.3f', '5.3g', '5.4', '5.5'],
-            "intervention": ['6.1', '6.2', '6.2a', '6.2b', '6.2c', '6.3', '6.3a', '6.4', '7.1', '7.2', '7.3', '7.4', '7.5', '7.5a', '7.6'],
-            "monitoring": ['8.1', '8.2', '8.3', '8.4', '8.4a', '8.4b', '8.4c', '8.5', '8.5a', '8.6', '8.7', '8.8', '8.9', '8.10', '9.1', '9.2', '9.2a', '9.3', '9.3a', '9.3b', '9.4', '9.5', '10.1', '10.1a', '10.1b', '10.2', '10.3', '10.3a', '10.4', '10.4a', '10.5', '10.6', '10.6a', '10.7', '10.8']
-        }
-        
-        columns = ["site_id", "site_name"]
-        registration_sheet_columns = columns + question_key_ids[:registration]
-        intervention_sheet_columns = columns + question_key_ids[:intervention]
-        monitoring_sheet_columns = columns + question_key_ids[:monitoring]
+      # create registration worksheet
+      registration_worksheet = wb.add_worksheet(name: "Registration")
+      intervention_worksheet = wb.add_worksheet(name: "Intervention")
+      monitoring_worksheet = wb.add_worksheet(name: "Monitoring")
 
-        # initialize workbook
-        p = Axlsx::Package.new
-        wb = p.workbook
+      # generate cells data
+      all_sites_rows = []
+      monitoring_sites_rows = []
+      Site.all.each { |site|
+          site_row = {}
+          site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id)
 
-        # create styles
-        style_header = wb.styles.add_style({:alignment => {:vertical => :center, :horizontal => :center, :wrap_text => true}, :bg_color => "000000", :fg_color => "FFFFFF"})    
-        style_row = wb.styles.add_style({:alignment => {:vertical => :top}})    
+          site_row["site_id"] = site.id
+          site_row["site_name"] = site.site_name
 
-        # create registration worksheet
-        registration_worksheet = wb.add_worksheet(name: "Registration")
-        intervention_worksheet = wb.add_worksheet(name: "Intervention")
-        monitoring_worksheet = wb.add_worksheet(name: "Monitoring")
+          registration_intervention_answers.each { |answer|
+              # site_row[answer.question_id] = answer.answer_value
+              site_row[answer.question_id] = to_human_readable(answer.question_id, answer.answer_value)
+          }
+      
+          all_sites_rows.push(site_row)
 
-        # generate cells data
-        all_sites_rows = []
-        monitoring_sites_rows = []
-        Site.all.each { |site|
-            site_row = {}
-            site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id)
+          if not monitoring_answers.empty?
+              monitoring_answers.each { |event|
+                  monitoring_site_row = {}
+                  monitoring_site_row["site_id"] = site.id
+                  monitoring_site_row["site_name"] = site.site_name
+                  
+                  event["answers"].each do  |question_id, answer|
+                      monitoring_site_row[question_id] = to_human_readable(question_id, answer)
+                  end
+                  monitoring_sites_rows.push(monitoring_site_row)
+              }
+          end
+      }
 
-            site_row["site_id"] = site.id
-            site_row["site_name"] = site.site_name
+      # add registration header
+      registration_worksheet.add_row registration_sheet_columns, :style => style_header
 
-            registration_intervention_answers.each { |answer|
-                # site_row[answer.question_id] = answer.answer_value
-                site_row[answer.question_id] = to_human_readable(answer.question_id, answer.answer_value)
-            }
-        
-            all_sites_rows.push(site_row)
+      # add registration rows
+      all_sites_rows.each { |site_row|
+          row = []
+          registration_sheet_columns.each { |column|
+              cell_value = site_row[column] || empty_answer
+              row.push(cell_value)
+          }
+          registration_worksheet.add_row row, :style => style_row
+      }
 
-            if not monitoring_answers.empty?
-                monitoring_answers.each { |event|
-                    monitoring_site_row = {}
-                    monitoring_site_row["site_id"] = site.id
-                    monitoring_site_row["site_name"] = site.site_name
-                    
-                    event["answers"].each do  |question_id, answer|
-                        monitoring_site_row[question_id] = to_human_readable(question_id, answer)
-                    end
-                    monitoring_sites_rows.push(monitoring_site_row)
-                }
-            end
-        }
+      # add intervention header
+      intervention_worksheet.add_row intervention_sheet_columns, :style => style_header
+      
+      # add intervention rows
+      all_sites_rows.each { |site_row|
+          row = []
+          intervention_sheet_columns.each { |column|
+              cell_value = site_row[column] || empty_answer
+              row.push(cell_value)
+          }
+          intervention_worksheet.add_row row, :style => style_row
+      }
 
-        # add registration header
-        registration_worksheet.add_row registration_sheet_columns, :style => style_header
+      # add monitoring header
+      monitoring_worksheet.add_row monitoring_sheet_columns, :style => style_header
 
-        # add registration rows
-        all_sites_rows.each { |site_row|
-            row = []
-            registration_sheet_columns.each { |column|
-                cell_value = site_row[column] || empty_answer
-                row.push(cell_value)
-            }
-            registration_worksheet.add_row row, :style => style_row
-        }
-    
-        # add intervention header
-        intervention_worksheet.add_row intervention_sheet_columns, :style => style_header
-        
-        # add intervention rows
-        all_sites_rows.each { |site_row|
-            row = []
-            intervention_sheet_columns.each { |column|
-                cell_value = site_row[column] || empty_answer
-                row.push(cell_value)
-            }
-            intervention_worksheet.add_row row, :style => style_row
-        }
+      # add monitoring rows
+      monitoring_sites_rows.each { |site_row| 
+          row = []
+          monitoring_sheet_columns.each { |column| 
+              cell_value = site_row[column] || empty_answer
+              row.push(cell_value)
+          }
+          monitoring_worksheet.add_row row, :style => style_row
+      }
 
-        # add monitoring header
-        monitoring_worksheet.add_row monitoring_sheet_columns, :style => style_header
+      # export
+      filename = "sites_report_#{Time.now.strftime("%Y-%m-%d_%H-%M-%S")}.xlsx"
+      send_data(p.to_stream.read, filename: filename, disposition: 'attachment')
+  end
 
-        # add monitoring rows
-        monitoring_sites_rows.each { |site_row| 
-            row = []
-            monitoring_sheet_columns.each { |column| 
-                cell_value = site_row[column] || empty_answer
-                row.push(cell_value)
-            }
-            monitoring_worksheet.add_row row, :style => style_row
-        }
+  def report_params
+      params.except(:format, :site).permit(:site_id)
+  end
 
-        # export
-        filename = "sites_report_#{Time.now.strftime("%Y-%m-%d_%H-%M-%S")}.xlsx"
-        send_data(p.to_stream.read, filename: filename, disposition: 'attachment')
-    end
+  def to_human_readable(question, answer)
+      if question == "5.3f"
+          return answer.map { |i|
+              "%s: %s" % [i["mangroveSpeciesType"], i["percentageComposition"]]
+          }.join("\n")
+      elsif ["1.1a", "1.1c"].include? question
+          return Date.parse(answer).strftime("%m/%d/%Y")
+      elsif ["1.1b"].include? question
+          return ("Yes" if answer == true) || ("No" if answer == false) || answer.to_json
+      elsif ["1.2"].include? question
+          return answer[0]["properties"]["country"]
+      elsif question == "1.3"
+          # convert geojson to map image via Mapbox Static API
+          geojson = answer["features"][0]
+          feature = RGeo::GeoJSON.decode(geojson)            
+          geojson = reduce_precision_geojson(geojson)
+          url = "https://api.mapbox.com/v4/mapbox.satellite/geojson(%s)/%s/600x300@2x.png?access_token=%s" % [geojson.to_json, "auto", "MAPBOX_ACCESS_TOKEN"]
+          return url
+      else
+          return answer.to_json
+      end
+  end
 
-    def report_params
-        params.except(:format, :site).permit(:site_id)
-    end
+  def reduce_precision_geojson(geojson)
+      geometry = geojson["geometry"]
+      coordinates = geometry["coordinates"]
+      coordinates_o = coordinates[0]
+      coordinates_o.each { |coord|
+          coord[0] = coord[0].truncate(2)
+          coord[1] = coord[1].truncate(2)
+      }
+      return geojson
+  end
 
-    def to_human_readable(question, answer)
-        if question == "5.3f"
-            return answer.map { |i|
-                "%s: %s" % [i["mangroveSpeciesType"], i["percentageComposition"]]
-            }.join("\n")
-        elsif ["1.1a", "1.1c"].include? question
-            return Date.parse(answer).strftime("%m/%d/%Y")
-        elsif ["1.1b"].include? question
-            return ("Yes" if answer == true) || ("No" if answer == false) || answer.to_json
-        elsif ["1.2"].include? question
-            return answer[0]["properties"]["country"]
-        elsif question == "1.3"
-            # convert geojson to map image via Mapbox Static API
-            geojson = answer["features"][0]
-            feature = RGeo::GeoJSON.decode(geojson)            
-            geojson = reduce_precision_geojson(geojson)
-            url = "https://api.mapbox.com/v4/mapbox.satellite/geojson(%s)/%s/600x300@2x.png?access_token=%s" % [geojson.to_json, "auto", "MAPBOX_ACCESS_TOKEN"]
-            return url
-        else
-            return answer.to_json
-        end
-    end
-
-    def reduce_precision_geojson(geojson)
-        geometry = geojson["geometry"]
-        coordinates = geometry["coordinates"]
-        coordinates_o = coordinates[0]
-        coordinates_o.each { |coord|
-            coord[0] = coord[0].truncate(2)
-            coord[1] = coord[1].truncate(2)
-        }
-        return geojson
-    end
-
-end
+  end
+  def report_params
+      params.except(:format, :site).permit(:site_id)
+  end
+  end

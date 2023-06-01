@@ -3,7 +3,7 @@ module Response
     render json: object,
       status: status,
       adapter: :json,
-      root: 'data',
+      root: "data",
       meta: meta
   end
 end

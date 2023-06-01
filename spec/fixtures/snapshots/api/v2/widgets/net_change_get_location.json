@@ -1,0 +1,38 @@
+{
+  "data": [
+    {
+      "year": 2012,
+      "net_change": 0.0,
+      "gain": null,
+      "loss": null
+    },
+    {
+      "year": 2013,
+      "net_change": -14200.229999999996,
+      "gain": null,
+      "loss": null
+    }
+  ],
+  "metadata": {
+    "location_id": "11968",
+    "units": {
+      "net_change": "km2"
+    },
+    "year": [
+      1996,
+      2007,
+      2008,
+      2009,
+      2010,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020
+    ],
+    "note": null,
+    "total_area": 0.09938805999999999,
+    "total_lenght": 99.38806
+  }
+}

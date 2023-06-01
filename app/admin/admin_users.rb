@@ -32,8 +32,7 @@ ActiveAdmin.register AdminUser do
 
   controller do
     def csv_filename
-      'AdminUsers.csv'
+      "AdminUsers.csv"
     end
   end
-
 end

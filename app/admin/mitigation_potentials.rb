@@ -1,5 +1,4 @@
 ActiveAdmin.register MitigationPotentials do
-
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -24,15 +23,15 @@ ActiveAdmin.register MitigationPotentials do
   })
 
   permit_params :indicator, :value, :category, :location_id, :year
- 
+
   form do |f|
-    f.inputs 'Details' do
-      f.input :indicator, as: :select, 
+    f.inputs "Details" do
+      f.input :indicator, as: :select,
         collection: MitigationPotentials.indicators,
         default: MitigationPotentials.indicators.first,
         include_blank: false,
         required: true
-        f.input :category, as: :select, 
+      f.input :category, as: :select,
         collection: MitigationPotentials.categories,
         default: MitigationPotentials.categories.first,
         include_blank: false,
@@ -41,7 +40,7 @@ ActiveAdmin.register MitigationPotentials do
       f.input :year, default: 2016
     end
 
-    f.inputs 'Location' do
+    f.inputs "Location" do
       f.input :location, as: :select
     end
 
@@ -58,8 +57,7 @@ ActiveAdmin.register MitigationPotentials do
 
   controller do
     def csv_filename
-      'mitigation_potentials.csv'
+      "mitigation_potentials.csv"
     end
   end
-  
 end

@@ -1,3 +1,3 @@
 class BlueCarbon < ApplicationRecord
-    belongs_to :location
+  belongs_to :location
 end

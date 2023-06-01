@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "year": 2021,
+      "indicator": "cum",
+      "value": 98628.73
+    },
+    {
+      "year": 2016,
+      "indicator": "voluptatem",
+      "value": 68950.02
+    }
+  ],
+  "metadata": {
+    "location_id": "worldwide",
+    "units": {
+      "value": "CO2e/ha",
+      "toc": "t CO₂e",
+      "soc": "t CO₂e",
+      "agb": "t CO₂e"
+    },
+    "year": [
+      2021,
+      2016
+    ],
+    "note": null
+  }
+}

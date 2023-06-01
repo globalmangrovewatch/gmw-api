@@ -1,5 +1,4 @@
 ActiveAdmin.register DegradationTreemap do
-
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -24,21 +23,21 @@ ActiveAdmin.register DegradationTreemap do
   })
 
   permit_params :indicator, :value, :unit, :location_id, :main_loss_driver
- 
+
   form do |f|
-    f.inputs 'Details' do
-      f.input :indicator, as: :select, 
+    f.inputs "Details" do
+      f.input :indicator, as: :select,
         collection: DegradationTreemap.indicators,
         default: DegradationTreemap.indicators.first,
         include_blank: false,
         required: true
       f.input :value
-      f.input :unit, as: :select, collection: ["ha", "%"], include_blank: false, default: 'ha'
+      f.input :unit, as: :select, collection: ["ha", "%"], include_blank: false, default: "ha"
       f.input :year, default: 2016
       f.input :main_loss_driver
     end
 
-    f.inputs 'Location' do
+    f.inputs "Location" do
       f.input :location, as: :select
     end
 
@@ -56,8 +55,7 @@ ActiveAdmin.register DegradationTreemap do
 
   controller do
     def csv_filename
-      'degradation_and_loss.csv'
+      "degradation_and_loss.csv"
     end
   end
-  
 end

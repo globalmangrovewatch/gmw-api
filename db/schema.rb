@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_15_102127) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -82,6 +82,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
     t.index ["location_id"], name: "index_degradation_treemaps_on_location_id"
   end
 
+  create_table "drivers_of_changes", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "variable", null: false
+    t.float "value", null: false
+    t.string "primary_driver", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_drivers_of_changes_on_location_id"
+  end
+
   create_table "ecosystem_services", force: :cascade do |t|
     t.bigint "location_id", null: false
     t.string "indicator"
@@ -128,6 +138,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
     t.bigint "organization_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["landscape_id", "organization_id"], name: "idx_u_landscapes_organizations", unique: true
     t.index ["landscape_id"], name: "index_landscapes_organizations_on_landscape_id"
     t.index ["organization_id"], name: "index_landscapes_organizations_on_organization_id"
   end
@@ -140,8 +151,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
     t.json "geometry"
     t.float "area_m2"
     t.float "perimeter_m"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.float "coast_length_m"
     t.string "location_id"
     t.index ["location_id"], name: "index_locations_on_location_id", unique: true
@@ -157,8 +168,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
     t.float "agb_mgha_1"
     t.float "hba_m"
     t.bigint "location_id"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "con_hotspot_summary_km2"
     t.float "net_change_m2"
     t.text "agb_hist_mgha_1"
@@ -217,7 +228,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
   create_table "registration_intervention_answers", force: :cascade do |t|
     t.bigint "site_id", null: false
     t.string "question_id"
-    t.json "answer_value"
+    t.jsonb "answer_value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["site_id"], name: "index_registration_intervention_answers_on_site_id"
@@ -315,6 +326,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_14_162027) do
   add_foreign_key "blue_carbon_investments", "locations"
   add_foreign_key "blue_carbons", "locations"
   add_foreign_key "degradation_treemaps", "locations"
+  add_foreign_key "drivers_of_changes", "locations"
   add_foreign_key "ecosystem_services", "locations"
   add_foreign_key "habitat_extents", "locations"
   add_foreign_key "international_statuses", "locations"

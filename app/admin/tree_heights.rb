@@ -1,5 +1,4 @@
 ActiveAdmin.register TreeHeight do
-
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
   #
@@ -15,7 +14,7 @@ ActiveAdmin.register TreeHeight do
   #   permitted
   # end
   menu parent: "Widgets"
-  
+
   active_admin_import({
     before_import: ->(importer) {
       TreeHeight.delete_all
@@ -23,10 +22,10 @@ ActiveAdmin.register TreeHeight do
   })
 
   permit_params :indicator, :value, :year, :location_id
- 
+
   form do |f|
-    f.inputs 'Details' do
-      f.input :indicator, as: :select, 
+    f.inputs "Details" do
+      f.input :indicator, as: :select,
         collection: TreeHeight.indicators,
         default: TreeHeight.indicators.first,
         include_blank: false,
@@ -35,7 +34,7 @@ ActiveAdmin.register TreeHeight do
       f.input :year, required: true
     end
 
-    f.inputs 'Location' do
+    f.inputs "Location" do
       f.input :location, as: :select
     end
 
@@ -51,7 +50,7 @@ ActiveAdmin.register TreeHeight do
 
   controller do
     def csv_filename
-      'tree_height.csv'
+      "tree_height.csv"
     end
   end
 end

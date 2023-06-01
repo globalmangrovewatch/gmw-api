@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "dates": [
+      {
+        "date": "2016-01-01"
+      }
+    ]
+  },
+  "data": [
+    {
+      "name": "Lome",
+      "location_type": "cum",
+      "iso": "cum",
+      "bounds": {
+      },
+      "location_id": "Location-2",
+      "coast_length_m": 98628.73,
+      "perimeter_m": 98628.73,
+      "area_m2": 98628.73,
+      "id": 14912,
+      "created_at": "2023-05-02T12:36:23.787Z"
+    },
+    {
+      "name": "Kinshasa",
+      "location_type": "voluptatem",
+      "iso": "voluptatem",
+      "bounds": {
+      },
+      "location_id": "Location-1",
+      "coast_length_m": 68950.02,
+      "perimeter_m": 68950.02,
+      "area_m2": 68950.02,
+      "id": 14911,
+      "created_at": "2023-05-02T12:36:23.777Z"
+    }
+  ]
+}
