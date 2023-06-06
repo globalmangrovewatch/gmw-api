@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>Site Report</title>
+  </head>
+  <body>
+    <% @single_site.each do |site_row| %>
+    <h1>
+      <%= site_row['site_name'] %>
+    </h1>
+    <h2>
+      Site ID: <%= site_row['site_id'] %>
+    </h2>
+    <% end %>
+    <table>
+      <thead>
+        <tr>
+          <th>Site Question</th>
+          <th>Site Answer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @site_dictionary.each do |key, item| %>          
+          <tr>
+            <td><%= key %></td>          
+            <td><%= item[:name] %></td>
+          </tr>
+            <td></td>
+            <td><%= item[:value] %></td>
+        <% end %>
+      </tbody>
+    </table>
+  </body>
+</html>
