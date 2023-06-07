@@ -207,7 +207,7 @@ class V2::PdfReportController < MrttApiController
             },
             "8.2" => {
                 "name" => "Which stakeholders currently manage the site?",
-                "type" => "TODO"
+                "type" => "multiselect"
             },
             "8.3" => {
                 "name" => "Are these stakeholders involved in the project activities able to influence management rules at the site?",
@@ -246,20 +246,225 @@ class V2::PdfReportController < MrttApiController
                 "type" => "string"
             },
             "8.8" => {
-                "name" => "Do those responsible for on-going management at the site (e.g., staff, community associations, management groups) have sufficient capacity and resources to enforce the rules and regulations?"
+                "name" => "Do those responsible for on-going management at the site (e.g., staff, community associations, management groups) have sufficient capacity and resources to enforce the rules and regulations?",
                 "type" => "string"
             },
             "8.9" => {
-                "name" => "Is there an effective strategy or approach for ensuring benefits from the site are shared equitably among local stakeholders?"
+                "name" => "Is there an effective strategy or approach for ensuring benefits from the site are shared equitably among local stakeholders?",
                 "type" => "string"
             },
             "8.10" => {
-                "name" => "Is the site consciously managed to adapt to climate change?"
+                "name" => "Is the site consciously managed to adapt to climate change?",
+                "type" => "string"
+            },
+            "9.1" => {
+                "name" => "What date was this socioeconomic and governance status and outcomes assessment conducted?",
+                "type" => "date"
+            },
+            "9.2" => {
+                "name" => "Has the governance arrangement of the site changed since the start of the project activities?",
+                "type" => "string"
+            },
+            "9.2a" => {
+                "name" => "What best describes the current governance arrangement of the site?",
+                "type" => "multiselect"
+            },
+            "9.3" => {
+                "name" => "Has the tenure arrangement of the site changed since the start of the project activities?",
+                "type" => "string"
+            },
+            "9.3a" => {
+                "name" => "What is the current land ownership of the site?",
+                "type" => "multiselect"
+            },
+            "9.3b" => {
+                "name" => "Are customary rights to land within the site recognised in national law?",
+                "type" => "string"
+            },
+            "9.4" => {
+                "name" => "What were the socioeconomic outcomes of the project activities at the site? Please fill the measurement data for the selected socioeconomic outcomes.",
+                "type" => "TODO"
+            },
+            "9.5" => {
+                "name" => "To what extent do you feel the socio-economic aims have been achieved?",
+                "type" => "string"
+            },
+            "10.1" => {
+                "name" => "What were the dates of the ecological monitoring being reported on?",
+                "type" => "TODO"
+            },
+            "10.2" => {
+                "name" => "Which stakeholders carried out the ecological monitoring?",
+                "type" => "TODO"
+            },
+            "10.3" => {
+                "name" => "Was there an increase in mangrove area?",
+                "type" => "string"
+            },
+            "10.3a" => {
+                "name" => "What was the mangrove area pre and post restoration activities at the site?",
+                "type" => "TODO"
+            },
+            "10.4" => {
+                "name" => "Was there an improvement in mangrove condition?",
+                "type" => "string"
+            },
+            "10.5" => {
+                "name" => "Is natural regeneration apparent, with mangroves establishing at the site?",
+                "type" => "string"
+            },
+            "10.6" => {
+                "name" => "What was the percentage survival of the planted mangrove seedlings or propagules?",
+                "type" => "TODO"
+            },
+            "10.6a" => {
+                "name" => "If survival was low, is the cause known?",
+                "type" => "TODO"
+            },
+            "10.7" => {
+                "name" => "What mangrove ecological outcomes were monitored",
+                "type" => "TODO"
+            },
+            "10.7a" => {
+                "name" => "Please fill the measurement data for the selected ecological outcomes.",
+                "type" => "TODO"
+            },
+            "10.8" => {
+                "name" => "To what extent do you feel the ecological aims have been achieved?",
                 "type" => "string"
             },
         }
 
         return pdf_report_formatter
+    end
+
+    def format_answers(registration_intervention_answers, monitoring_answers)
+        @site_dictionary = Hash.new { |h, k| h[k] = h.dup.clear }
+        pdf_format = pdf_report_formatter
+        # site = @site_dictionary[answer.question_id]
+
+        registration_intervention_answers.each { |answer|
+        if answer.answer_value.present?
+            site = @site_dictionary[answer.question_id]
+            
+            # TODO False in a boolean seems to not display the item
+            if pdf_format.key?(answer.question_id)
+                site[:value] = answer.answer_value
+                site[:name] = pdf_format[answer.question_id]["name"]
+                case pdf_format[answer.question_id]["type"]
+                when "string"
+                    site[:value] = answer.answer_value.to_s
+                when "list"
+                    site[:value] = answer.answer_value.to_s
+                when "date"
+                    site[:value] = DateTime.parse(site[:value]).to_date.to_s
+                when "boolean"
+                    if site[:value]
+                        site[:value] = "Yes"
+                    else
+                        site[:value] = "No"
+                    end
+                when "multiselect"
+                    select_array = []
+                    site[:value]["selectedValues"].each { |x|
+                        select_array.push(x)
+                    }
+                    if site[:value]["isOtherChecked"]
+                        select_array.push("Other: " + site[:value]["otherValue"])
+                    end
+                    site[:value] = select_array
+                when "1.2 countries"
+                    country_array = []
+                    site[:value].each { |x|
+                        country_array.push(x["properties"]["country"])
+                    }
+                    site[:value] = country_array
+                when "2.1 stakeholders"
+                    stakeholder_array = []
+                    site[:value].each { |x|
+                        stakeholder_name = x["stakeholderName"]
+                        stakeholder_type = x["stakeholderType"]
+                        stakeholder_array.push("Name: " + stakeholder_name + ", Type: " + stakeholder_type)
+                    }
+                    site[:value] = stakeholder_array
+                when "5.3f species"
+                    species_array = []
+                    site[:value].each { |x|
+                        species_type = x["mangroveSpeciesType"]
+                        percentage = x["percentageComposition"]
+                        species_array.push("Species: " + species_type + ", Percent: " + percentage.to_s)
+                    }
+                    site[:value] = species_array
+                when "5.3g measurements"
+                    measurements_array = []
+                    site[:value].each { |x|
+                        if x["measurementValue"].present?
+                            measurement_type = x["measurementType"]
+                            measurement_value = x["measurementValue"]
+                        measurements_array.push("Type: " + measurement_type + ", Value: " + measurement_value)
+                        end
+                    }
+                    site[:value] = measurements_array
+                when "6.1 stakeholders"
+                    stakeholder_array = []
+                    site[:value].each { |x|
+                        stakeholder = x["stakeholder"]
+                        stakeholder_type = x["stakeholderType"]
+                        stakeholder_array.push("Name: " + stakeholder + ", Type: " + stakeholder_type)
+                    }
+                    site[:value] = stakeholder_array
+                # TODO - needs testing
+                when "6.2a daterange"
+                    date_array = []
+                    if site[:value]["startDate"].present?
+                        start_date = DateTime.parse(x["startDate"]).to_date.to_s
+                        date_array.push("Start Date: " + start_date)
+                    end
+                    if site[:value]["endDate"].present?
+                        end_date = DateTime.parse(x["endDate"]).to_date.to_s
+                        date_array.push("End Date: " + end_date)
+                    end
+                    site[:value] = date_array
+                when "6.2b species"
+                    species_array = []
+                    site[:value].each { |x|
+                        type = x["type"]
+                        species_array.push(type)
+                        if x["seed"]["checked"]
+                            seed_source = x["seed"]["source"][0]
+                            seed_count = x["seed"]["count"]
+                            species_array.push(seed_source, seed_count)
+                        end
+                        if x["propagule"]["checked"]
+                            propagule_source = x["propagule"]["source"][0]
+                            propagule_count = x["propagule"]["count"]
+                            species_array.push(propagule_source, propagule_count)
+                        end
+                    }
+                    site[:value] = species_array
+                when "6.2c planted"
+                    planted_array = []
+                    site[:value].each { |x|
+                        type = x["type"]
+                        count = x["count"]
+                        source = x["source"]
+                        if x["purpose"]["other"].present?
+                            purpose = "Other: " + x["purpose"]["other"]
+                        else
+                            purpose = x["purpose"]["purpose"]
+                        end
+                        planted_array.push([type, count, source, purpose])
+                    }
+                    site[:value] = planted_array
+                else
+                    site[:value] = "TODO"
+                end
+            
+            else
+                
+            end
+        end
+    }
     end
 
     def answers_by_site
@@ -329,136 +534,15 @@ class V2::PdfReportController < MrttApiController
         @single_site = []
         @answer_array = []
         site_row = {}
-        @site_dictionary = Hash.new { |h, k| h[k] = h.dup.clear }
+        
         site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id)
         # answers = monitoring_answers.uuid
-        pdf_format = pdf_report_formatter
+        
         # puts pdf_format
 
-        registration_intervention_answers.each { |answer|
-            if answer.answer_value.present?
-                answer.question_id
-                
-                # TODO False in a boolean seems to not display the item
-                if pdf_format.key?(answer.question_id)
-                    @site_dictionary[answer.question_id][:value] = answer.answer_value
-                    @site_dictionary[answer.question_id][:name] = pdf_format[answer.question_id]["name"]
-                    case pdf_format[answer.question_id]["type"]
-                    when "string"
-                        @site_dictionary[answer.question_id][:value] = answer.answer_value.to_s
-                    when "list"
-                        @site_dictionary[answer.question_id][:value] = answer.answer_value.to_s
-                    when "date"
-                        @site_dictionary[answer.question_id][:value] = DateTime.parse(@site_dictionary[answer.question_id.to_s][:value]).to_date.to_s
-                    when "boolean"
-                        if @site_dictionary[answer.question_id][:value]
-                            @site_dictionary[answer.question_id][:value] = "Yes"
-                        else
-                            @site_dictionary[answer.question_id][:value] = "No"
-                        end
-                    when "multiselect"
-                        select_array = []
-                        @site_dictionary[answer.question_id][:value]["selectedValues"].each { |x|
-                            select_array.push(x)
-                        }
-                        if @site_dictionary[answer.question_id][:value]["isOtherChecked"]
-                            select_array.push("Other: " + @site_dictionary[answer.question_id][:value]["otherValue"])
-                        end
-                        @site_dictionary[answer.question_id][:value] = select_array
-                    when "1.2 countries"
-                        country_array = []
-                        @site_dictionary[answer.question_id][:value].each { |x|
-                            country_array.push(x["properties"]["country"])
-                        }
-                        @site_dictionary[answer.question_id][:value] = country_array
-                    when "2.1 stakeholders"
-                        stakeholder_array = []
-                        @site_dictionary[answer.question_id][:value].each { |x|
-                            stakeholder_name = x["stakeholderName"]
-                            stakeholder_type = x["stakeholderType"]
-                            stakeholder_array.push("Name: " + stakeholder_name + ", Type: " + stakeholder_type)
-                        }
-                        @site_dictionary[answer.question_id][:value] = stakeholder_array
-                    when "5.3f species"
-                        species_array = []
-                        @site_dictionary[answer.question_id][:value].each { |x|
-                            species_type = x["mangroveSpeciesType"]
-                            percentage = x["percentageComposition"]
-                            species_array.push("Species: " + species_type + ", Percent: " + percentage.to_s)
-                        }
-                        @site_dictionary[answer.question_id][:value] = species_array
-                    when "5.3g measurements"
-                        measurements_array = []
-                        @site_dictionary[answer.question_id][:value].each { |x|
-                            if x["measurementValue"].present?
-                                measurement_type = x["measurementType"]
-                                measurement_value = x["measurementValue"]
-                            measurements_array.push("Type: " + measurement_type + ", Value: " + measurement_value)
-                            end
-                        }
-                        @site_dictionary[answer.question_id][:value] = measurements_array
-                    when "6.1 stakeholders"
-                        stakeholder_array = []
-                        @site_dictionary[answer.question_id][:value].each { |x|
-                            stakeholder = x["stakeholder"]
-                            stakeholder_type = x["stakeholderType"]
-                            stakeholder_array.push("Name: " + stakeholder + ", Type: " + stakeholder_type)
-                        }
-                        @site_dictionary[answer.question_id][:value] = stakeholder_array
-                    # TODO - needs testing
-                    when "6.2a daterange"
-                        date_array = []
-                        if @site_dictionary[answer.question_id][:value]["startDate"].present?
-                            start_date = DateTime.parse(x["startDate"]).to_date.to_s
-                            date_array.push("Start Date: " + start_date)
-                        end
-                        if @site_dictionary[answer.question_id][:value]["endDate"].present?
-                            end_date = DateTime.parse(x["endDate"]).to_date.to_s
-                            date_array.push("End Date: " + end_date)
-                        end
-                        @site_dictionary[answer.question_id][:value] = date_array
-                    when "6.2b species"
-                        species_array = []
-                        @site_dictionary[answer.question_id][:value].each { |x|
-                            type = x["type"]
-                            species_array.push(type)
-                            if x["seed"]["checked"]
-                                seed_source = x["seed"]["source"][0]
-                                seed_count = x["seed"]["count"]
-                                species_array.push(seed_source, seed_count)
-                            end
-                            if x["propagule"]["checked"]
-                                propagule_source = x["propagule"]["source"][0]
-                                propagule_count = x["propagule"]["count"]
-                                species_array.push(propagule_source, propagule_count)
-                            end
-                        }
-                        @site_dictionary[answer.question_id][:value] = species_array
-                    when "6.2c planted"
-                        planted_array = []
-                        @site_dictionary[answer.question_id][:value].each { |x|
-                            type = x["type"]
-                            count = x["count"]
-                            source = x["source"]
-                            if x["purpose"]["other"].present?
-                                purpose = "Other: " + x["purpose"]["other"]
-                            else
-                                purpose = x["purpose"]["purpose"]
-                            end
-                            planted_array.push([type, count, source, purpose])
-                        }
-                        @site_dictionary[answer.question_id][:value] = planted_array
-                    else
-                        @site_dictionary[answer.question_id][:value] = "TODO"
-                    end
-                
-                else
-                    
-                end
-            end
-        }
+        format_answers(registration_intervention_answers, monitoring_answers)
 
-
+        puts @site_dictionary
         @site_dictionary = @site_dictionary.sort
 
         site_row["site_id"] = site.id
