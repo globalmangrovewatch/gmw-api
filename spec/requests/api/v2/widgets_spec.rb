@@ -1102,4 +1102,44 @@ RSpec.describe "API V2 Widgets", type: :request do
       end
     end
   end
+
+  path "/api/v2/widgets/national_dashboard" do
+    get "Retrieves the data for the national dashboard widget" do
+      tags "Widgets"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :location_id, in: :query, type: :string, description: "Location id", required: true
+
+      let(:location) { create :location }
+      let!(:national_dashboard_1) { create :national_dashboard, location: location }
+      let!(:national_dashboard_2) { create :national_dashboard }
+      let!(:location_resource) { create :location_resource, location: location }
+
+      let(:location_id) { location.id }
+
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {
+              type: :array,
+              items: {"$ref" => "#/components/schemas/national_dashboard"}
+            },
+            metadata: {
+              :type => :object,
+              "$ref" => "#/components/schemas/metadata"
+            }
+          }
+
+        run_test!
+
+        it "matches snapshot", generate_swagger_example: true do
+          expect(response.body).to match_snapshot("api/v2/widgets/national_dashboard")
+        end
+
+        it "returns correct data" do
+          expect(response_json["data"].pluck("value")).to eq([national_dashboard_1.value])
+        end
+      end
+    end
+  end
 end

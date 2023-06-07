@@ -337,4 +337,10 @@ class V2::WidgetsController < ApiController
     @data = @data.with_registration_intervention_answer "6.2", params[:intervention_type] if params[:intervention_type].present?
     @data = @data.with_registration_intervention_answer "6.4", params[:community_activities] if params[:community_activities].present?
   end
+
+  def national_dashboard
+    @location_id = params[:location_id]
+    @data = NationalDashboard.where location_id: @location_id
+    @location_resources = LocationResource.where location_id: @location_id
+  end
 end
