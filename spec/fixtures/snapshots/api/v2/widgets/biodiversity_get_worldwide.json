@@ -1,9 +1,10 @@
 {
   "data": {
-    "total": 1,
+    "total": 2,
     "threatened": 1,
     "categories": {
-      "vu": 1
+      "vu": 1,
+      "lc": 1
     },
     "species": [
       {
@@ -14,11 +15,21 @@
         "common_name": "voluptatem",
         "iucn_url": "http://kutch-spencer.com/moises",
         "red_list_cat": "vu"
+      },
+      {
+        "id": 226,
+        "created_at": "2023-06-07T11:29:41.307Z",
+        "updated_at": "2023-06-07T11:29:41.307Z",
+        "scientific_name": "cum",
+        "common_name": "cum",
+        "iucn_url": "http://bartoletti.com/jeremiah_cronin",
+        "red_list_cat": "lc"
       }
     ]
   },
   "metadata": {
     "unit": null,
-    "note": "nº of species"
+    "note": "nº of species",
+    "worldwide_total": 2
   }
 }

@@ -51,7 +51,8 @@ RSpec.configure do |config|
                 items: {type: :number},
                 nullable: true
               },
-              note: {type: :string, nullable: true}
+              note: {type: :string, nullable: true},
+              worldwide_total: {type: :number, nullable: true, description: "total number of species in the world"}
             }
           },
           error_response: {

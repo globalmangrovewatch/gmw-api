@@ -96,9 +96,10 @@ RSpec.describe "API V2 Widgets", type: :request do
       produces "application/json"
       parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
 
-      let(:location) { create :location }
-      let!(:specie_1) { create :specie, locations: [location] }
-      let!(:specie_2) { create :specie }
+      let(:location_1) { create :location }
+      let(:location_2) { create :location }
+      let!(:specie_1) { create :specie, locations: [location_1] }
+      let!(:specie_2) { create :specie, locations: [location_2] }
 
       response 200, "Success" do
         schema type: :object,
@@ -114,7 +115,7 @@ RSpec.describe "API V2 Widgets", type: :request do
           }
 
         context "when location_id is used" do
-          let(:location_id) { location.id }
+          let(:location_id) { location_1.id }
 
           run_test!
 
@@ -124,6 +125,7 @@ RSpec.describe "API V2 Widgets", type: :request do
 
           it "returns correct id of found record" do
             expect(response_json["data"]["species"].pluck("id")).to eq([specie_1.id])
+            expect(response_json["metadata"]["worldwide_total"]).to eq(2)
           end
         end
 
@@ -132,6 +134,11 @@ RSpec.describe "API V2 Widgets", type: :request do
 
           it "matches snapshot" do
             expect(response.body).to match_snapshot("api/v2/widgets/biodiversity_get_worldwide")
+          end
+
+          it "returns correct id of found records" do
+            expect(response_json["data"]["species"].pluck("id")).to eq([specie_1.id, specie_2.id])
+            expect(response_json["metadata"]["worldwide_total"]).to eq(2)
           end
         end
       end
