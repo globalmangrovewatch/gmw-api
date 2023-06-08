@@ -234,6 +234,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_115240) do
     t.string "indicator", null: false
     t.integer "year", null: false
     t.float "value", null: false
+    t.string "layer_info"
     t.string "layer_link"
     t.string "download_link"
     t.string "unit", null: false

@@ -1137,7 +1137,13 @@ RSpec.describe "API V2 Widgets", type: :request do
         end
 
         it "returns correct data" do
-          expect(response_json["data"].pluck("value")).to eq([national_dashboard_1.value])
+          expect(response_json["data"].first["indicator"]).to eq(national_dashboard_1.indicator)
+          expect(response_json["data"].first["sources"].first["source"]).to eq(national_dashboard_1.source)
+          expect(response_json["data"].first["sources"].first["data_source"].pluck("value")).to eq([national_dashboard_1.value])
+        end
+
+        it "returns correct metadata" do
+          expect(response_json["metadata"]["other_resources"].pluck("name")).to eq([location_resource.name])
         end
       end
     end

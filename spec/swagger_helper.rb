@@ -292,13 +292,31 @@ RSpec.configure do |config|
           national_dashboard: {
             type: :object,
             properties: {
-              year: {type: :number},
-              source: {type: :string, nullable: true},
-              value: {type: :number},
               indicator: {type: :string},
-              layer_link: {type: :string, nullable: true},
-              download_link: {type: :string, nullable: true},
-              unit: {type: :string}
+              sources: {
+                type: :array,
+                items: {
+                  type: :object,
+                  properties: {
+                    source: {type: :string},
+                    unit: {type: :string},
+                    years: {type: :array, items: {type: :number}},
+                    data_source: {
+                      type: :array,
+                      items: {
+                        type: :object,
+                        properties: {
+                          year: {type: :number},
+                          value: {type: :number},
+                          layer_info: {type: :string, nullable: true},
+                          layer_link: {type: :string, nullable: true},
+                          download_link: {type: :string, nullable: true}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
           sites_filters: {

@@ -1,25 +1,33 @@
 json.data do
-  json.array! @data do |data|
-    json.year data.year
-    json.source data.source
-    json.indicator data.indicator
-    json.value data.value
-    json.layer_link data.layer_link
-    json.download_link data.download_link
-    json.unit data.unit
+  json.array! @data.group_by(&:indicator) do |indicator, data|
+    json.indicator indicator
+    json.sources do
+      json.array! data.group_by(&:source) do |source, data_source|
+        json.source source
+        json.unit data_source.first&.unit
+        json.years data_source.map(&:year).uniq.sort
+        json.data_source do
+          json.array! data_source do |record|
+            json.year record.year
+            json.value record.value
+            json.layer_info record.layer_info
+            json.layer_link record.layer_link
+            json.download_link record.download_link
+          end
+        end
+      end
+    end
   end
 end
 
 json.metadata do
   json.location_id @location_id
-  json.location_resources do
+  json.other_resources do
     json.array! @location_resources do |location_resource|
       json.name location_resource.name
       json.description location_resource.description
       json.link location_resource.link
     end
   end
-  json.units @data.group_by(&:indicator).map { |k, v| [k, v.first.unit] }.to_h
-  json.years @data.map(&:year).uniq.sort
   json.note nil
 end

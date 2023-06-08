@@ -12,6 +12,10 @@ FactoryBot.define do
       Faker::Config.random = Random.new(n)
       Faker::Date.between(from: "2014-01-01", to: "2022-01-01").year
     end
+    sequence(:layer_info) do |n|
+      Faker::Config.random = Random.new(n)
+      Faker::Lorem.sentence
+    end
     sequence(:layer_link) do |n|
       Faker::Config.random = Random.new(n)
       Faker::Internet.url

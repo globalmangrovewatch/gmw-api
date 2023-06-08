@@ -6,6 +6,7 @@ class CreateNationalDashboards < ActiveRecord::Migration[7.0]
       t.string :indicator, null: false
       t.integer :year, null: false
       t.float :value, null: false
+      t.string :layer_info
       t.string :layer_link
       t.string :download_link
       t.string :unit, null: false

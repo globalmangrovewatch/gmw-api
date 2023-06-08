@@ -7,7 +7,7 @@ ActiveAdmin.register NationalDashboard do
     }
   })
 
-  permit_params :source, :indicator, :year, :value, :layer_link, :download_link, :unit, :location_id
+  permit_params :source, :indicator, :year, :value, :layer_info, :layer_link, :download_link, :unit, :location_id
 
   form do |f|
     f.inputs "Details" do
@@ -16,6 +16,7 @@ ActiveAdmin.register NationalDashboard do
       f.input :value
       f.input :unit, as: :select, collection: NationalDashboard.units
       f.input :year
+      f.input :layer_info
       f.input :layer_link
       f.input :download_link
     end
@@ -33,6 +34,7 @@ ActiveAdmin.register NationalDashboard do
     column :value
     column :unit
     column :year
+    column :layer_info
     column :layer_link
     column :download_link
     column :location_id
