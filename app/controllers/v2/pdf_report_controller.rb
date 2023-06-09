@@ -19,7 +19,7 @@ class V2::PdfReportController < MrttApiController
             },
             "1.3" => { 
                 "name" => "What is the overall site area?",
-                "type" => "TODO - Mapbox geolocation"
+                "type" => "TODO"
             },
             "2.1" => {
                 "name" => "Which stakeholders are involved in the project activities?",
@@ -75,12 +75,8 @@ class V2::PdfReportController < MrttApiController
             },
             "4.2" => {
                 "name" => "What were the major cause(s) of mangrove loss or degradation at the site?",
-                "type" => "TODO"
-            },
-            "4.3" => {
-                "name" => "Rate the magnitude of impact of the cause(s) of decline selected in the previous question, on mangrove loss and degradation - High, Moderate, Low",
-                "type" => "TODO"
-            },
+                "type" => "4.2 4.3 causes"
+            }, 
             "5.1" => {
                 "name" => "Have mangroves naturally occurred at the site previously?",
                 "type" => "string"
@@ -117,7 +113,7 @@ class V2::PdfReportController < MrttApiController
                 "name" => "What year were mangroves lost from this site?",
                 "type" => "string"
             },
-            "5.2d" => {
+            "5.3d" => {
                 "name" => "Is natural regeneration apparent at the site?",
                 "type" => "string"
             },
@@ -179,23 +175,23 @@ class V2::PdfReportController < MrttApiController
             },
             "7.2" => {
                 "name" => "What is the main finance mechanism used to fund the project interventions at the site?",
-                "type" => "TODO"
+                "type" => "7.2 funding"
             },
             "7.3" => {
                 "name" => "What funders provided monetary support?",
-                "type" => "TODO"
+                "type" => "7.3 funders"
             },
             "7.4" => {
                 "name" => "What was the total cost of the project activities at the site?",
-                "type" => "TODO"
+                "type" => "7.4 cost total"
             },
             "7.5" => {
                 "name" => "What was the breakdown of the costs of the project activities?",
-                "type" => "TODO"
+                "type" => "7.5 cost breakdown"
             },
             "7.5a" => {
                 "name" => "What was the approximate percentage split in expenditure between the different biophysical interventions and/or community activities?",
-                "type" => "TODO"
+                "type" => "7.5a cost percentage"
             },
             "7.6" => {
                 "name" => "What non-monetised contributions were made to the project activities at the site?",
@@ -342,6 +338,12 @@ class V2::PdfReportController < MrttApiController
         @site_dictionary = Hash.new { |h, k| h[k] = h.dup.clear }
         pdf_format = pdf_report_formatter
         # site = @site_dictionary[answer.question_id]
+        # monitoring_answers.each { |monitoring_answer|
+        #     # puts monitoring_answer["answers"]
+        #     monitoring_answer["answers"].each { |key, value|
+        #         puts key
+        #     }
+        # }
 
         registration_intervention_answers.each { |answer|
         if answer.answer_value.present?
@@ -353,16 +355,16 @@ class V2::PdfReportController < MrttApiController
                 site[:name] = pdf_format[answer.question_id]["name"]
                 case pdf_format[answer.question_id]["type"]
                 when "string"
-                    site[:value] = answer.answer_value.to_s
+                    site[:value] = [answer.answer_value.to_s]
                 when "list"
-                    site[:value] = answer.answer_value.to_s
+                    site[:value] = answer.answer_value
                 when "date"
-                    site[:value] = DateTime.parse(site[:value]).to_date.to_s
+                    site[:value] = [DateTime.parse(site[:value]).to_date.to_s]
                 when "boolean"
                     if site[:value]
-                        site[:value] = "Yes"
+                        site[:value] = ["Yes"]
                     else
-                        site[:value] = "No"
+                        site[:value] = ["No"]
                     end
                 when "multiselect"
                     select_array = []
@@ -384,15 +386,29 @@ class V2::PdfReportController < MrttApiController
                     site[:value].each { |x|
                         stakeholder_name = x["stakeholderName"]
                         stakeholder_type = x["stakeholderType"]
-                        stakeholder_array.push("Name: " + stakeholder_name + ", Type: " + stakeholder_type)
+                        stakeholder_array.push("Name: #{stakeholder_name or "UNDEFINED"}, Type: #{stakeholder_type}")
                     }
                     site[:value] = stakeholder_array
+                # TODO expand this further
+                when "4.2 4.3 causes"
+                    causes_array = []
+                    site[:value].each { |x|
+                        main_cause_label = x["mainCauseLabel"]
+                        if x["mainCauseAnswers"].present?
+                            main_cause_answers = x["mainCauseAnswers"]
+                        end
+                        if x["subCauses"].present?
+                            sub_causes = x["subCauses"]                            
+                        end
+                        causes_array.push([main_cause_label, main_cause_answers, sub_causes])
+                    }
+                    site[:value] = causes_array
                 when "5.3f species"
                     species_array = []
                     site[:value].each { |x|
                         species_type = x["mangroveSpeciesType"]
                         percentage = x["percentageComposition"]
-                        species_array.push("Species: " + species_type + ", Percent: " + percentage.to_s)
+                        species_array.push("Species: #{species_type}, Percent: #{percentage.to_s}")
                     }
                     site[:value] = species_array
                 when "5.3g measurements"
@@ -401,7 +417,7 @@ class V2::PdfReportController < MrttApiController
                         if x["measurementValue"].present?
                             measurement_type = x["measurementType"]
                             measurement_value = x["measurementValue"]
-                        measurements_array.push("Type: " + measurement_type + ", Value: " + measurement_value)
+                        measurements_array.push("Type: #{measurement_type}, Value: #{measurement_value}")
                         end
                     }
                     site[:value] = measurements_array
@@ -410,7 +426,7 @@ class V2::PdfReportController < MrttApiController
                     site[:value].each { |x|
                         stakeholder = x["stakeholder"]
                         stakeholder_type = x["stakeholderType"]
-                        stakeholder_array.push("Name: " + stakeholder + ", Type: " + stakeholder_type)
+                        stakeholder_array.push("Name: #{stakeholder}, Type: #{stakeholder_type}")
                     }
                     site[:value] = stakeholder_array
                 # TODO - needs testing
@@ -418,11 +434,11 @@ class V2::PdfReportController < MrttApiController
                     date_array = []
                     if site[:value]["startDate"].present?
                         start_date = DateTime.parse(x["startDate"]).to_date.to_s
-                        date_array.push("Start Date: " + start_date)
+                        date_array.push("Start Date: #{start_date}")
                     end
                     if site[:value]["endDate"].present?
                         end_date = DateTime.parse(x["endDate"]).to_date.to_s
-                        date_array.push("End Date: " + end_date)
+                        date_array.push("End Date: #{end_date}")
                     end
                     site[:value] = date_array
                 when "6.2b species"
@@ -433,12 +449,12 @@ class V2::PdfReportController < MrttApiController
                         if x["seed"]["checked"]
                             seed_source = x["seed"]["source"][0]
                             seed_count = x["seed"]["count"]
-                            species_array.push(seed_source, seed_count)
+                            species_array.push("Seed Source: #{seed_source}, Count: #{seed_count}")
                         end
                         if x["propagule"]["checked"]
                             propagule_source = x["propagule"]["source"][0]
                             propagule_count = x["propagule"]["count"]
-                            species_array.push(propagule_source, propagule_count)
+                            species_array.push("Propagule Source: #{propagule_source}, Count: #{propagule_count}")
                         end
                     }
                     site[:value] = species_array
@@ -456,8 +472,42 @@ class V2::PdfReportController < MrttApiController
                         planted_array.push([type, count, source, purpose])
                     }
                     site[:value] = planted_array
+                when "7.2 funding"
+                    site[:value] = ["Funding Type: " + site[:value]["fundingType"]]
+                when "7.3 funders"
+                    funders_array = []
+                    site[:value].each { |x|
+                        funder_name = x["funderName"]
+                        funder_type = x["funderType"]
+                        percentage = x["percentage"]
+                        funders_array.push([funder_name, funder_type, percentage])
+                    }
+                    site[:value] = funders_array
+                when "7.4 cost total"
+                    cost = site[:value]["cost"]
+                    currency = site[:value]["currency"]
+                    site[:value] = [cost.to_s + " " + currency]
+                when "7.5 cost breakdown"
+                    cost_array = []
+                    site[:value].each { |x|
+                        if x["id"].present?
+                            cost_type = x["costType"]
+                            cost = x["cost"]
+                            currency = x["currency"]
+                            cost_array.push([cost_type, cost + " " + currency])
+                        end
+                    }
+                    site[:value] = cost_array
+                when "7.5a cost percentage"
+                    cost_array = []
+                    site[:value].each { |x|
+                        intervention = x["intervention"]
+                        percentage = x["percentage"]
+                        cost_array.push([intervention, percentage + "%"])
+                    }
+                    site[:value] = cost_array
                 else
-                    site[:value] = "TODO"
+                    site[:value] = ["TODO"]
                 end
             
             else
@@ -542,7 +592,6 @@ class V2::PdfReportController < MrttApiController
 
         format_answers(registration_intervention_answers, monitoring_answers)
 
-        puts @site_dictionary
         @site_dictionary = @site_dictionary.sort
 
         site_row["site_id"] = site.id
