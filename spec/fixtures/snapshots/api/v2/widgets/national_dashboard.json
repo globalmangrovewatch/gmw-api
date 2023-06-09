@@ -1,0 +1,36 @@
+{
+  "data": [
+    {
+      "indicator": "floods",
+      "sources": [
+        {
+          "source": "voluptatem",
+          "unit": "GDP",
+          "years": [
+            2016
+          ],
+          "data_source": [
+            {
+              "year": 2016,
+              "value": 68950.02,
+              "layer_info": "Enim repellat pariatur est.",
+              "layer_link": "http://kutch-spencer.com/moises",
+              "download_link": "http://kutch-spencer.com/moises"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "location_id": "226",
+    "other_resources": [
+      {
+        "name": "voluptatem",
+        "description": "Enim repellat pariatur. Earum modi eos. Libero tempora exercitationem.",
+        "link": "http://kutch-spencer.com/moises"
+      }
+    ],
+    "note": null
+  }
+}
