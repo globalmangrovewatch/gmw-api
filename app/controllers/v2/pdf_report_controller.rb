@@ -334,187 +334,176 @@ class V2::PdfReportController < MrttApiController
         return pdf_report_formatter
     end
 
-    def format_answers(registration_intervention_answers, monitoring_answers)
-        @site_dictionary = Hash.new { |h, k| h[k] = h.dup.clear }
+    def format_answers(site, question_id, answer_value, pdf_answers)
         pdf_format = pdf_report_formatter
-        # site = @site_dictionary[answer.question_id]
-        # monitoring_answers.each { |monitoring_answer|
-        #     # puts monitoring_answer["answers"]
-        #     monitoring_answer["answers"].each { |key, value|
-        #         puts key
-        #     }
-        # }
-
-        registration_intervention_answers.each { |answer|
-        if answer.answer_value.present?
-            site = @site_dictionary[answer.question_id]
-            
-            # TODO False in a boolean seems to not display the item
-            if pdf_format.key?(answer.question_id)
-                site[:value] = answer.answer_value
-                site[:name] = pdf_format[answer.question_id]["name"]
-                case pdf_format[answer.question_id]["type"]
-                when "string"
-                    site[:value] = [answer.answer_value.to_s]
-                when "list"
-                    site[:value] = answer.answer_value
-                when "date"
-                    site[:value] = [DateTime.parse(site[:value]).to_date.to_s]
-                when "boolean"
-                    if site[:value]
-                        site[:value] = ["Yes"]
-                    else
-                        site[:value] = ["No"]
-                    end
-                when "multiselect"
-                    select_array = []
-                    site[:value]["selectedValues"].each { |x|
-                        select_array.push(x)
-                    }
-                    if site[:value]["isOtherChecked"]
-                        select_array.push("Other: " + site[:value]["otherValue"])
-                    end
-                    site[:value] = select_array
-                when "1.2 countries"
-                    country_array = []
-                    site[:value].each { |x|
-                        country_array.push(x["properties"]["country"])
-                    }
-                    site[:value] = country_array
-                when "2.1 stakeholders"
-                    stakeholder_array = []
-                    site[:value].each { |x|
-                        stakeholder_name = x["stakeholderName"]
-                        stakeholder_type = x["stakeholderType"]
-                        stakeholder_array.push("Name: #{stakeholder_name or "UNDEFINED"}, Type: #{stakeholder_type}")
-                    }
-                    site[:value] = stakeholder_array
-                # TODO expand this further
-                when "4.2 4.3 causes"
-                    causes_array = []
-                    site[:value].each { |x|
-                        main_cause_label = x["mainCauseLabel"]
-                        if x["mainCauseAnswers"].present?
-                            main_cause_answers = x["mainCauseAnswers"]
-                        end
-                        if x["subCauses"].present?
-                            sub_causes = x["subCauses"]                            
-                        end
-                        causes_array.push([main_cause_label, main_cause_answers, sub_causes])
-                    }
-                    site[:value] = causes_array
-                when "5.3f species"
-                    species_array = []
-                    site[:value].each { |x|
-                        species_type = x["mangroveSpeciesType"]
-                        percentage = x["percentageComposition"]
-                        species_array.push("Species: #{species_type}, Percent: #{percentage.to_s}")
-                    }
-                    site[:value] = species_array
-                when "5.3g measurements"
-                    measurements_array = []
-                    site[:value].each { |x|
-                        if x["measurementValue"].present?
-                            measurement_type = x["measurementType"]
-                            measurement_value = x["measurementValue"]
-                        measurements_array.push("Type: #{measurement_type}, Value: #{measurement_value}")
-                        end
-                    }
-                    site[:value] = measurements_array
-                when "6.1 stakeholders"
-                    stakeholder_array = []
-                    site[:value].each { |x|
-                        stakeholder = x["stakeholder"]
-                        stakeholder_type = x["stakeholderType"]
-                        stakeholder_array.push("Name: #{stakeholder}, Type: #{stakeholder_type}")
-                    }
-                    site[:value] = stakeholder_array
-                # TODO - needs testing
-                when "6.2a daterange"
-                    date_array = []
-                    if site[:value]["startDate"].present?
-                        start_date = DateTime.parse(x["startDate"]).to_date.to_s
-                        date_array.push("Start Date: #{start_date}")
-                    end
-                    if site[:value]["endDate"].present?
-                        end_date = DateTime.parse(x["endDate"]).to_date.to_s
-                        date_array.push("End Date: #{end_date}")
-                    end
-                    site[:value] = date_array
-                when "6.2b species"
-                    species_array = []
-                    site[:value].each { |x|
-                        type = x["type"]
-                        species_array.push(type)
-                        if x["seed"]["checked"]
-                            seed_source = x["seed"]["source"][0]
-                            seed_count = x["seed"]["count"]
-                            species_array.push("Seed Source: #{seed_source}, Count: #{seed_count}")
-                        end
-                        if x["propagule"]["checked"]
-                            propagule_source = x["propagule"]["source"][0]
-                            propagule_count = x["propagule"]["count"]
-                            species_array.push("Propagule Source: #{propagule_source}, Count: #{propagule_count}")
-                        end
-                    }
-                    site[:value] = species_array
-                when "6.2c planted"
-                    planted_array = []
-                    site[:value].each { |x|
-                        type = x["type"]
-                        count = x["count"]
-                        source = x["source"]
-                        if x["purpose"]["other"].present?
-                            purpose = "Other: " + x["purpose"]["other"]
-                        else
-                            purpose = x["purpose"]["purpose"]
-                        end
-                        planted_array.push([type, count, source, purpose])
-                    }
-                    site[:value] = planted_array
-                when "7.2 funding"
-                    site[:value] = ["Funding Type: " + site[:value]["fundingType"]]
-                when "7.3 funders"
-                    funders_array = []
-                    site[:value].each { |x|
-                        funder_name = x["funderName"]
-                        funder_type = x["funderType"]
-                        percentage = x["percentage"]
-                        funders_array.push([funder_name, funder_type, percentage])
-                    }
-                    site[:value] = funders_array
-                when "7.4 cost total"
-                    cost = site[:value]["cost"]
-                    currency = site[:value]["currency"]
-                    site[:value] = [cost.to_s + " " + currency]
-                when "7.5 cost breakdown"
-                    cost_array = []
-                    site[:value].each { |x|
-                        if x["id"].present?
-                            cost_type = x["costType"]
-                            cost = x["cost"]
-                            currency = x["currency"]
-                            cost_array.push([cost_type, cost + " " + currency])
-                        end
-                    }
-                    site[:value] = cost_array
-                when "7.5a cost percentage"
-                    cost_array = []
-                    site[:value].each { |x|
-                        intervention = x["intervention"]
-                        percentage = x["percentage"]
-                        cost_array.push([intervention, percentage + "%"])
-                    }
-                    site[:value] = cost_array
+        if pdf_format.key?(question_id)
+            site[:value] = answer_value
+            site[:name] = pdf_format[question_id]["name"]
+            puts question_id.to_s + " " + site[:value].to_s
+            case pdf_format[question_id]["type"]
+            when "string"
+                site[:value] = [answer_value.to_s]
+            when "list"
+                site[:value] = answer_value
+            when "date"
+                site[:value] = [DateTime.parse(site[:value]).to_date.to_s]
+            when "boolean"
+                if site[:value]
+                    site[:value] = ["Yes"]
                 else
-                    site[:value] = ["TODO"]
+                    site[:value] = ["No"]
                 end
-            
+            when "multiselect"
+                select_array = []
+                site[:value]["selectedValues"].each { |x|
+                    select_array.push(x)
+                }
+                if site[:value]["isOtherChecked"]
+                    select_array.push("Other: " + site[:value]["otherValue"])
+                end
+                if select_array.empty?
+                    pdf_answers.delete(question_id)
+                else
+                    site[:value] = select_array
+                end
+            when "1.2 countries"
+                country_array = []
+                site[:value].each { |x|
+                    country_array.push(x["properties"]["country"])
+                }
+                site[:value] = country_array
+            when "2.1 stakeholders"
+                stakeholder_array = []
+                site[:value].each { |x|
+                    stakeholder_name = x["stakeholderName"]
+                    stakeholder_type = x["stakeholderType"]
+                    stakeholder_array.push("Name: #{stakeholder_name or "UNDEFINED"}, Type: #{stakeholder_type}")
+                }
+                site[:value] = stakeholder_array
+            # TODO expand this further
+            when "4.2 4.3 causes"
+                causes_array = []
+                site[:value].each { |x|
+                    main_cause_label = x["mainCauseLabel"]
+                    if x["mainCauseAnswers"].present?
+                        main_cause_answers = x["mainCauseAnswers"]
+                    end
+                    if x["subCauses"].present?
+                        sub_causes = x["subCauses"]                            
+                    end
+                    causes_array.push([main_cause_label, main_cause_answers, sub_causes])
+                }
+                site[:value] = causes_array
+            when "5.3f species"
+                species_array = []
+                site[:value].each { |x|
+                    species_type = x["mangroveSpeciesType"]
+                    percentage = x["percentageComposition"]
+                    species_array.push("Species: #{species_type}, Percent: #{percentage.to_s}")
+                }
+                site[:value] = species_array
+            when "5.3g measurements"
+                measurements_array = []
+                site[:value].each { |x|
+                    if x["measurementValue"].present?
+                        measurement_type = x["measurementType"]
+                        measurement_value = x["measurementValue"]
+                    measurements_array.push("Type: #{measurement_type}, Value: #{measurement_value}")
+                    end
+                }
+                site[:value] = measurements_array
+            when "6.1 stakeholders"
+                stakeholder_array = []
+                site[:value].each { |x|
+                    stakeholder = x["stakeholder"]
+                    stakeholder_type = x["stakeholderType"]
+                    stakeholder_array.push("Name: #{stakeholder}, Type: #{stakeholder_type}")
+                }
+                site[:value] = stakeholder_array
+            # TODO - needs testing
+            when "6.2a daterange"
+                date_array = []
+                if site[:value]["startDate"].present?
+                    start_date = DateTime.parse(x["startDate"]).to_date.to_s
+                    date_array.push("Start Date: #{start_date}")
+                end
+                if site[:value]["endDate"].present?
+                    end_date = DateTime.parse(x["endDate"]).to_date.to_s
+                    date_array.push("End Date: #{end_date}")
+                end
+                site[:value] = date_array
+            when "6.2b species"
+                species_array = []
+                site[:value].each { |x|
+                    type = x["type"]
+                    species_array.push(type)
+                    if x["seed"]["checked"]
+                        seed_source = x["seed"]["source"][0]
+                        seed_count = x["seed"]["count"]
+                        species_array.push("Seed Source: #{seed_source}, Count: #{seed_count}")
+                    end
+                    if x["propagule"]["checked"]
+                        propagule_source = x["propagule"]["source"][0]
+                        propagule_count = x["propagule"]["count"]
+                        species_array.push("Propagule Source: #{propagule_source}, Count: #{propagule_count}")
+                    end
+                }
+                site[:value] = species_array
+            when "6.2c planted"
+                planted_array = []
+                site[:value].each { |x|
+                    type = x["type"]
+                    count = x["count"]
+                    source = x["source"]
+                    if x["purpose"]["other"].present?
+                        purpose = "Other: " + x["purpose"]["other"]
+                    else
+                        purpose = x["purpose"]["purpose"]
+                    end
+                    planted_array.push([type, count, source, purpose])
+                }
+                site[:value] = planted_array
+            when "7.2 funding"
+                site[:value] = ["Funding Type: " + site[:value]["fundingType"]]
+            when "7.3 funders"
+                funders_array = []
+                site[:value].each { |x|
+                    funder_name = x["funderName"]
+                    funder_type = x["funderType"]
+                    percentage = x["percentage"]
+                    funders_array.push([funder_name, funder_type, percentage])
+                }
+                site[:value] = funders_array
+            when "7.4 cost total"
+                cost = site[:value]["cost"]
+                currency = site[:value]["currency"]
+                site[:value] = [cost.to_s + " " + currency]
+            when "7.5 cost breakdown"
+                cost_array = []
+                site[:value].each { |x|
+                    if x["id"].present?
+                        cost_type = x["costType"]
+                        cost = x["cost"]
+                        currency = x["currency"]
+                        cost_array.push([cost_type, cost + " " + currency])
+                    end
+                }
+                site[:value] = cost_array
+            when "7.5a cost percentage"
+                cost_array = []
+                site[:value].each { |x|
+                    intervention = x["intervention"]
+                    percentage = x["percentage"]
+                    cost_array.push([intervention, percentage + "%"])
+                }
+                site[:value] = cost_array
             else
-                
-            end
+                site[:value] = ["TODO"]
+            end             
+        
+        else
+            
         end
-    }
     end
 
     def answers_by_site
@@ -578,9 +567,34 @@ class V2::PdfReportController < MrttApiController
         params.except(:format, :site).permit(:site_id)
     end
 
+    def sort_answers(registration_intervention_answers, monitoring_answers)
+        registration_intervention_answers.each { |reg_answer|
+            if reg_answer.answer_value.present? || reg_answer.answer_value == false
+                pdf_answers = @pdf_reg_answers
+                site = @pdf_reg_answers[reg_answer.question_id]
+                question_id = reg_answer.question_id
+                answer_value = reg_answer.answer_value
+                
+                format_answers(site, question_id, answer_value, pdf_answers)
+            end
+        }
+        monitoring_answers.each { |mon_answer|
+        site = @pdf_mon_answers[mon_answer["uuid"]]["monitoring_date"] = mon_answer["monitoring_date"].to_date.to_s
+            mon_answer["answers"].each { |question_id, answer_value|
+                if answer_value.present? || answer_value == false
+                    pdf_answers = @pdf_mon_answers
+                    site = @pdf_mon_answers[mon_answer["uuid"]]["answers"][question_id]
+
+                    format_answers(site, question_id, answer_value, pdf_answers)
+                end
+            }
+        }
+    end
+
     def export_pdf_single_site
         site = Site.find(params[:site_id])
-
+        @pdf_reg_answers = Hash.new { |h, k| h[k] = h.dup.clear }
+        @pdf_mon_answers = Hash.new { |h, k| h[k] = h.dup.clear }
         @single_site = []
         @answer_array = []
         site_row = {}
@@ -590,9 +604,8 @@ class V2::PdfReportController < MrttApiController
         
         # puts pdf_format
 
-        format_answers(registration_intervention_answers, monitoring_answers)
-
-        @site_dictionary = @site_dictionary.sort
+        sort_answers(registration_intervention_answers, monitoring_answers)
+        @pdf_reg_answers = @pdf_reg_answers.sort
 
         site_row["site_id"] = site.id
         site_row["site_name"] = site.site_name
