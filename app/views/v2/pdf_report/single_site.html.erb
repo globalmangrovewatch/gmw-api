@@ -3,30 +3,24 @@
   <head>
     <meta charset='utf-8'>
     <title>Site Report</title>
+    <style>
+      .white   { background-color: white; }
+      .mint    { background-color: rgba(163, 209, 98, 8%) }
+    </style>
   </head>
   <body>
     <% @single_site.each do |site_row| %>
-    <h1>
-      <%= site_row['site_name'] %>
-    </h1>
-    <h2>
-      Site ID: <%= site_row['site_id'] %>
-    </h2>
+      <h1>
+        <%= site_row['site_name'] %>
+      </h1>
+      <h4>
+        Site ID: <%= site_row['site_id'] %>
+      </h4>
     <% end %>
-    <table>
-      <thead>
-        <tr>
-          <th>Site Question</th>
-          <th>Site Answer</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    <% @site_dictionary.each do |key, item| %>
-      <hr>
-      <div style="padding-top: 10px; padding-bottom: 10px;">
-        <table>     
+    <% @pdf_reg_answers.each do |key, item| %>
+      <hr style="margin-top: 0em; margin-bottom: 0em;">
+      <div class= "<%= cycle('white', 'mint') -%>" style="padding-top: 16px; padding-bottom: 32px;">
+        <table>   
           <tr>
             <td style="padding: 10px"><%= key %></td>          
             <td><b><%= item[:name] %></b></td>
@@ -40,5 +34,24 @@
         </table>
       </div>
     <% end %>
+    <% @pdf_mon_answers.each do |key, value| %>
+      <% value["answers"].each do |x, y| %>
+        <hr style="margin-top: 0em; margin-bottom: 0em;">
+        <div class= "<%= cycle('white', 'mint') -%>" style="padding-top: 16px; padding-bottom: 32px;">
+          <table>         
+            <tr>
+              <td style="padding: 10px"><%= x %></td>          
+              <td><b><%= y[:name] %></b></td>
+            </tr>
+            <% y[:value].each do |item| %>
+            <tr>
+              <td></td>
+              <td><%= item %></td>
+            </tr>
+            <% end %>
+          </table>
+        </div>
+      <% end %>
+    <% end %>    
   </body>
 </html>
