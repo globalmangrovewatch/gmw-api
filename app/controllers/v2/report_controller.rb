@@ -59,6 +59,8 @@ class V2::ReportController < MrttApiController
   end
 
   def answers_as_xlsx
+      site_id = report_params[:site_id]
+      organization_id = report_params[:organization_id]
       # prep
       empty_answer = "---"
       question_key_ids = {
@@ -88,7 +90,20 @@ class V2::ReportController < MrttApiController
       # generate cells data
       all_sites_rows = []
       monitoring_sites_rows = []
-      Site.all.each { |site|
+      
+      # filter by organization_id
+      if !organization_id.nil?
+        sites = Site.joins(:landscape => :organizations).where(:organizations => {id: organization_id})
+      end
+
+      # filter by site_id
+      if site_id.nil?
+        sites = Site.all
+      else
+        sites = Site.find([site_id])
+      end
+
+      sites.each { |site|
           site_row = {}
           site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id)
 
@@ -161,21 +176,37 @@ class V2::ReportController < MrttApiController
   end
 
   def report_params
-      params.except(:format, :site).permit(:site_id)
+      params.except(:format, :site).permit(:site_id, :organization_id)
   end
 
   def to_human_readable(question, answer)
-      if question == "5.3f"
-          return answer.map { |i|
-              "%s: %s" % [i["mangroveSpeciesType"], i["percentageComposition"]]
-          }.join("\n")
-      elsif ["1.1a", "1.1c"].include? question
+      # get answers data types
+      dtypes = Rails.application.config.data_types
+
+      # handle null values
+      if answer.nil?
+        return ""
+      end
+
+      if dtypes[question] == "object"
+          return answer_obj_to_str(answer)
+      elsif dtypes[question] == "array"
+          answer.each{ |i| 
+            if i.instance_of? String
+              return answer.join("\n")
+            elsif i.instance_of? Hash
+              return answer.map{|obj| answer_obj_to_str(obj)}.join("\n\n")
+            else
+              return answer.to_json
+            end
+          }
+      elsif dtypes[question] == "date"
           return Date.parse(answer).strftime("%m/%d/%Y")
-      elsif ["1.1b"].include? question
-          return ("Yes" if answer == true) || ("No" if answer == false) || answer.to_json
-      elsif ["1.2"].include? question
-          return answer[0]["properties"]["country"]
-      elsif question == "1.3"
+      elsif dtypes[question] == "int"
+          return answer.to_s
+      elsif dtypes[question] == "str"
+          return ("Yes" if answer == true) || ("No" if answer == false) || answer.to_s
+      elsif dtypes[question] == "geojson"
           # convert geojson to map image via Mapbox Static API
           geojson = answer["features"][0]
           feature = RGeo::GeoJSON.decode(geojson)            
@@ -185,6 +216,10 @@ class V2::ReportController < MrttApiController
       else
           return answer.to_json
       end
+  end
+
+  def answer_obj_to_str(answer)
+    return answer.map{|k,v| "#{k}: #{v}"}.join("\n")
   end
 
   def reduce_precision_geojson(geojson)
@@ -198,8 +233,4 @@ class V2::ReportController < MrttApiController
       return geojson
   end
 
-  end
-  def report_params
-      params.except(:format, :site).permit(:site_id)
-  end
   end
