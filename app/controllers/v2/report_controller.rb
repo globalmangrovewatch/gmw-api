@@ -94,21 +94,18 @@ class V2::ReportController < MrttApiController
     all_sites_rows = []
     monitoring_sites_rows = []
 
-    # filter by organization_id
-    if !organization_id.nil?
-      sites = Site.joins(landscape: :organizations).where(organizations: {id: organization_id})
-    end
-
-    # filter by site_id
-    sites = if site_id.nil?
-      Site.all
-    else
+    # filter by site_id, organization_id
+    sites = if !organization_id.nil?
+      Site.joins(landscape: :organizations).where(organizations: {id: organization_id})
+    elsif !site_id.nil?
       Site.find([site_id])
+    else
+      Site.all
     end
 
     sites.each { |site|
       site_row = {}
-      site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id, public_only = public_only)
+      site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id, public_only = :public_only)
 
       site_row["site_id"] = site.id
       site_row["site_name"] = site.site_name
@@ -212,7 +209,7 @@ class V2::ReportController < MrttApiController
     elsif dtypes[question] == "geojson"
       # convert geojson to map image via Mapbox Static API
       geojson = answer["features"][0]
-      feature = RGeo::GeoJSON.decode(geojson)
+      # feature = RGeo::GeoJSON.decode(geojson)
       geojson = reduce_precision_geojson(geojson)
       "https://api.mapbox.com/v4/mapbox.satellite/geojson(%s)/%s/600x300@2x.png?access_token=%s" % [geojson.to_json, "auto", "MAPBOX_ACCESS_TOKEN"]
 
