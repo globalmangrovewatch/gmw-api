@@ -955,6 +955,7 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
       parameter name: :organization, in: :query, type: :array, items: {type: :string}, description: "Organization name", required: false
       parameter name: :ecological_aim, in: :query, type: :array, items: {type: :string}, required: false
       parameter name: :socioeconomic_aim, in: :query, type: :array, items: {type: :string}, required: false
@@ -1018,8 +1019,17 @@ RSpec.describe "API V2 Widgets", type: :request do
             "selectedValues" => ["Formal mangrove protection ", "None"], "isOtherChecked" => false
           }
       end
-      let!(:site_1) { create :site, landscape: landscape_1 }
-      let!(:site_2) { create :site, registration_intervention_answers: [registration_intervention_answer_1, registration_intervention_answer_2, registration_intervention_answer_3] }
+      let(:location) { create :location, geometry: {type: "Polygon", coordinates: [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]]} }
+      let!(:site_1) do
+        create :site,
+          landscape: landscape_1,
+          area: RGeo::GeoJSON.decode({type: "Polygon", coordinates: [[[10, 10], [11, 10], [11, 11], [10, 11]]]}.to_json)
+      end
+      let!(:site_2) do
+        create :site,
+          registration_intervention_answers: [registration_intervention_answer_1, registration_intervention_answer_2, registration_intervention_answer_3],
+          area: RGeo::GeoJSON.decode({type: "Polygon", coordinates: [[[0, 0], [1, 0], [1, 1], [0, 1]]]}.to_json)
+      end
       let!(:site_3) { create :site, registration_intervention_answers: [registration_intervention_answer_4, registration_intervention_answer_5] }
       let!(:site_4) { create :site }
 
@@ -1040,6 +1050,14 @@ RSpec.describe "API V2 Widgets", type: :request do
 
         it "contains all available sites" do
           expect(response_json["data"].pluck("id")).to match_array(Site.pluck(:id))
+        end
+
+        context "when used location filter" do
+          let(:location_id) { location.id }
+
+          it "contains only sites at given location" do
+            expect(response_json["data"].pluck("id")).to eq([site_2.id])
+          end
         end
 
         context "when used organization filter" do
@@ -1091,6 +1109,7 @@ RSpec.describe "API V2 Widgets", type: :request do
         end
 
         context "when using multiple filters together" do
+          let(:location_id) { location.id }
           let(:ecological_aim) { ["Increase native flora/vegetation (non-mangrove)"] }
           let(:socioeconomic_aim) { ["Tourism and recreation"] }
           let(:cause_of_decline) { ["Residential %26 commercial development"] }

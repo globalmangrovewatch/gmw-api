@@ -8,3 +8,7 @@ json.data do
     json.site_centroid data.site_centroid
   end
 end
+
+json.metadata do
+  json.location_id @location_id
+end

@@ -150,8 +150,8 @@
                       "coast_length_m": 98628.73,
                       "perimeter_m": 98628.73,
                       "area_m2": 98628.73,
-                      "id": 750,
-                      "created_at": "2023-06-08T11:55:31.812Z"
+                      "id": 524,
+                      "created_at": "2023-06-14T13:16:03.647Z"
                     },
                     {
                       "name": "Kinshasa",
@@ -163,8 +163,8 @@
                       "coast_length_m": 68950.02,
                       "perimeter_m": 68950.02,
                       "area_m2": 68950.02,
-                      "id": 749,
-                      "created_at": "2023-06-08T11:55:31.811Z"
+                      "id": 523,
+                      "created_at": "2023-06-14T13:16:03.633Z"
                     }
                   ]
                 },
@@ -212,7 +212,7 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "id": 756,
+                    "id": 530,
                     "iso": "voluptatem",
                     "bounds": {
                     },
@@ -278,7 +278,7 @@
                       "iucn_url": "http://kutch-spencer.com/moises",
                       "red_list_cat": "vu",
                       "location_ids": [
-                        760
+                        534
                       ]
                     },
                     {
@@ -348,14 +348,14 @@
                 "example": {
                   "data": [
                     {
-                      "id": 57,
+                      "id": 39,
                       "year": 2016,
                       "total_area": 68950.02,
                       "protected_area": 68950.02
                     }
                   ],
                   "metadata": {
-                    "location_id": "765",
+                    "location_id": "539",
                     "units": {
                       "total_area": "ha",
                       "protected_area": "ha"
@@ -446,9 +446,9 @@
                     },
                     "species": [
                       {
-                        "id": 47,
-                        "created_at": "2023-06-08T11:55:32.217Z",
-                        "updated_at": "2023-06-08T11:55:32.217Z",
+                        "id": 43,
+                        "created_at": "2023-06-14T13:16:04.012Z",
+                        "updated_at": "2023-06-14T13:16:04.012Z",
                         "scientific_name": "voluptatem",
                         "common_name": "voluptatem",
                         "iucn_url": "http://kutch-spencer.com/moises",
@@ -520,7 +520,7 @@
                     "mangrove_area_extent": null
                   },
                   "metadata": {
-                    "location_id": "798",
+                    "location_id": "572",
                     "year": [
                       2019,
                       2018
@@ -597,7 +597,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "826",
+                    "location_id": "600",
                     "year": [
                       2019,
                       2018
@@ -679,7 +679,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "860",
+                    "location_id": "634",
                     "unit": "ha",
                     "note": null
                   }
@@ -734,7 +734,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "874",
+                    "location_id": "648",
                     "note": null
                   }
                 },
@@ -818,7 +818,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "882",
+                    "location_id": "656",
                     "unit": "mt CO₂ e",
                     "note": null
                   }
@@ -875,7 +875,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "899",
+                    "location_id": "673",
                     "units": {
                       "habitat_extent_area": "km2",
                       "linear_coverage": "km"
@@ -947,7 +947,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "917",
+                    "location_id": "691",
                     "units": {
                       "net_change": "km2"
                     },
@@ -1021,7 +1021,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "935",
+                    "location_id": "709",
                     "units": {
                       "value": "tons/ha"
                     },
@@ -1089,7 +1089,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "951",
+                    "location_id": "725",
                     "units": {
                       "value": "m"
                     },
@@ -1154,7 +1154,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "963",
+                    "location_id": "737",
                     "units": {
                       "value": "CO2e/ha",
                       "toc": "t CO₂e",
@@ -1221,7 +1221,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "974",
+                    "location_id": "748",
                     "units": {
                       "value": "tCO2/ha"
                     },
@@ -1361,7 +1361,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "994",
+                    "location_id": "768",
                     "units": {
                       "value": "%"
                     }
@@ -1520,6 +1520,15 @@
         ],
         "parameters": [
           {
+            "name": "location_id",
+            "in": "query",
+            "description": "Location id. Default: worldwide",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "organization",
             "in": "query",
             "items": {
@@ -1595,78 +1604,81 @@
                 "example": {
                   "data": [
                     {
-                      "id": 288,
+                      "id": 230,
                       "site_name": "Site 1",
-                      "landscape_id": 288,
+                      "landscape_id": 230,
                       "landscape_name": "Landscape 1",
-                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
-                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[10,10],[11,10],[11,11],[10,11],[10,10]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[10.5,10.5]}"
                     },
                     {
-                      "id": 289,
+                      "id": 231,
                       "site_name": "Site 2",
-                      "landscape_id": 289,
+                      "landscape_id": 231,
                       "landscape_name": "Landscape 2",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 290,
+                      "id": 232,
                       "site_name": "Site 3",
-                      "landscape_id": 290,
+                      "landscape_id": 232,
                       "landscape_name": "Landscape 3",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 291,
+                      "id": 233,
                       "site_name": "Site 4",
-                      "landscape_id": 291,
+                      "landscape_id": 233,
                       "landscape_name": "Landscape 4",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 292,
+                      "id": 234,
                       "site_name": "Site 5",
-                      "landscape_id": 292,
+                      "landscape_id": 234,
                       "landscape_name": "Landscape 5",
-                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
-                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+                      "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[1,0],[1,1],[0,1],[0,0]]]}",
+                      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[0.5,0.5]}"
                     },
                     {
-                      "id": 293,
+                      "id": 235,
                       "site_name": "Site 6",
-                      "landscape_id": 293,
+                      "landscape_id": 235,
                       "landscape_name": "Landscape 6",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 294,
+                      "id": 236,
                       "site_name": "Site 7",
-                      "landscape_id": 294,
+                      "landscape_id": 236,
                       "landscape_name": "Landscape 7",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 295,
+                      "id": 237,
                       "site_name": "Site 8",
-                      "landscape_id": 295,
+                      "landscape_id": 237,
                       "landscape_name": "Landscape 8",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     },
                     {
-                      "id": 296,
+                      "id": 238,
                       "site_name": "Site 9",
-                      "landscape_id": 296,
+                      "landscape_id": 238,
                       "landscape_name": "Landscape 9",
                       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
                       "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
                     }
-                  ]
+                  ],
+                  "metadata": {
+                    "location_id": null
+                  }
                 },
                 "schema": {
                   "type": "object",
@@ -1732,7 +1744,7 @@
                     }
                   ],
                   "metadata": {
-                    "location_id": "1006",
+                    "location_id": "782",
                     "other_resources": [
                       {
                         "name": "voluptatem",

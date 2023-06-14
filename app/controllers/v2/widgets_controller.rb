@@ -325,11 +325,13 @@ class V2::WidgetsController < ApiController
   end
 
   def sites
+    @location_id = params[:location_id]
     @data = Site.select(
       "sites.*,
       ST_AsGeoJSON(sites.area) as site_area,
       ST_AsGeoJSON(ST_Centroid(sites.area)) as site_centroid"
     ).includes(:landscape)
+    @data = @data.for_location @location_id if @location_id.present?
     @data = @data.at_organizations params[:organization] if params[:organization].present?
     @data = @data.with_registration_intervention_answer "3.1", params[:ecological_aim] if params[:ecological_aim].present?
     @data = @data.with_registration_intervention_answer "3.2", params[:socioeconomic_aim] if params[:socioeconomic_aim].present?
