@@ -16,7 +16,7 @@ class V2::ReportController < MrttApiController
     }
   end
 
-  def get_answers_by_site(site_id)
+  def get_answers_by_site(site_id, public_only=true)
     site = Site.find(site_id)
     landscape = site.landscape
     organization_ids = landscape.organization_ids
@@ -26,7 +26,7 @@ class V2::ReportController < MrttApiController
     # Instead of returning: insufficient_privilege && return
     # We restrict the sections instead
     @restricted_sections = []
-    if !(current_user.is_admin || current_user.is_member_of_any(organization_ids))
+    if !(current_user.is_admin || current_user.is_member_of_any(organization_ids)) || public_only
       @restricted_sections = (
           if site.section_data_visibility
             site.section_data_visibility.map { |key, value| (value == "private") ? key : nil }.select { |i| !i.nil? }
@@ -59,8 +59,11 @@ class V2::ReportController < MrttApiController
   end
 
   def answers_as_xlsx
+      # query parameters
       site_id = report_params[:site_id]
       organization_id = report_params[:organization_id]
+      public_only = ActiveModel::Type::Boolean.new.cast(report_params[:public_only]) || true
+      
       # prep
       empty_answer = "---"
       question_key_ids = {
@@ -105,7 +108,7 @@ class V2::ReportController < MrttApiController
 
       sites.each { |site|
           site_row = {}
-          site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id)
+          site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id, public_only=public_only)
 
           site_row["site_id"] = site.id
           site_row["site_name"] = site.site_name
