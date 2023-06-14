@@ -5,6 +5,47 @@
     "version": "v2"
   },
   "paths": {
+    "/api/v2/report/answers_as_xlsx": {
+      "get": {
+        "summary": "Return site data in XLSX format",
+        "tags": ["report"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "site_id",
+            "schema": {"type": "integer"},
+            "description": "Site id"
+          },
+          {
+            "in": "query",
+            "name": "organization_id",
+            "schema": {"type": "integer"},
+            "description": "Organization id"
+          },
+          {
+            "in": "query",
+            "name": "public_only",
+            "schema": {"type": "boolean"},
+            "description": "If true, returns only answers marked as public. If false response includes answers marked as private."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                "schema": {
+                  "type": "file"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/api/v2/spatial_file/converter": {
       "post": {
         "summary": "Converts a geospatial format into a valid geojson",
