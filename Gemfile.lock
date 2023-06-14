@@ -179,9 +179,8 @@ GEM
     has_scope (0.8.0)
       actionpack (>= 5.2)
       activesupport (>= 5.2)
-    htmlentities (4.3.4)
-    i18n (1.11.0)
     hashdiff (1.0.1)
+    htmlentities (4.3.4)
     i18n (1.13.0)
       concurrent-ruby (~> 1.0)
     importmap-rails (1.1.2)
@@ -452,7 +451,6 @@ DEPENDENCIES
   cancancan
   capybara
   caxlsx (~> 3.3)
-  database_cleaner
   debug
   devise
   devise-jwt
