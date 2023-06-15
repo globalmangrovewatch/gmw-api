@@ -339,7 +339,6 @@ class V2::PdfReportController < MrttApiController
         if pdf_format.key?(question_id)
             site[:value] = answer_value
             site[:name] = pdf_format[question_id]["name"]
-            puts question_id.to_s + " " + site[:value].to_s
             case pdf_format[question_id]["type"]
             when "string"
                 site[:value] = [answer_value.to_s]
@@ -384,14 +383,24 @@ class V2::PdfReportController < MrttApiController
             when "4.2 4.3 causes"
                 causes_array = []
                 site[:value].each { |x|
-                    main_cause_label = x["mainCauseLabel"]
+                    causes_array.push(x["mainCauseLabel"])
                     if x["mainCauseAnswers"].present?
-                        main_cause_answers = x["mainCauseAnswers"]
+                        x["mainCauseAnswers"].each { |y|
+                            main_cause_answer = y["mainCauseAnswer"]
+                            level_of_degradation = y["levelOfDegredation"]
+                            causes_array.push("#{main_cause_answer}, Level of Degredation: #{level_of_degradation}")
+                        }
                     end
                     if x["subCauses"].present?
-                        sub_causes = x["subCauses"]                            
+                        x["subCauses"].each { |y|
+                            causes_array.push(y["subCauseLabel"])
+                            y["subCauseAnswers"].each { |z|
+                                sub_cause_answer = z["subCauseAnswer"]
+                                level_of_degradation = z["levelOfDegredation"]
+                                causes_array.push("#{sub_cause_answer}, Level of Degredation: #{level_of_degradation}")
+                            }
+                        }                    
                     end
-                    causes_array.push([main_cause_label, main_cause_answers, sub_causes])
                 }
                 site[:value] = causes_array
             when "5.3f species"
@@ -605,6 +614,7 @@ class V2::PdfReportController < MrttApiController
         # puts pdf_format
 
         sort_answers(registration_intervention_answers, monitoring_answers)
+        puts @pdf_reg_answers
         @pdf_reg_answers = @pdf_reg_answers.sort
 
         site_row["site_id"] = site.id
@@ -638,9 +648,22 @@ class V2::PdfReportController < MrttApiController
             :margin_bottom => '0.5in',
             :margin_left => '0.5in'
         }
+        # Render the HTML template as a string
+        # html = render_to_string(:template => 'v2/pdf_report/sites.pdf', :formats => 'html', :layout => false)
+        html = render_to_string(:template => 'v2/pdf_report/single_site', :formats => [:html])
 
+        # Create a new PDFKit object and convert the HTML to a PDF file
+        kit = PDFKit.new(html, options)
+        kit.stylesheets << "#{Rails.root}/app/assets/stylesheets/pdf_report.css"
+        pdf_file = kit.to_file("#{Rails.root}/tmp/single_site.pdf")
+
+        # Send the generated PDF file as a download
+        send_file pdf_file.path, :type => 'application/pdf', :disposition => 'attachment', :filename => 'single_site.pdf'
         # Render the HTML (temporary solution)
-        render(:template => 'v2/pdf_report/single_site', :formats => [:html])
+        # render(:template => 'v2/pdf_report/single_site', :formats => [:html])
+        # html = render_to_string(:template => 'v2/pdf_report/single_site', :formats => [:html])
+        # kit = PDFKit.new(html, :page_size => 'Letter')
+        # pdf = kit.to_pdf
     end
 
     def export_pdf
