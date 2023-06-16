@@ -98,5 +98,3 @@ gem "devise-jwt"
 # Geo
 gem "rgeo-geojson"
 gem "activerecord-postgis-adapter"
-
-gem "caxlsx", "~> 3.3"
