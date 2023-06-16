@@ -1,13 +1,13 @@
 class V2::ReportController < MrttApiController
   def answers_by_site
     site_id = report_params[:site_id]
-    @site_id, @registration_intervention_answers, @monitoring_answers = get_answers_by_site(site_id, public_only = false)
+    @site_id, @registration_intervention_answers, @monitoring_answers = get_answers_by_site(site_id, false)
   end
 
   def answers
     @answers = []
     Site.all.each { |site|
-      site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id, public_only = false)
+      site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id, false)
       @answers.push({
         "site_id" => site_id,
         "registration_intervention_answers" => registration_intervention_answers,
@@ -55,7 +55,7 @@ class V2::ReportController < MrttApiController
     monitoring_events.each { |key, value|
       monitoring_answers.push(value)
     }
-    [site.id, registration_intervention_answers.select{ |answer| !@restricted_sections.include?(answer.question_id.split(".")[0])}, monitoring_answers]
+    [site.id, registration_intervention_answers.select { |answer| !@restricted_sections.include?(answer.question_id.split(".")[0]) }, monitoring_answers]
   end
 
   def answers_as_xlsx
