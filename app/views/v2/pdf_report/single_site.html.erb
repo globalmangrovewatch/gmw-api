@@ -6,37 +6,42 @@
   </head>
   <body>
     <% @single_site.each do |site_row| %>
-      <h1>
-        <%= site_row['site_name'] %>
+      <h1 class="font-heading">
+        Site: <%= site_row['site_name'] %>
       </h1>
-      <h4>
-        Site ID: <%= site_row['site_id'] %>
-      </h4>
     <% end %>
-    <% @pdf_reg_answers.each do |key, item| %>
-      <hr style="margin-top: 0em; margin-bottom: 0em;">
-      <div class= "<%= cycle('white', 'mint') -%>" style="padding-top: 16px; padding-bottom: 32px;">
-        <table>   
-          <tr>
-            <td style="padding: 10px"><%= key %></td>          
-            <td><b><%= item[:name] %></b></td>
-          </tr>
-          <% item[:value].each do |x| %>
+
+    <!-- Start of Registration Answers -->
+    <% @pdf_reg_answers.each do |category, questions| %>
+      <h2><%= category %></h2>
+      <% questions.each do |key, item| %>
+        <hr class="no-margin">
+        <div class= "<%= cycle('white', 'mint') -%> question-padding">
+          <table>   
             <tr>
-              <td></td>
-              <td><%= x %></td>
+              <td class="td-padding"><%= key %></td>          
+              <td><b><%= item[:name] %></b></td>
             </tr>
-          <% end %>
-        </table>
-      </div>
+            <% item[:value].each do |x| %>
+              <tr>
+                <td></td>
+                <td><%= x %></td>
+              </tr>
+            <% end %>
+          </table>
+        </div>
+      <% end %>
+      <div class="pagebreak"> </div>
     <% end %>
+
+    <!-- Start of Monitoring Answers -->
     <% @pdf_mon_answers.each do |key, value| %>
       <% value["answers"].each do |x, y| %>
-        <hr style="margin-top: 0em; margin-bottom: 0em;">
-        <div class= "<%= cycle('white', 'mint') -%>" style="padding-top: 16px; padding-bottom: 32px;">
+        <hr class="no-margin">
+        <div class= "<%= cycle('white', 'mint') -%> question-padding">
           <table>         
             <tr>
-              <td style="padding: 10px"><%= x %></td>          
+              <td class="td-align"><%= x %></td>          
               <td><b><%= y[:name] %></b></td>
             </tr>
             <% y[:value].each do |item| %>
