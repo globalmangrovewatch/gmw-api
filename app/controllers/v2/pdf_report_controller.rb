@@ -3,199 +3,248 @@ class V2::PdfReportController < MrttApiController
         pdf_report_formatter = {
             "1.1a" => { 
                 "name" => "Project start date",
-                "type" => "date"
+                "type" => "date",
+                "category" => "1 Site Details and Location"
             },
             "1.1b" => {
                 "name" => "Does this project have an end date?",
-                "type" => "boolean"
+                "type" => "boolean",
+                "category" => "1 Site Details and Location"
             },
             "1.1c" => {
                 "name" => "Project end date",
-                "type" => "date"
+                "type" => "date",
+                "category" => "1 Site Details and Location"
             },
             "1.2" => { 
                 "name" => "What country/countries is the site located in?",
-                "type" => "1.2 countries"
+                "type" => "1.2 countries",
+                "category" => "1 Site Details and Location"
             },
             "1.3" => { 
                 "name" => "What is the overall site area?",
-                "type" => "TODO"
+                "type" => "TODO",
+                "category" => "1 Site Details and Location"
             },
             "2.1" => {
                 "name" => "Which stakeholders are involved in the project activities?",
-                "type" => "2.1 stakeholders"
+                "type" => "2.1 stakeholders",
+                "category" => "2 Site Background"
             },
             "2.2" => {
                 "name" => "What was the management status of the site immediately before the project started?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "2 Site Background"
             },
             "2.3" => {
                 "name" => "Are management activities at the site recognized in statutory or customary laws?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "2 Site Background"
             },
             "2.4" => {
                 "name" => "Name of the formal management area the site is contained within (if relevant)?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "2 Site Background"
             },
             "2.5" => {
                 "name" => "How would you describe the protection status of the site immediately before the project started?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "2 Site Background"
             },
             "2.6" => {
                 "name" => "Are the stakeholders involved in project activities able to influence site management rules?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "2 Site Background"
             },
             "2.7" => {
                 "name" => "What best describes the governance arrangement of the site immediately before the project started?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "2 Site Background"
             },
             "2.8" => {
                 "name" => "What was the land tenure of the site immediately before the project started?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "2 Site Background"
             },
             "2.9" => {
                 "name" => "Are customary rights to land within the site recognised in national law?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "2 Site Background"
             },
             "3.1" => {
                 "name" => "What are the ecological aim(s) of the project activities at the site?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "3 Restoration Aims"
             },
             "3.2" => {
                 "name" => "What are the socio-economic aim(s) of project activities at the site?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "3 Restoration Aims"
             },
             "3.3" => {
                 "name" => "What are the other aim(s) of project activities at the site?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "3 Restoration Aims"
             },
             "4.1" => {
                 "name" => "Is the cause(s) of mangrove loss or degradation at the site known?",
-                "type" => "boolean"
+                "type" => "boolean",
+                "category" => "4 Causes of Decline"
             },
             "4.2" => {
                 "name" => "What were the major cause(s) of mangrove loss or degradation at the site?",
-                "type" => "4.2 4.3 causes"
+                "type" => "4.2 4.3 causes",
+                "category" => "4 Causes of Decline"
             }, 
             "5.1" => {
                 "name" => "Have mangroves naturally occurred at the site previously?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.2" => {
                 "name" => "Has mangrove restoration/rehabilitation been attempted at the site previously?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.2a" => {
                 "name" => "What year was restoration/rehabilitation last attempted at the site?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.2b" => {
                 "name" => "What biophysical interventions were previously attempted at the site?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.2c" => {
                 "name" => "If the last restoration/rehabilitation attempt was unsuccessful, please specify why this was the case?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.3" => {
                 "name" => "Was the site assessed before the current project activities were started?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.3a" => {
                 "name" => "How was the assessment undertaken?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.3b" => {
                 "name" => "Has the site been compared to a reference site?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.3c" => {
                 "name" => "What year were mangroves lost from this site?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.3d" => {
                 "name" => "Is natural regeneration apparent at the site?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.3e" => {
                 "name" => "What mangrove species were present at the site?",
-                "type" => "list"
+                "type" => "list",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.3f" => {
                 "name" => "What was the species composition of mangroves at the site?",
-                "type" => "5.3f species"
+                "type" => "5.3f species",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.3g" => {
                 "name" => "What physical site measurements were taken?",
-                "type" => "5.3g measurements"
+                "type" => "5.3g measurements",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.4" => {
                 "name" => "Was a pilot/test intervention conducted?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "5.5" => {
                 "name" => "Was external expertise or guidance consulted on how to best restore the site?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "5 Pre-Restoration Assessment"
             },
             "6.1" => {
                 "name" => "Which stakeholders undertook the project activities at the site?",
-                "type" => "6.1 stakeholders"
+                "type" => "6.1 10.2 stakeholders",
+                "category" => "6 Site Interventions"
             },
             "6.2" => {
                 "name" => "What biophysical interventions were used to restore/rehabilitate the site?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "6 Site Interventions"
             },
             "6.2a" => {
                 "name" => "What was the duration of the biophysical interventions?",
-                "type" => "6.2a daterange"
+                "type" => "6.2a daterange",
+                "category" => "6 Site Interventions"
             },
             "6.2b" => {
                 "name" => "What mangrove species were used? What was the source of seeds/propagules or seedlings?",
-                "type" => "6.2b species"
+                "type" => "6.2b species",
+                "category" => "6 Site Interventions"
             },
             "6.2c" => {
                 "name" => "Were mangrove-associated species planted?",
-                "type" => "6.2c planted"
+                "type" => "6.2c planted",
+                "category" => "6 Site Interventions"
             },
             "6.3" => {
                 "name" => "Did local participants receive restoration training?",
-                "type" => "string"
+                "type" => "string",
+                "category" => "6 Site Interventions"
             },
             "6.3a" => {
                 "name" => "What type of organisations provided the restoration training?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "6 Site Interventions"
             },
             "6.4" => {
                 "name" => "Were there other activities implemented to address the causes of decline at the site?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "6 Site Interventions"
             },
             "7.1" => {
                 "name" => "What type of support was provided for the project activities conducted at the site?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "7 Costs"
             },
             "7.2" => {
                 "name" => "What is the main finance mechanism used to fund the project interventions at the site?",
-                "type" => "7.2 funding"
+                "type" => "7.2 funding",
+                "category" => "7 Costs"
             },
             "7.3" => {
                 "name" => "What funders provided monetary support?",
-                "type" => "7.3 funders"
+                "type" => "7.3 funders",
+                "category" => "7 Costs"
             },
             "7.4" => {
                 "name" => "What was the total cost of the project activities at the site?",
-                "type" => "7.4 cost total"
+                "type" => "7.4 cost total",
+                "category" => "7 Costs"
             },
             "7.5" => {
                 "name" => "What was the breakdown of the costs of the project activities?",
-                "type" => "7.5 cost breakdown"
+                "type" => "7.5 cost breakdown",
+                "category" => "7 Costs"
             },
             "7.5a" => {
                 "name" => "What was the approximate percentage split in expenditure between the different biophysical interventions and/or community activities?",
-                "type" => "7.5a cost percentage"
+                "type" => "7.5a cost percentage",
+                "category" => "7 Costs"
             },
             "7.6" => {
                 "name" => "What non-monetised contributions were made to the project activities at the site?",
-                "type" => "multiselect"
+                "type" => "multiselect",
+                "category" => "7 Costs"
             },
             "8.1" => {
                 "name" => "What date was this management status and effectiveness assessment conducted?",
@@ -231,10 +280,6 @@ class V2::PdfReportController < MrttApiController
             },
             "8.6" => {
                 "name" => "What is the main finance mechanism used to fund ongoing site management?",
-                "type" => "string"
-            },
-            "8.7" => {
-                "name" => "Is the current budget or funds used to support on-going management activities at the site sufficient?",
                 "type" => "string"
             },
             "8.7" => {
@@ -279,7 +324,7 @@ class V2::PdfReportController < MrttApiController
             },
             "9.4" => {
                 "name" => "What were the socioeconomic outcomes of the project activities at the site? Please fill the measurement data for the selected socioeconomic outcomes.",
-                "type" => "TODO"
+                "type" => "9.4 social outcomes"
             },
             "9.5" => {
                 "name" => "To what extent do you feel the socio-economic aims have been achieved?",
@@ -291,7 +336,7 @@ class V2::PdfReportController < MrttApiController
             },
             "10.2" => {
                 "name" => "Which stakeholders carried out the ecological monitoring?",
-                "type" => "TODO"
+                "type" => "6.1 10.2 stakeholders"
             },
             "10.3" => {
                 "name" => "Was there an increase in mangrove area?",
@@ -319,17 +364,25 @@ class V2::PdfReportController < MrttApiController
             },
             "10.7" => {
                 "name" => "What mangrove ecological outcomes were monitored",
-                "type" => "TODO"
-            },
-            "10.7a" => {
-                "name" => "Please fill the measurement data for the selected ecological outcomes.",
-                "type" => "TODO"
+                "type" => "10.7 eco outcomes"
             },
             "10.8" => {
                 "name" => "To what extent do you feel the ecological aims have been achieved?",
                 "type" => "string"
             },
         }
+    
+    def pdf_order_by_section
+        pdf_order_by_section = [
+            "Site Details and Location" => 1,
+            "Site Background" => 2,
+            "Restoration Aims" => 3,
+            "Causes of Decline" => 4,
+            "Pre-Restoration Assessment" => 5,
+            "Site Interventions" => 6,
+            "Costs" => 7
+        ]
+    end
 
         return pdf_report_formatter
     end
@@ -376,7 +429,7 @@ class V2::PdfReportController < MrttApiController
                 site[:value].each { |x|
                     stakeholder_name = x["stakeholderName"]
                     stakeholder_type = x["stakeholderType"]
-                    stakeholder_array.push("Name: #{stakeholder_name or "UNDEFINED"}, Type: #{stakeholder_type}")
+                    stakeholder_array.push("Name: #{stakeholder_name or "UNDEFINED"}, #{stakeholder_type}")
                 }
                 site[:value] = stakeholder_array
             # TODO expand this further
@@ -421,7 +474,7 @@ class V2::PdfReportController < MrttApiController
                     end
                 }
                 site[:value] = measurements_array
-            when "6.1 stakeholders"
+            when "6.1 10.2 stakeholders"
                 stakeholder_array = []
                 site[:value].each { |x|
                     stakeholder = x["stakeholder"]
@@ -506,6 +559,46 @@ class V2::PdfReportController < MrttApiController
                     cost_array.push([intervention, percentage + "%"])
                 }
                 site[:value] = cost_array
+            when "9.4 social outcomes"
+                outcomes_array = []
+                site[:value].each { |x|
+                    outcome = []
+                    main_label = "#{x["mainLabel"]}: #{x["secondaryLabel"]}"
+                    sub_label = x["child"]
+                    type = "Type: #{x["type"]}"
+                    outcome.push(main_label, sub_label, type)
+                    if x["trend"].present?
+                        trend = "Trend: #{x["trend"]}"
+                        outcome.push(trend)
+                    end
+                    if x["measurement"].present?
+                        measurement = "Measurement: #{x["measurement"]} #{x["unit"]}"
+                        comparison = "Comparison: #{x["comparison"]} = #{x["value"]}"
+                        outcome.push(measurement, comparison)
+                    end
+                    outcome.push("Linked aims:")
+                    x["linkedAims"].each { |aim| outcome.push(aim) }
+                    outcomes_array.push(outcome)
+                }
+                site[:value] = outcomes_array
+            when "10.7 eco outcomes"
+                outcomes_array = []
+                site[:value].each { |x|
+                    outcome = []
+                    main_label = "#{x["mainLabel"]}: #{x["secondaryLabel"]}"
+                    sub_label = x["child"]
+                    type = "#{x["indicator"]}: #{x["metric"]}"
+                    outcome.push(main_label, sub_label, type)
+                    if x["measurement"].present? || x["measurementComparison"].present?
+                        measurement = "Measurement: #{x["measurement"]} #{x["unit"]}"
+                        comparison = "Comparison: #{x["comparison"]} = #{x["measurementComparison"]}"
+                        outcome.push(measurement, comparison)
+                    end
+                    outcome.push("Linked aims:")
+                    x["linkedAims"].each { |aim| outcome.push(aim) }
+                    outcomes_array.push(outcome)
+                }
+                site[:value] = outcomes_array
             else
                 site[:value] = ["TODO"]
             end             
@@ -577,12 +670,19 @@ class V2::PdfReportController < MrttApiController
     end
 
     def sort_answers(registration_intervention_answers, monitoring_answers)
+        pdf_format = pdf_report_formatter
         registration_intervention_answers.each { |reg_answer|
             if reg_answer.answer_value.present? || reg_answer.answer_value == false
-                pdf_answers = @pdf_reg_answers
-                site = @pdf_reg_answers[reg_answer.question_id]
+
                 question_id = reg_answer.question_id
                 answer_value = reg_answer.answer_value
+
+                if pdf_format.key?(question_id)
+                    category = pdf_format[question_id]["category"]
+                end
+
+                pdf_answers = @pdf_reg_answers[category]
+                site = @pdf_reg_answers[category][reg_answer.question_id]
                 
                 format_answers(site, question_id, answer_value, pdf_answers)
             end
@@ -614,8 +714,16 @@ class V2::PdfReportController < MrttApiController
         # puts pdf_format
 
         sort_answers(registration_intervention_answers, monitoring_answers)
-        puts @pdf_reg_answers
+
+        @pdf_reg_answers.each { |key, value| 
+            @pdf_reg_answers[key] = value.sort
+        }
         @pdf_reg_answers = @pdf_reg_answers.sort
+        
+        # category_order = pdf_order_by_section
+        # @pdf_reg_answers = @pdf_reg_answers.sort_by { |key, value| category_order[key] }
+        
+        # puts @pdf_reg_answers
 
         site_row["site_id"] = site.id
         site_row["site_name"] = site.site_name
@@ -646,8 +754,14 @@ class V2::PdfReportController < MrttApiController
             :margin_top => '0.5in',
             :margin_right => '0.5in',
             :margin_bottom => '0.5in',
-            :margin_left => '0.5in'
+            :margin_left => '0.5in',
+            :header_left => "MONITORING",
+            :header_line => true,
+            :header_spacing => '5'
         }
+
+        @image_logo_path = "#{Rails.root}/app/views/v2/pdf_report/single_site_footer.html"
+
         # Render the HTML template as a string
         # html = render_to_string(:template => 'v2/pdf_report/sites.pdf', :formats => 'html', :layout => false)
         html = render_to_string(:template => 'v2/pdf_report/single_site', :formats => [:html])
@@ -671,8 +785,6 @@ class V2::PdfReportController < MrttApiController
         Site.all.each { |site|
             site_row = {}
             site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id)
-
-            puts site
 
             site_row["site_id"] = site.id
             site_row["site_name"] = site.site_name

@@ -2,5 +2,29 @@
     background-color: rgba(163, 209, 98, 8%);
 } */
 
-.white { background-color: white; }
+.neutral { background-color: #737373; }
+.primary { background-color: #0D3E3C; }
+.white { background-color: #FFFFFF; }
 .mint { background-color: rgba(163, 209, 98, 0.08); }
+
+.font-heading {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+ }
+
+.no-margin {
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+.question-padding { 
+    padding-top: 16px;
+    padding-bottom: 32px;
+}
+
+.td-padding {
+    padding: 10px;
+}
+
+.pagebreak { page-break-after: always; } /* page-break-after works, as well */
