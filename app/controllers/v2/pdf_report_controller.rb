@@ -750,6 +750,7 @@ class V2::PdfReportController < MrttApiController
         # }
 
         # Set up PDFKit options
+        footer_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_footer.html")
         options = {
             :margin_top => '0.5in',
             :margin_right => '0.5in',
@@ -757,10 +758,13 @@ class V2::PdfReportController < MrttApiController
             :margin_left => '0.5in',
             :header_left => "MONITORING",
             :header_line => true,
-            :header_spacing => '5'
+            :header_spacing => '5',
+            :enable_local_file_access => true,
+            :quiet => false,
+            :footer_html => footer_html_path
         }
 
-        @image_logo_path = "#{Rails.root}/app/views/v2/pdf_report/single_site_footer.html"
+        
 
         # Render the HTML template as a string
         # html = render_to_string(:template => 'v2/pdf_report/sites.pdf', :formats => 'html', :layout => false)
