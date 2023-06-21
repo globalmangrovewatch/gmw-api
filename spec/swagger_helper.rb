@@ -51,6 +51,13 @@ RSpec.configure do |config|
                 items: {type: :number},
                 nullable: true
               },
+              periods: {
+                type: :array,
+                items: {type: :string},
+                nullable: true
+              },
+              min: {type: :number, nullable: true},
+              max: {type: :number, nullable: true},
               note: {type: :string, nullable: true},
               worldwide_total: {type: :number, nullable: true, description: "total number of species in the world"},
               location_resources: {
@@ -346,8 +353,7 @@ RSpec.configure do |config|
             properties: {
               indicator: {type: :string},
               period: {type: :string},
-              value: {type: :number},
-              unit: {type: :string}
+              value: {type: :number}
             }
           },
           file_converter: {

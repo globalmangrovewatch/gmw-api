@@ -109,6 +109,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_115240) do
     t.string "unit", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["location_id", "indicator", "period"], name: "index_flood_protections_on_location_id_and_indicator_and_period", unique: true
     t.index ["location_id"], name: "index_flood_protections_on_location_id"
   end
 

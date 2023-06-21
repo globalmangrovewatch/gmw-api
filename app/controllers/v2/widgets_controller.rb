@@ -342,13 +342,9 @@ class V2::WidgetsController < ApiController
 
   # GET /v2/widgets/flood_protections
   def flood_protection
-    if params.has_key?(:location_id) && params[:location_id] != "worldwide"
-      @location_id = params[:location_id]
-      @data = FloodProtection.includes(:location).where location_id: @location_id
-    else
-      @location_id = "worldwide"
-      @data = FloodProtection.joins(:location).where location: {location_id: @location_id}
-    end
+    @location_id = params[:location_id]
+    @indicator = params[:indicator]
+    @data = FloodProtection.where indicator: @indicator, location_id: @location_id
   end
 
   def national_dashboard

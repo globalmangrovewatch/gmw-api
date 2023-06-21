@@ -1,13 +1,30 @@
 {
   "data": [
     {
-      "indicator": "population",
+      "indicator": "area",
+      "period": "annual",
+      "value": 0.0
+    },
+    {
+      "indicator": "area",
       "period": "25_year",
-      "value": 68950.02,
-      "unit": "people"
+      "value": 68950.02
+    },
+    {
+      "indicator": "area",
+      "period": "100_year",
+      "value": 0.0
     }
   ],
   "metadata": {
-    "location_id": "37"
+    "location_id": "2504",
+    "unit": "km2",
+    "periods": [
+      "annual",
+      "25_year",
+      "100_year"
+    ],
+    "min": 68950.02,
+    "max": 99388.06
   }
 }

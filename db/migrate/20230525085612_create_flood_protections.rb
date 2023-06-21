@@ -9,5 +9,7 @@ class CreateFloodProtections < ActiveRecord::Migration[7.0]
 
       t.timestamps
     end
+
+    add_index :flood_protections, [:location_id, :indicator, :period], unique: true
   end
 end

@@ -1127,50 +1127,42 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
-      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: true
+      parameter name: :indicator, in: :query, type: :string, required: true
 
-      let(:location) { create :location }
-      let(:worldwide) { create :location, :worldwide }
-      let!(:flood_protection_1) { create :flood_protection, location: location }
-      let!(:flood_protection_2) { create :flood_protection, location: worldwide }
+      let(:location_1) { create :location }
+      let(:location_2) { create :location }
+      let!(:flood_protection_1) { create :flood_protection, indicator: "area", location: location_1 }
+      let!(:flood_protection_2) { create :flood_protection, indicator: "population", location: location_1 }
+      let!(:flood_protection_3) { create :flood_protection, indicator: "area", location: location_2 }
+
+      let(:location_id) { location_1.id }
+      let(:indicator) { "area" }
 
       response 200, "Success" do
         schema type: :object,
-               properties: {
-                 data: {
-                   type: :array,
-                   items: {"$ref" => "#/components/schemas/flood_protection"}
-                 },
-                 metadata: {
-                   :type => :object,
-                   "$ref" => "#/components/schemas/metadata"
-                 }
-               }
+          properties: {
+            data: {
+              type: :array,
+              items: {"$ref" => "#/components/schemas/flood_protection"}
+            },
+            metadata: {
+              :type => :object,
+              "$ref" => "#/components/schemas/metadata"
+            }
+          }
 
-        context "when location_id is used" do
-          let(:location_id) { location.id }
+        run_test!
 
-          run_test!
-
-          it "matches snapshot", generate_swagger_example: true do
-            expect(response.body).to match_snapshot("api/v2/widgets/flood_protection_get_location")
-          end
-
-          it "returns correct data" do
-            expect(response_json["data"].pluck("value")).to eq([flood_protection_1.value])
-          end
+        it "matches snapshot", generate_swagger_example: true do
+          expect(response.body).to match_snapshot("api/v2/widgets/flood_protection_get_location")
         end
 
-        context "when location_id is missing - use worldwide" do
-          run_test!
-
-          it "matches snapshot" do
-            expect(response.body).to match_snapshot("api/v2/widgets/flood_protection_get_worldwide")
-          end
-
-          it "returns correct data" do
-            expect(response_json["data"].pluck("value")).to eq([flood_protection_2.value])
-          end
+        it "returns correct data" do
+          expect(response_json["data"].pluck("value")).to match_array([flood_protection_1.value, 0.0, 0.0])
+          expect(response_json["data"].pluck("period")).to match_array(FloodProtection.periods.keys)
+          expect(response_json["metadata"]["max"]).to eq([flood_protection_1.value, flood_protection_3.value].max)
+          expect(response_json["metadata"]["min"]).to eq([flood_protection_1.value, flood_protection_3.value].min)
         end
       end
     end
