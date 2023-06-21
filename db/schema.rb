@@ -101,6 +101,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_115240) do
     t.index ["location_id"], name: "index_ecosystem_services_on_location_id"
   end
 
+  create_table "flood_protections", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "indicator", null: false
+    t.string "period", null: false
+    t.float "value", null: false
+    t.string "unit", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id", "indicator", "period"], name: "index_flood_protections_on_location_id_and_indicator_and_period", unique: true
+    t.index ["location_id"], name: "index_flood_protections_on_location_id"
+  end
+
   create_table "habitat_extents", force: :cascade do |t|
     t.bigint "location_id", null: false
     t.enum "indicator", default: "habitat_extent_area", null: false, enum_type: "habitat_extent_indicators"
@@ -353,6 +365,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_115240) do
   add_foreign_key "degradation_treemaps", "locations"
   add_foreign_key "drivers_of_changes", "locations"
   add_foreign_key "ecosystem_services", "locations"
+  add_foreign_key "flood_protections", "locations"
   add_foreign_key "habitat_extents", "locations"
   add_foreign_key "international_statuses", "locations"
   add_foreign_key "landscapes_organizations", "landscapes"

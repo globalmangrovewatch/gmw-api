@@ -1122,6 +1122,52 @@ RSpec.describe "API V2 Widgets", type: :request do
     end
   end
 
+  path "/api/v2/widgets/flood_protection" do
+    get "Retrieves the data for the flood protection widget" do
+      tags "Widgets"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: true
+      parameter name: :indicator, in: :query, type: :string, required: true
+
+      let(:location_1) { create :location }
+      let(:location_2) { create :location }
+      let!(:flood_protection_1) { create :flood_protection, indicator: "area", location: location_1 }
+      let!(:flood_protection_2) { create :flood_protection, indicator: "population", location: location_1 }
+      let!(:flood_protection_3) { create :flood_protection, indicator: "area", location: location_2 }
+
+      let(:location_id) { location_1.id }
+      let(:indicator) { "area" }
+
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {
+              type: :array,
+              items: {"$ref" => "#/components/schemas/flood_protection"}
+            },
+            metadata: {
+              :type => :object,
+              "$ref" => "#/components/schemas/metadata"
+            }
+          }
+
+        run_test!
+
+        it "matches snapshot", generate_swagger_example: true do
+          expect(response.body).to match_snapshot("api/v2/widgets/flood_protection_get_location")
+        end
+
+        it "returns correct data" do
+          expect(response_json["data"].pluck("value")).to match_array([flood_protection_1.value, 0.0, 0.0])
+          expect(response_json["data"].pluck("period")).to match_array(FloodProtection.periods.keys)
+          expect(response_json["metadata"]["max"]).to eq([flood_protection_1.value, flood_protection_3.value].max)
+          expect(response_json["metadata"]["min"]).to eq([flood_protection_1.value, flood_protection_3.value].min)
+        end
+      end
+    end
+  end
+
   path "/api/v2/widgets/national_dashboard" do
     get "Retrieves the data for the national dashboard widget" do
       tags "Widgets"

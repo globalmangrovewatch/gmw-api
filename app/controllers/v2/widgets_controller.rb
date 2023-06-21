@@ -340,6 +340,13 @@ class V2::WidgetsController < ApiController
     @data = @data.with_registration_intervention_answer "6.4", params[:community_activities] if params[:community_activities].present?
   end
 
+  # GET /v2/widgets/flood_protections
+  def flood_protection
+    @location_id = params[:location_id]
+    @indicator = params[:indicator]
+    @data = FloodProtection.where indicator: @indicator, location_id: @location_id
+  end
+
   def national_dashboard
     @location_id = params[:location_id]
     @data = NationalDashboard.where location_id: @location_id
