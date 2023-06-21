@@ -815,6 +815,8 @@ class V2::PdfReportController < MrttApiController
             :footer_html => footer_html_path
         }
 
+        
+
         # Render the HTML template as a string
         # html = render_to_string(:template => 'v2/pdf_report/sites.pdf', :formats => 'html', :layout => false)
         html = render_to_string(:template => 'v2/pdf_report/single_site', :formats => [:html])
