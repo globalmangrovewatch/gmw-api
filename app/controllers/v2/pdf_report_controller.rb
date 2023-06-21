@@ -761,16 +761,17 @@ class V2::PdfReportController < MrttApiController
         sort_answers(registration_intervention_answers, monitoring_answers)
 
         @pdf_reg_answers.each { |key, value| 
-            puts "Reg " + value.to_s
             @pdf_reg_answers[key] = value.sort
         }
         @pdf_reg_answers = @pdf_reg_answers.sort
               
         @pdf_mon_answers.each { |uuid, mon_list|
             mon_list["answers"].each { |key, value|
-                puts "Mon " + value.to_s
                 mon_list["answers"][key] = value.sort
             }
+        }
+        @pdf_mon_answers = @pdf_mon_answers.sort_by { |uuid, mon_list|
+            mon_list["monitoring_date"]
         }
 
         # category_order = pdf_order_by_section
