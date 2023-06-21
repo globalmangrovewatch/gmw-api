@@ -65,7 +65,7 @@ class V2::ReportController < MrttApiController
     public_only = ActiveModel::Type::Boolean.new.cast(report_params[:public_only]) || true
 
     # prep
-    empty_answer = "---"
+    empty_answer = nil
     question_key_ids = {
       registration: ["1.1a", "1.1b", "1.1c", "1.2", "1.3", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "3.1", "3.2", "3.3", "4.1", "4.2", "5.1", "5.2", "5.2a", "5.2b", "5.2c", "5.3", "5.3a", "5.3b", "5.3c", "5.3d", "5.3e", "5.3f", "5.3g", "5.4", "5.5"],
       intervention: ["6.1", "6.2", "6.2a", "6.2b", "6.2c", "6.3", "6.3a", "6.4", "7.1", "7.2", "7.3", "7.4", "7.5", "7.5a", "7.6"],
@@ -132,7 +132,7 @@ class V2::ReportController < MrttApiController
     }
 
     # add registration header
-    registration_worksheet.add_row registration_sheet_columns, style: style_header
+    registration_worksheet.add_row registration_sheet_columns, style: style_header, types: :string
 
     # add registration rows
     all_sites_rows.each { |site_row|
@@ -145,7 +145,7 @@ class V2::ReportController < MrttApiController
     }
 
     # add intervention header
-    intervention_worksheet.add_row intervention_sheet_columns, style: style_header
+    intervention_worksheet.add_row intervention_sheet_columns, style: style_header, types: :string
 
     # add intervention rows
     all_sites_rows.each { |site_row|
@@ -158,7 +158,7 @@ class V2::ReportController < MrttApiController
     }
 
     # add monitoring header
-    monitoring_worksheet.add_row monitoring_sheet_columns, style: style_header
+    monitoring_worksheet.add_row monitoring_sheet_columns, style: style_header, types: :string
 
     # add monitoring rows
     monitoring_sites_rows.each { |site_row|
