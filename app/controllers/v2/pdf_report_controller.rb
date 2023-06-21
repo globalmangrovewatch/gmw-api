@@ -23,7 +23,7 @@ class V2::PdfReportController < MrttApiController
             },
             "1.3" => { 
                 "name" => "What is the overall site area?",
-                "type" => "TODO",
+                "type" => "1.3 map",
                 "category" => "01 Site Details and Location"
             },
             "2.1" => {
@@ -286,6 +286,11 @@ class V2::PdfReportController < MrttApiController
                 "type" => "string",
                 "category" => "08 Management Status & Effectiveness"
             },
+            "8.5a" => {
+                "name" => "How would you currently describe the protection status of the site?",
+                "type" => "string",
+                "category" => "08 Management Status & Effectiveness"
+            },
             "8.6" => {
                 "name" => "What is the main finance mechanism used to fund ongoing site management?",
                 "type" => "string",
@@ -353,7 +358,17 @@ class V2::PdfReportController < MrttApiController
             },
             "10.1" => {
                 "name" => "What were the dates of the ecological monitoring being reported on?",
-                "type" => "TODO",
+                "type" => "VOID",
+                "category" => "10 Ecological Status and Outcomes"
+            },
+            "10.1a" => {
+                "name" => "Ecological monitoring start date:",
+                "type" => "date",
+                "category" => "10 Ecological Status and Outcomes"
+            },
+            "10.1b" => {
+                "name" => "Ecological monitoring end date:",
+                "type" => "date",
                 "category" => "10 Ecological Status and Outcomes"
             },
             "10.2" => {
@@ -374,6 +389,12 @@ class V2::PdfReportController < MrttApiController
             "10.4" => {
                 "name" => "Was there an improvement in mangrove condition?",
                 "type" => "string",
+                "category" => "10 Ecological Status and Outcomes"
+            },
+            # This question does not seem to exist?
+            "10.4a" => {
+                "name" => "Was there an improvement in mangrove condition?",
+                "type" => "VOID",
                 "category" => "10 Ecological Status and Outcomes"
             },
             "10.5" => {
@@ -455,6 +476,9 @@ class V2::PdfReportController < MrttApiController
                     country_array.push(x["properties"]["country"])
                 }
                 site[:value] = country_array
+            when "1.3 map"
+                # site[:value] = generate_mapbox_url(answer_value)
+                puts answer_value
             when "2.1 stakeholders"
                 stakeholder_array = []
                 site[:value].each { |x|
@@ -634,6 +658,8 @@ class V2::PdfReportController < MrttApiController
                     outcomes_array.push(outcome)
                 }
                 site[:value] = outcomes_array
+            when "VOID"
+                pdf_answers.delete(question_id)
             else
                 site[:value] = ["TODO"]
             end             
@@ -697,7 +723,7 @@ class V2::PdfReportController < MrttApiController
         monitoring_events.each { |key, value|
             monitoring_answers.push(value)
         }
-        return site.id, registration_intervention_answers, monitoring_answers
+        return site.id, registration_intervention_answers, monitoring_answers, landscape
     end
 
     def report_params
@@ -753,11 +779,11 @@ class V2::PdfReportController < MrttApiController
         @answer_array = []
         site_row = {}
         
-        site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id)
+        site_id, registration_intervention_answers, monitoring_answers, landscape = get_answers_by_site(site.id)
         # answers = monitoring_answers.uuid
         
         # puts pdf_format
-
+        @pdf_landscape = landscape.landscape_name
         sort_answers(registration_intervention_answers, monitoring_answers)
 
         @pdf_reg_answers.each { |key, value| 
@@ -773,6 +799,9 @@ class V2::PdfReportController < MrttApiController
         @pdf_mon_answers = @pdf_mon_answers.sort_by { |uuid, mon_list|
             mon_list["monitoring_date"]
         }
+        # @pdf_mon_answers = @pdf_mon_answers.sort_by { |uuid, mon_list|
+        #     mon_list
+        # }
 
         # category_order = pdf_order_by_section
         # @pdf_reg_answers = @pdf_reg_answers.sort_by { |key, value| category_order[key] }
@@ -781,6 +810,8 @@ class V2::PdfReportController < MrttApiController
 
         site_row["site_id"] = site.id
         site_row["site_name"] = site.site_name
+
+        # puts site_row["1.3"]
 
         # answers.each { |answer|
         #     site_row[answer.question_id] = answer.answers
@@ -804,21 +835,22 @@ class V2::PdfReportController < MrttApiController
         # }
 
         # Set up PDFKit options
+        # header_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_header.html")
         footer_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_footer.html")
         options = {
-            :margin_top => '0.5in',
+            :margin_top => '0.7in',
             :margin_right => '0.5in',
-            :margin_bottom => '0.5in',
+            :margin_bottom => '0.7in',
             :margin_left => '0.5in',
-            :header_left => "MONITORING",
-            :header_line => true,
-            :header_spacing => '5',
             :enable_local_file_access => true,
             :quiet => false,
-            :footer_html => footer_html_path
+            # :header_html => header_html_path,
+            :header_left => 'REPORT',
+            :header_line => true,
+            :header_spacing => '5',
+            :footer_html => footer_html_path,
+            :footer_spacing => '2'
         }
-
-        
 
         # Render the HTML template as a string
         # html = render_to_string(:template => 'v2/pdf_report/sites.pdf', :formats => 'html', :layout => false)
@@ -852,7 +884,8 @@ class V2::PdfReportController < MrttApiController
             # }
 
             # generate Mapbox url
-            # site_row["site_map"] = generate_mapbox_url(site_row["1.3"])
+            site_row["site_map"] = generate_mapbox_url(site_row["1.3"])
+            puts site_row["1.3"]
 
             @all_site_rows.push(site_row)
         }
@@ -871,13 +904,13 @@ class V2::PdfReportController < MrttApiController
         # render(:template => 'v2/pdf_report/sites', :formats => [:html])
         # Create a new PDFKit object and convert the HTML to a PDF file
         # File.write("#{Rails.root}/tmp/sites.pdf", '')
-        # pdf_file = PDFKit.new(html, options).to_file("#{Rails.root}/tmp/sites.pdf")
-        kit = PDFKit.new(html, :page_size => 'Letter')
-        pdf = kit.to_pdf
+        pdf_file = PDFKit.new(html, options).to_file("#{Rails.root}/tmp/sites.pdf")
+        # kit = PDFKit.new(html, :page_size => 'Letter')
+        # pdf = kit.to_pdf
         # file = kit.to_file("#{Rails.root}/tmp/sites.pdf")
 
         # Send the generated PDF file as a download
-        # send_file file.path, :type => 'application/pdf', :disposition => 'attachment', :filename => 'sites.pdf'
+        send_file pdf_file.path, :type => 'application/pdf', :disposition => 'attachment', :filename => 'sites.pdf'
         # send_data(pdf, type: 'application/pdf', disposition: 'attachment', filename: 'sites.pdf')
     end
 

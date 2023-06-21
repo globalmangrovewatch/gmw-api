@@ -7,6 +7,7 @@
   <body>
     <% @single_site.each do |site_row| %>
       <h1 class="font-heading">
+        Landscape <%= @pdf_landscape %><br>
         Site: <%= site_row['site_name'] %>
       </h1>
     <% end %>
@@ -28,7 +29,7 @@
                 <% if x.class == Hash -%>
                   <td>
                     <% x.each do |key, value| -%>
-                      <b><%= key.capitalize -%>:</b> <%= value -%>, 
+                      <b><%= key.capitalize -%>:</b> <%= value -%>
                     <% end -%>
                   </td>
                 <% else -%>
