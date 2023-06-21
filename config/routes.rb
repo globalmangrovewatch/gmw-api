@@ -41,6 +41,7 @@ Rails.application.routes.draw do
       get "/widgets/sites_filters", to: "widgets#sites_filters"
       get "/widgets/sites", to: "widgets#sites"
       get "/widgets/flood_protection", to: "widgets#flood_protection"
+      get "/widgets/national_dashboard", to: "widgets#national_dashboard"
 
       ## Geometry file conversion
       post "/spatial_file/converter", to: "file_converter#convert"
@@ -67,6 +68,10 @@ Rails.application.routes.draw do
       delete "/organizations/:organization_id/users/:email", to: "organizations#remove_user", constraints: {email: /[^\/]+/}
 
       get "/dashboard/sites", to: "dashboard#sites"
+
+      get "/report/answers", to: "report#answers"
+      get "/report/answers/:site_id", to: "report#answers_by_site"
+      get "/report/answers_as_xlsx", to: "report#answers_as_xlsx"
 
       get "/report/answers", to: "report#answers"
       get "/report/answers/:site_id", to: "report#answers_by_site"

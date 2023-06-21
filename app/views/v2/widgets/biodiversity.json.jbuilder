@@ -8,4 +8,5 @@ end
 json.metadata do
   json.unit nil
   json.note "nº of species"
+  json.worldwide_total Specie.count
 end

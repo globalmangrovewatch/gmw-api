@@ -128,6 +128,8 @@ class V2::WidgetsController < ApiController
 
   # GET /v2/widgets/ecosystem_services
   def ecosystem_service
+    slugs = {"restoration-value" => %w[AGB SOC], "fisheries" => %w[fish shrimp crab bivalve]}
+    @indicators = slugs[params[:slug]].presence || EcosystemService.indicators.keys
     if params.has_key?(:location_id) && params[:location_id] != "worldwide"
       @location_id = params[:location_id]
       @data = EcosystemService.select("indicator, location_id, value").where(location_id: params[:location_id])
@@ -135,6 +137,7 @@ class V2::WidgetsController < ApiController
       @data = EcosystemService.select("indicator, sum(value) as value").group("indicator")
       @location_id = "worldwide"
     end
+    @data = @data.where indicator: @indicators
   end
 
   # GET /v2/widgets/habitat_extent
@@ -322,11 +325,13 @@ class V2::WidgetsController < ApiController
   end
 
   def sites
+    @location_id = params[:location_id]
     @data = Site.select(
       "sites.*,
       ST_AsGeoJSON(sites.area) as site_area,
       ST_AsGeoJSON(ST_Centroid(sites.area)) as site_centroid"
     ).includes(:landscape)
+    @data = @data.for_location @location_id if @location_id.present?
     @data = @data.at_organizations params[:organization] if params[:organization].present?
     @data = @data.with_registration_intervention_answer "3.1", params[:ecological_aim] if params[:ecological_aim].present?
     @data = @data.with_registration_intervention_answer "3.2", params[:socioeconomic_aim] if params[:socioeconomic_aim].present?
@@ -344,5 +349,11 @@ class V2::WidgetsController < ApiController
       @location_id = "worldwide"
       @data = FloodProtection.joins(:location).where location: {location_id: @location_id}
     end
+  end
+
+  def national_dashboard
+    @location_id = params[:location_id]
+    @data = NationalDashboard.where location_id: @location_id
+    @location_resources = LocationResource.where location_id: @location_id
   end
 end

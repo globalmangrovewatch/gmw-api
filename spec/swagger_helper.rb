@@ -51,7 +51,13 @@ RSpec.configure do |config|
                 items: {type: :number},
                 nullable: true
               },
-              note: {type: :string, nullable: true}
+              note: {type: :string, nullable: true},
+              worldwide_total: {type: :number, nullable: true, description: "total number of species in the world"},
+              location_resources: {
+                type: :array,
+                items: {"$ref" => "#/components/schemas/location_resource"},
+                nullable: true
+              }
             }
           },
           error_response: {
@@ -204,7 +210,7 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               indicator: {type: :string},
-              value: {type: :number}
+              value: {type: :number, nullable: true}
             },
             required: [:indicator, :value]
           },
@@ -283,6 +289,36 @@ RSpec.configure do |config|
               primary_driver: {type: :string}
             }
           },
+          national_dashboard: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
+              sources: {
+                type: :array,
+                items: {
+                  type: :object,
+                  properties: {
+                    source: {type: :string},
+                    unit: {type: :string},
+                    years: {type: :array, items: {type: :number}},
+                    data_source: {
+                      type: :array,
+                      items: {
+                        type: :object,
+                        properties: {
+                          year: {type: :number},
+                          value: {type: :number},
+                          layer_info: {type: :string, nullable: true},
+                          layer_link: {type: :string, nullable: true},
+                          download_link: {type: :string, nullable: true}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
           sites_filters: {
             type: :object,
             properties: {
@@ -325,6 +361,14 @@ RSpec.configure do |config|
               }
             },
             required: [:type, :features]
+          },
+          location_resource: {
+            type: :object,
+            properties: {
+              name: {type: :string},
+              description: {type: :string, nullable: true},
+              link: {type: :string, nullable: true}
+            }
           }
         }
       }
