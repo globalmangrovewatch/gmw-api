@@ -549,7 +549,11 @@ class V2::PdfReportController < MrttApiController
                     end_date = DateTime.parse(x["endDate"]).to_date.to_s
                     date_array.push("End Date: #{end_date}")
                 end
-                site[:value] = date_array
+                if date_array.empty?
+                    pdf_answers.delete(question_id)
+                else
+                    site[:value] = date_array
+                end
             when "6.2b species"
                 species_array = []
                 site[:value].each { |x|
@@ -869,6 +873,8 @@ class V2::PdfReportController < MrttApiController
             
         # }
 
+        test_value = "REPORT"
+
         # Set up PDFKit options
         # header_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_header.html")
         footer_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_footer.html")
@@ -880,7 +886,7 @@ class V2::PdfReportController < MrttApiController
             :enable_local_file_access => true,
             :quiet => false,
             # :header_html => header_html_path,
-            :header_left => 'REPORT',
+            :header_left => test_value,
             :header_line => true,
             :header_spacing => '5',
             :footer_html => footer_html_path,
