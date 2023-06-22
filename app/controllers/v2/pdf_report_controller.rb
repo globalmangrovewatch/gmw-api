@@ -783,7 +783,7 @@ class V2::PdfReportController < MrttApiController
                     end
 
                     pdf_answers = @pdf_mon_answers
-                    site = @pdf_mon_answers[mon_answer["uuid"]]["answers"][category][question_id]
+                    site = @pdf_mon_answers[mon_answer["uuid"]]["answers"][question_id]
 
                     format_answers(site, question_id, answer_value, pdf_answers)
                 end
@@ -816,9 +816,7 @@ class V2::PdfReportController < MrttApiController
               
         puts @pdf_mon_answers
         @pdf_mon_answers.each { |uuid, mon_list|
-            mon_list["answers"].each { |key, value|
-                mon_list["answers"][key] = value.sort
-            }
+            mon_list["answers"] = mon_list["answers"].sort
         }
         @pdf_mon_answers = @pdf_mon_answers.sort_by { |uuid, mon_list|
             mon_list["monitoring_date"]
