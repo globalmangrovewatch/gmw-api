@@ -23,8 +23,8 @@
     padding-bottom: 32px;
 }
 
-.td-padding {
-    padding: 10px;
+.td-align {
+    vertical-align: top;
 }
 
 .pagebreak { page-break-after: always; } /* page-break-after works, as well */
