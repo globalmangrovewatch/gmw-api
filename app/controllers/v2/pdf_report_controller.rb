@@ -356,6 +356,7 @@ class V2::PdfReportController < MrttApiController
                 "type" => "string",
                 "category" => "09 Sociological and Governance Status and Outcomes"
             },
+            # Void because of 10.1a and 10.1b answering the question instead
             "10.1" => {
                 "name" => "What were the dates of the ecological monitoring being reported on?",
                 "type" => "VOID",
@@ -383,7 +384,7 @@ class V2::PdfReportController < MrttApiController
             },
             "10.3a" => {
                 "name" => "What was the mangrove area pre and post restoration activities at the site?",
-                "type" => "TODO",
+                "type" => "10.3a area",
                 "category" => "10 Ecological Status and Outcomes"
             },
             "10.4" => {
@@ -391,10 +392,10 @@ class V2::PdfReportController < MrttApiController
                 "type" => "string",
                 "category" => "10 Ecological Status and Outcomes"
             },
-            # This question does not seem to exist?
+            # This question is actually 10.3a but is here as a failsafe as it's in the json
             "10.4a" => {
-                "name" => "Was there an improvement in mangrove condition?",
-                "type" => "VOID",
+                "name" => "What was the mangrove area pre and post restoration activities at the site?",
+                "type" => "10.3a area",
                 "category" => "10 Ecological Status and Outcomes"
             },
             "10.5" => {
@@ -409,7 +410,7 @@ class V2::PdfReportController < MrttApiController
             },
             "10.6a" => {
                 "name" => "If survival was low, is the cause known?",
-                "type" => "TODO",
+                "type" => "multiselect",
                 "category" => "10 Ecological Status and Outcomes"
             },
             "10.7" => {
@@ -642,6 +643,16 @@ class V2::PdfReportController < MrttApiController
                     }                    
                 }
                 site[:value] = outcomes_array
+            when "10.3a area"
+                area_array = []
+                if not site[:value].empty?
+                    area_pre = "Area Pre-Intevention: #{site[:value]["areaPreIntervention"]} #{site[:value]["unitPre"]}"
+                    area_post = "Area Post-Intevention: #{site[:value]["areaPostIntervention"]} #{site[:value]["unitPost"]}"
+                    area_array.push(area_pre, area_post)
+                    site[:value] = area_array
+                else
+                    pdf_answers.delete(question_id)
+                end
             when "10.7 eco outcomes"
                 outcomes_array = []
                 site[:value].each { |x|
@@ -761,6 +772,10 @@ class V2::PdfReportController < MrttApiController
         @pdf_mon_answers[mon_answer["uuid"]]["monitoring_date"] = mon_answer["monitoring_date"].to_date.to_s
             mon_answer["answers"].each { |question_id, answer_value|
                 if answer_value.present? || answer_value == false
+
+                    if question_id == "10.4a"
+                        question_id = "10.3a"
+                    end
 
                     if pdf_format.key?(question_id)
                         category = pdf_format[question_id]["category"]
