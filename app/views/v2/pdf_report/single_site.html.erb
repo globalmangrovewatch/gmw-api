@@ -32,6 +32,10 @@
                       <b><%= key.capitalize -%>:</b> <%= value -%>
                     <% end -%>
                   </td>
+                <%  elsif x.class == String &&  x.start_with?("#{Rails.root}/tmp/") -%>
+                  <td>
+                    <img src="<%= x -%>" alt="site boundary"/>
+                  </td>
                 <% else -%>
                   <td><%= x %></td>
                 <% end -%>
