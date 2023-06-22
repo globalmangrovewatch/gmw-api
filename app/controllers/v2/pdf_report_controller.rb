@@ -622,40 +622,44 @@ class V2::PdfReportController < MrttApiController
                 outcomes_array = []
                 site[:value].each { |x|
                     outcome = []
-                    main_label = "#{x["mainLabel"]}: #{x["secondaryLabel"]}"
-                    sub_label = x["child"]
-                    type = "Type: #{x["type"]}"
+                    main_label = "Outcome: #{x["mainLabel"]}: #{x["secondaryLabel"]}"
+                    sub_label = "#{x["child"]}"
+                    type = "- Type: #{x["type"]}"
                     outcome.push(main_label, sub_label, type)
                     if x["trend"].present?
-                        trend = "Trend: #{x["trend"]}"
+                        trend = "- Trend: #{x["trend"]}"
                         outcome.push(trend)
                     end
                     if x["measurement"].present?
-                        measurement = "Measurement: #{x["measurement"]} #{x["unit"]}"
-                        comparison = "Comparison: #{x["comparison"]} = #{x["value"]}"
+                        measurement = "- Measurement: #{x["measurement"]} #{x["unit"]}"
+                        comparison = "- Comparison: #{x["comparison"]} = #{x["value"]}"
                         outcome.push(measurement, comparison)
                     end
-                    outcome.push("Linked aims:")
-                    x["linkedAims"].each { |aim| outcome.push(aim) }
-                    outcomes_array.push(outcome)
+                    outcome.push("- Linked aims:")
+                    x["linkedAims"].each { |aim| outcome.push("-- #{aim}") }
+                    outcome.each { |y|
+                        outcomes_array.push(y)
+                    }                    
                 }
                 site[:value] = outcomes_array
             when "10.7 eco outcomes"
                 outcomes_array = []
                 site[:value].each { |x|
                     outcome = []
-                    main_label = "#{x["mainLabel"]}: #{x["secondaryLabel"]}"
-                    sub_label = x["child"]
-                    type = "#{x["indicator"]}: #{x["metric"]}"
+                    main_label = "Outcome #{x["mainLabel"]}: #{x["secondaryLabel"]}"
+                    sub_label = "#{x["child"]}"
+                    type = "- #{x["indicator"]}: #{x["metric"]}"
                     outcome.push(main_label, sub_label, type)
                     if x["measurement"].present? || x["measurementComparison"].present?
-                        measurement = "Measurement: #{x["measurement"]} #{x["unit"]}"
-                        comparison = "Comparison: #{x["comparison"]} = #{x["measurementComparison"]}"
+                        measurement = "- Measurement: #{x["measurement"]} #{x["unit"]}"
+                        comparison = "- Comparison: #{x["comparison"]} = #{x["measurementComparison"]}"
                         outcome.push(measurement, comparison)
                     end
-                    outcome.push("Linked aims:")
-                    x["linkedAims"].each { |aim| outcome.push(aim) }
-                    outcomes_array.push(outcome)
+                    outcome.push("- Linked aims:")
+                    x["linkedAims"].each { |aim| outcome.push("-- #{aim}") }
+                    outcome.each { |y|
+                        outcomes_array.push(y)
+                    }  
                 }
                 site[:value] = outcomes_array
             when "VOID"
