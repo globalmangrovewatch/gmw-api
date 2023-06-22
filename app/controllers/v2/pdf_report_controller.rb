@@ -405,7 +405,7 @@ class V2::PdfReportController < MrttApiController
             },
             "10.6" => {
                 "name" => "What was the percentage survival of the planted mangrove seedlings or propagules?",
-                "type" => "TODO",
+                "type" => "string",
                 "category" => "The Ecological Status and Outcomes"
             },
             "10.6a" => {
@@ -422,7 +422,7 @@ class V2::PdfReportController < MrttApiController
                 "name" => "To what extent do you feel the ecological aims have been achieved?",
                 "type" => "string",
                 "category" => "The Ecological Status and Outcomes"
-            },
+            }
         }
     
     def pdf_order_by_section
@@ -786,7 +786,7 @@ class V2::PdfReportController < MrttApiController
                         @pdf_mon_answers[mon_answer["uuid"]]["category"] = category
                     end
 
-                    pdf_answers = @pdf_mon_answers
+                    pdf_answers = @pdf_mon_answers[mon_answer["uuid"]]["answers"]
                     site = @pdf_mon_answers[mon_answer["uuid"]]["answers"][question_id]
 
                     format_answers(site, question_id, answer_value, pdf_answers)
@@ -818,7 +818,6 @@ class V2::PdfReportController < MrttApiController
             [key, @pdf_reg_answers[key]]
         }
               
-        puts @pdf_mon_answers
         @pdf_mon_answers.each { |uuid, mon_list|
             mon_list["answers"] = mon_list["answers"].sort
         }
