@@ -45,9 +45,9 @@
 
     <!-- Start of Monitoring Answers -->
     <% @pdf_mon_answers.each do |uuid, values| %>
+      <h2><%= values["category"] %></h2>
       <h2>Date of Entry: <%= values["monitoring_date"] %></h2>
       <% values["answers"].each do |category, questions| %>
-        <h2><%= category %></h2>
         <% questions.each do |key, item| %>
           <hr class="no-margin">
           <div class= "<%= cycle('white', 'mint') -%> question-padding">
