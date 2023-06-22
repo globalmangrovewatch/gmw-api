@@ -478,8 +478,7 @@ class V2::PdfReportController < MrttApiController
                 }
                 site[:value] = country_array
             when "1.3 map"
-                # site[:value] = generate_mapbox_url(answer_value)
-                # puts answer_value
+                site[:value] = [generate_site_boundary_preview(answer_value)]
             when "2.1 stakeholders"
                 stakeholder_array = []
                 site[:value].each { |x|
@@ -954,15 +953,24 @@ class V2::PdfReportController < MrttApiController
         # send_data(pdf, type: 'application/pdf', disposition: 'attachment', filename: 'sites.pdf')
     end
 
-    def generate_mapbox_url(geojson)
+    def generate_site_boundary_preview(geojson)
         url = nil
         if geojson.present?         
-            geojson = geojson["features"][0]
-            geojson = reduce_precision_geojson(geojson)
+            geojson = sanitize_geojson(geojson)
+            geojson = CGI.escape(geojson)
             token = ENV["MAPBOX_ACCESS_TOKEN"]
-            url = "https://api.mapbox.com/v4/mapbox.satellite/geojson(%s)/%s/150x75@2x.png?access_token=%s" % [geojson.to_json, "auto", token]
+            url = "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/geojson(#{geojson})/auto/300x200@2x?access_token=#{token}"
         end
-        return url
+
+        # download image and save to temporary file to be included in pdf
+        begin
+            image_path = "#{Rails.root}/tmp/#{SecureRandom.uuid}.jpeg"
+            download = URI.open(url)
+            IO.copy_stream(download, image_path)
+        rescue => exception
+            image_path = "#{Rails.root}/tmp/site-boundary-preview-not-available.jpeg"
+        end
+        image_path
     end
 
     def reduce_precision_geojson(geojson)
@@ -976,4 +984,20 @@ class V2::PdfReportController < MrttApiController
         return geojson
     end
 
+    def sanitize_geojson(geojson)
+        # ensure geojson is valid with respect to Right Hand Rule since 
+        result = `echo '#{geojson.to_json}' | \
+                  ogr2ogr -f GeoJSON \
+                  -lco RFC7946=YES \
+                  -lco COORDINATE_PRECISION=5 \
+                  -makevalid \
+                  /vsistdout/ \
+                  /vsistdin/`.gsub("\n", "")
+                             .gsub(" ", "")
+        # check child process exit 
+        if $?.exitstatus != 0
+            result = ""
+        end
+        return result
+    end
 end
