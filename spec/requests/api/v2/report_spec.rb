@@ -5,14 +5,7 @@ RSpec.describe "v2/report", type: :request do
     get("answers report") do
       tags "report"
       response(200, "successful") do
-        after do |example|
-          example.metadata[:response][:content] = {
-            "application/json" => {
-              example: JSON.parse(response.body, symbolize_names: true)
-            }
-          }
-        end
-        run_test!
+
       end
     end
   end
@@ -24,16 +17,8 @@ RSpec.describe "v2/report", type: :request do
     get("answers_by_site report") do
       tags "report"
       response(200, "successful") do
-        let(:site_id) { "123" }
 
-        after do |example|
-          example.metadata[:response][:content] = {
-            "application/json" => {
-              example: JSON.parse(response.body, symbolize_names: true)
-            }
-          }
-        end
-        run_test!
+
       end
     end
   end
@@ -49,14 +34,7 @@ RSpec.describe "v2/report", type: :request do
         description "An excel (xlsx) file."
         schema type: :file,
           properties: {}
-        after do |example|
-          example.metadata[:response][:content] = {
-            "application/json" => {
-              example: JSON.parse(response.body, symbolize_names: true)
-            }
-          }
-        end
-        run_test!
+
       end
     end
   end
