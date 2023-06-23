@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <header>
+    <% @single_site.each do |site_row| %>
         <div style="float: left;">REPORT</div>
-        <div style="float: right;">Indonesia - Uji Coba 2</div>
+        <div style="float: right;"><%= @pdf_landscape %> - <%= site_row['site_name'] %></div>
         <br>
         <hr style="margin-top: 0.5em; margin-bottom: 0em;">
+    <% end %>
 </header>

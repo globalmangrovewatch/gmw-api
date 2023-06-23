@@ -875,7 +875,20 @@ class V2::PdfReportController < MrttApiController
 
         # Set up PDFKit options
         # header_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_header.html")
+
+        header_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_header.html")
         footer_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_footer.html")
+        footer_html_rendered = render_to_string(:template => 'v2/pdf_report/single_site_footer', :formats => [:html])
+        header_html_rendered = render_to_string(:template => 'v2/pdf_report/single_site_header', :formats => [:html])
+        
+        File.open("#{Rails.root}/app/views/v2/pdf_report/single_site_header.html", 'w') do |f|
+            f.write(header_html_rendered)
+        end
+
+        File.open("#{Rails.root}/app/views/v2/pdf_report/single_site_footer.html", 'w') do |f|
+            f.write(footer_html_rendered)
+        end
+
         options = {
             :margin_top => '0.7in',
             :margin_right => '0.5in',
@@ -884,10 +897,11 @@ class V2::PdfReportController < MrttApiController
             :enable_local_file_access => true,
             :quiet => false,
             # :header_html => header_html_path,
-            :header_left => test_value,
-            :header_line => true,
+            :header_html => header_html_path,
+            # :header_line => true,
             :header_spacing => '5',
             :footer_html => footer_html_path,
+            # :footer_right => "[page]",
             :footer_spacing => '2'
         }
 
