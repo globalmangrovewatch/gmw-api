@@ -1,6 +1,14 @@
 /* body {
     background-color: rgba(163, 209, 98, 8%);
 } */
+.heading-invisible {
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: 0 -1px -1px 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+}
 
 .neutral { background-color: #737373; }
 .primary { background-color: #0D3E3C; }
@@ -28,3 +36,6 @@
 }
 
 .pagebreak { page-break-after: always; } /* page-break-after works, as well */
+
+.left { float: left; }
+.right { float: right; }

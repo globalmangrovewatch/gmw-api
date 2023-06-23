@@ -5,14 +5,17 @@
     <title>Site Report</title>
   </head>
   <body>
+    
     <% @single_site.each do |site_row| %>
-      <h1 class="font-heading">
+      <h1 class="heading-invisible"><%= @pdf_landscape %> - <%= site_row['site_name'] %></h1>
+      <h2 class="font-heading">
         Landscape <%= @pdf_landscape %><br>
         Site: <%= site_row['site_name'] %>
-      </h1>
+      </h2>
     <% end %>
 
     <!-- Start of Registration Answers -->
+    <h3 class="heading-invisible">REGISTRATION</h3>
     <% @pdf_reg_answers.each do |category, questions| %>
       <h2><%= category %></h2>
       <% questions.each do |key, item| %>
@@ -48,9 +51,11 @@
     <% end %>
 
     <!-- Start of Monitoring Answers -->
-    <% @pdf_mon_answers.each do |uuid, values| %>
+    
+    <% @pdf_mon_answers.each do |uuid, values| %>      
       <h2><%= values["category"] %></h2>
       <h2>Date of Entry: <%= values["monitoring_date"] %></h2>
+      <h3 class="heading-invisible">MONITORING</h3>
       <% values["answers"].each do |key, item| %>
         <hr class="no-margin">
         <div class= "<%= cycle('white', 'mint') -%> question-padding">
