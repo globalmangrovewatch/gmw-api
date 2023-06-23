@@ -5,6 +5,8 @@ RSpec.describe "v2/report", type: :request do
     get("answers report") do
       tags "report"
       response(200, "successful") do
+        before { skip }
+        run_test!
       end
     end
   end
@@ -16,6 +18,9 @@ RSpec.describe "v2/report", type: :request do
     get("answers_by_site report") do
       tags "report"
       response(200, "successful") do
+        let(:site_id) { "123" }
+        before { skip }
+        run_test!
       end
     end
   end
@@ -31,6 +36,8 @@ RSpec.describe "v2/report", type: :request do
         description "An excel (xlsx) file."
         schema type: :file,
           properties: {}
+        before { skip }
+        run_test!
       end
     end
   end
