@@ -9,13 +9,13 @@
     <% @single_site.each do |site_row| %>
       <h1 class="heading-invisible"><%= @pdf_landscape %> - <%= site_row['site_name'] %></h1>
       <h2 class="font-heading">
-        Landscape <%= @pdf_landscape %><br>
+        Landscape: <%= @pdf_landscape %><br>
         Site: <%= site_row['site_name'] %>
       </h2>
     <% end %>
 
     <!-- Start of Registration Answers -->
-    <h3 class="heading-invisible">REGISTRATION</h3>
+    <h3 class="heading-invisible">REGISTRATION / INTERVENTION</h3>
     <% @pdf_reg_answers.each do |category, questions| %>
       <h2><%= category %></h2>
       <% questions.each do |key, item| %>
