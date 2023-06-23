@@ -5,7 +5,6 @@ RSpec.describe "v2/report", type: :request do
     get("answers report") do
       tags "report"
       response(200, "successful") do
-
       end
     end
   end
@@ -17,8 +16,6 @@ RSpec.describe "v2/report", type: :request do
     get("answers_by_site report") do
       tags "report"
       response(200, "successful") do
-
-
       end
     end
   end
@@ -34,7 +31,6 @@ RSpec.describe "v2/report", type: :request do
         description "An excel (xlsx) file."
         schema type: :file,
           properties: {}
-
       end
     end
   end
