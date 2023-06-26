@@ -65,11 +65,11 @@ Rails.application.routes.draw do
       patch "/organizations/:organization_id/users/:email", to: "organizations#update_user", constraints: {email: /[^\/]+/}
       delete "/organizations/:organization_id/users/:email", to: "organizations#remove_user", constraints: {email: /[^\/]+/}
 
-      get '/dashboard/sites', to: 'dashboard#sites'
+      get "/dashboard/sites", to: "dashboard#sites"
 
-      get '/report/answers', to: 'report#answers'
-      get '/report/answers/:site_id', to: 'report#answers_by_site'
-      get '/report/pdf/answers/:site_id', to: 'pdf_report#export_pdf_single_site', as: 'single_site'
+      get "/report/answers", to: "report#answers"
+      get "/report/answers/:site_id", to: "report#answers_by_site"
+      get "/report/answers_as_pdf/:site_id", to: "pdf_report#export_pdf_single_site", as: "single_site"
 
     end
   end
