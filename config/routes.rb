@@ -42,6 +42,7 @@ Rails.application.routes.draw do
       get "/widgets/sites", to: "widgets#sites"
       get "/widgets/flood_protection", to: "widgets#flood_protection"
       get "/widgets/national_dashboard", to: "widgets#national_dashboard"
+      get "/widgets/fisheries", to: "widgets#fisheries"
 
       ## Geometry file conversion
       post "/spatial_file/converter", to: "file_converter#convert"

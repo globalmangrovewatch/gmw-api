@@ -352,4 +352,10 @@ class V2::WidgetsController < ApiController
     @data = NationalDashboard.where location_id: @location_id
     @location_resources = LocationResource.where location_id: @location_id
   end
+
+  def fisheries
+    @location_id = params[:location_id]
+    @year = params[:year] || Fishery.maximum(:year) || Time.current.year
+    @data = Fishery.where location_id: @location_id, year: @year
+  end
 end

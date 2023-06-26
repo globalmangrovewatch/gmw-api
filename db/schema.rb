@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_07_115240) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_26_121116) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -99,6 +99,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_115240) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_ecosystem_services_on_location_id"
+  end
+
+  create_table "fisheries", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "indicator", null: false
+    t.string "category", null: false
+    t.float "value", null: false
+    t.integer "year", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_fisheries_on_location_id"
   end
 
   create_table "flood_protections", force: :cascade do |t|
@@ -365,6 +376,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_07_115240) do
   add_foreign_key "degradation_treemaps", "locations"
   add_foreign_key "drivers_of_changes", "locations"
   add_foreign_key "ecosystem_services", "locations"
+  add_foreign_key "fisheries", "locations"
   add_foreign_key "flood_protections", "locations"
   add_foreign_key "habitat_extents", "locations"
   add_foreign_key "international_statuses", "locations"
