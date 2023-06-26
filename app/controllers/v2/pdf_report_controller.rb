@@ -770,26 +770,26 @@ class V2::PdfReportController < MrttApiController
       end
     }
     monitoring_answers.each { |mon_answer|
-    @pdf_mon_answers[mon_answer["uuid"]]["monitoring_date"] = mon_answer["monitoring_date"].to_date.to_s
-      mon_answer["answers"].each { |question_id, answer_value|
-        if answer_value.present? || answer_value == false
+      @pdf_mon_answers[mon_answer["uuid"]]["monitoring_date"] = mon_answer["monitoring_date"].to_date.to_s
+        mon_answer["answers"].each { |question_id, answer_value|
+          if answer_value.present? || answer_value == false
 
-          if question_id == "10.4a"
-            question_id = "10.3a"
+            if question_id == "10.4a"
+              question_id = "10.3a"
+            end
+
+            if pdf_format.key?(question_id)
+              category = pdf_format[question_id]["category"]
+              @pdf_mon_answers[mon_answer["uuid"]]["category"] = category
+            end
+
+            pdf_answers = @pdf_mon_answers[mon_answer["uuid"]]["answers"]
+            site = @pdf_mon_answers[mon_answer["uuid"]]["answers"][question_id]
+
+            format_answers(site, question_id, answer_value, pdf_answers)
           end
-
-          if pdf_format.key?(question_id)
-            category = pdf_format[question_id]["category"]
-            @pdf_mon_answers[mon_answer["uuid"]]["category"] = category
-          end
-
-          pdf_answers = @pdf_mon_answers[mon_answer["uuid"]]["answers"]
-          site = @pdf_mon_answers[mon_answer["uuid"]]["answers"][question_id]
-
-          format_answers(site, question_id, answer_value, pdf_answers)
-        end
+        }
       }
-    }
   end
 
   # Sorts based on the desired order
@@ -892,20 +892,20 @@ class V2::PdfReportController < MrttApiController
     footer_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_footer.html")
 
     options = {
-      :margin_top => '0.7in',
-      :margin_right => '0.5in',
-      :margin_bottom => '0.7in',
-      :margin_left => '0.5in',
-      :enable_local_file_access => true,
-      :quiet => false,
-      :header_html => header_html_path,
-      :header_spacing => '5',
-      :footer_html => footer_html_path,
-      :footer_spacing => '2'
+      margin_top: "0.7in",
+      margin_right: "0.5in",
+      margin_bottom: "0.7in",
+      margin_left: "0.5in",
+      enable_local_file_access: true,
+      quiet: false,
+      header_html: header_html_path,
+      header_spacing: "5",
+      footer_html: footer_html_path,
+      footer_spacing: "2"
     }
 
     # Render the HTML template as a string
-    html = render_to_string(:template => 'v2/pdf_report/single_site', :formats => [:html])
+    html = render_to_string(template: "v2/pdf_report/single_site", formats: [:html])
 
     # Create a new PDFKit object and convert the HTML to a PDF file
     kit = PDFKit.new(html, options)
@@ -913,6 +913,6 @@ class V2::PdfReportController < MrttApiController
     pdf_file = kit.to_file("#{Rails.root}/tmp/single_site.pdf")
 
     # Send the generated PDF file as a download
-    send_file pdf_file.path, :type => 'application/pdf', :disposition => 'attachment', :filename => 'single_site.pdf'
+    send_file pdf_file.path, type: "application/pdf", disposition: "attachment", filename: "single_site.pdf"
   end
 end
