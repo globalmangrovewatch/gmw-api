@@ -96,7 +96,7 @@ class V2::PdfReportController < MrttApiController
         "name" => "What were the major cause(s) of mangrove loss or degradation at the site?",
         "type" => "4.2 4.3 causes",
         "category" => "Causes of Decline"
-      }, 
+      },
       "5.1" => {
         "name" => "Have mangroves naturally occurred at the site previously?",
         "type" => "string",
@@ -425,7 +425,6 @@ class V2::PdfReportController < MrttApiController
         "category" => "The Ecological Status and Outcomes"
       }
     }
-    return pdf_report_formatter
   end
 
   # Order for registration and intervention sections
@@ -455,10 +454,10 @@ class V2::PdfReportController < MrttApiController
       when "date"
         site[:value] = DateTime.parse(site[:value]).to_date.to_s
       when "boolean"
-        if site[:value]
-          site[:value] = "Yes"
+        site[:value] = if site[:value]
+          "Yes"
         else
-          site[:value] = "No"
+          "No"
         end
       when "multiselect"
         select_array = []
@@ -509,7 +508,7 @@ class V2::PdfReportController < MrttApiController
                 level_of_degradation = z["levelOfDegredation"]
                 causes_array.push("#{sub_cause_answer}, Level of Degredation: #{level_of_degradation}")
               }
-            }                    
+            }
           end
         }
         site[:value] = causes_array
@@ -578,10 +577,10 @@ class V2::PdfReportController < MrttApiController
           type = x["type"]
           count = x["count"]
           source = x["source"]
-          if x["purpose"]["other"].present?
-            purpose = "Other: " + x["purpose"]["other"]
+          purpose = if x["purpose"]["other"].present?
+            "Other: " + x["purpose"]["other"]
           else
-            purpose = x["purpose"]["purpose"]
+            x["purpose"]["purpose"]
           end
           planted_array.push([type, count, source, purpose])
         }
@@ -629,7 +628,7 @@ class V2::PdfReportController < MrttApiController
         site[:value].each { |x|
           outcome = []
           main_label = "Outcome: #{x["mainLabel"]}: #{x["secondaryLabel"]}"
-          sub_label = "#{x["child"]}"
+          sub_label = x["child"].to_s
           type = "- Type: #{x["type"]}"
           outcome.push(main_label, sub_label, type)
           if x["trend"].present?
@@ -645,12 +644,12 @@ class V2::PdfReportController < MrttApiController
           x["linkedAims"].each { |aim| outcome.push("-- #{aim}") }
           outcome.each { |y|
             outcomes_array.push(y)
-          }                    
+          }
         }
         site[:value] = outcomes_array
       when "10.3a area"
         area_array = []
-        if not site[:value].empty?
+        if !site[:value].empty?
           area_pre = "Area Pre-Intevention: #{site[:value]["areaPreIntervention"]} #{site[:value]["unitPre"]}"
           area_post = "Area Post-Intevention: #{site[:value]["areaPostIntervention"]} #{site[:value]["unitPost"]}"
           area_array.push(area_pre, area_post)
@@ -663,7 +662,7 @@ class V2::PdfReportController < MrttApiController
         site[:value].each { |x|
           outcome = []
           main_label = "Outcome #{x["mainLabel"]}: #{x["secondaryLabel"]}"
-          sub_label = "#{x["child"]}"
+          sub_label = x["child"].to_s
           type = "- #{x["indicator"]}: #{x["metric"]}"
           outcome.push(main_label, sub_label, type)
           if x["measurement"].present? || x["measurementComparison"].present?
@@ -675,14 +674,14 @@ class V2::PdfReportController < MrttApiController
           x["linkedAims"].each { |aim| outcome.push("-- #{aim}") }
           outcome.each { |y|
             outcomes_array.push(y)
-          }  
+          }
         }
         site[:value] = outcomes_array
       when "VOID"
         pdf_answers.delete(question_id)
       else
         site[:value] = ["TODO"]
-      end             
+      end
     end
   end
 
@@ -714,17 +713,20 @@ class V2::PdfReportController < MrttApiController
     # Instead of returning: insufficient_privilege && return
     # We restrict the sections instead
     @restricted_sections = []
-    if not (current_user.is_admin || current_user.is_member_of_any(organization_ids))
+    if !(current_user.is_admin || current_user.is_member_of_any(organization_ids))
       @restricted_sections = (
         site.section_data_visibility ?
-          site.section_data_visibility.map{|key, value| value == "private" ? key : nil }.select{|i| i != nil} :
-          []
+          site.section_data_visibility.map { |key, value|
+            value == "private" ? key : nil
+          }.select{ |i|
+            !i.nil?
+          } : []
       )
     end
 
     monitoring_events = {}
     site.monitoring_answers.each { |answer|
-      if not monitoring_events.key?(answer.uuid)
+      if !monitoring_events.key?(answer.uuid)
         monitoring_events[answer.uuid] = {
           "uuid" => answer.uuid,
           "form_type" => answer.form_type,
@@ -732,7 +734,7 @@ class V2::PdfReportController < MrttApiController
           "answers" => {}
         }
       end
-      if not @restricted_sections.include?(answer.question_id.split(".")[0])
+      if !@restricted_sections.include?(answer.question_id.split(".")[0])
         monitoring_events[answer.uuid]["answers"][answer.question_id] = answer.answer_value
       end
     }
@@ -793,7 +795,7 @@ class V2::PdfReportController < MrttApiController
   # Sorts based on the desired order
   def sort_answers
     # Sort registration answers by question value
-    @pdf_reg_answers.each { |key, value| 
+    @pdf_reg_answers.each { |key, value|
       @pdf_reg_answers[key] = value.sort
     }
     # Sort registration answers by section (Uses pdf_order by section)
@@ -801,7 +803,7 @@ class V2::PdfReportController < MrttApiController
     @pdf_reg_answers = category_order.map { |key|
       [key, @pdf_reg_answers[key]]
     }
-      
+
     # Sort monitoring answers by question value
     @pdf_mon_answers.each { |uuid, mon_list|
       mon_list["answers"] = mon_list["answers"].sort
@@ -819,7 +821,7 @@ class V2::PdfReportController < MrttApiController
   # GEOSPATIAL METHODS
   def generate_site_boundary_preview(geojson)
     url = nil
-    if geojson.present?         
+    if geojson.present?
       geojson = sanitize_geojson(geojson)
       geojson = CGI.escape(geojson)
       token = ENV["MAPBOX_ACCESS_TOKEN"]
@@ -849,7 +851,7 @@ class V2::PdfReportController < MrttApiController
   end
 
   def sanitize_geojson(geojson)
-    # ensure geojson is valid with respect to Right Hand Rule since 
+    # ensure geojson is valid with respect to Right Hand Rule since
     result = `echo '#{geojson.to_json}' | \
           ogr2ogr -f GeoJSON \
           -lco RFC7946=YES \
@@ -858,7 +860,7 @@ class V2::PdfReportController < MrttApiController
           /vsistdout/ \
           /vsistdin/`.gsub("\n", "")
                .gsub(" ", "")
-    # check child process exit 
+    # check child process exit
     if $?.exitstatus != 0
       result = ""
     end
@@ -869,13 +871,13 @@ class V2::PdfReportController < MrttApiController
     site = Site.find(params[:site_id])
     @pdf_reg_answers = Hash.new { |h, k| h[k] = h.dup.clear }
     @pdf_mon_answers = Hash.new { |h, k| h[k] = h.dup.clear }
-    
+
     # Single site used for title
     @single_site = []
-    site_row = {} 
-    
+    site_row = {}
+
     site_id, registration_intervention_answers, monitoring_answers, landscape = get_answers_by_site(site.id)
-    
+
     @pdf_landscape = landscape.landscape_name
 
     distribute_answers(registration_intervention_answers, monitoring_answers)
