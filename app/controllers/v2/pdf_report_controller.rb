@@ -762,11 +762,6 @@ class V2::PdfReportController < MrttApiController
 
                 pdf_answers = @pdf_reg_answers[category]
                 site = @pdf_reg_answers[category][reg_answer.question_id]
-                
-                # puts "Site: " + site.to_s
-                # puts "Question ID: " + question_id.to_s
-                # puts "Value " + answer_value.to_s
-                # puts "PDF Answers" + pdf_answers.to_s
 
                 format_answers(site, question_id, answer_value, pdf_answers)
             end
@@ -828,9 +823,6 @@ class V2::PdfReportController < MrttApiController
         }
         # @pdf_mon_answers = @pdf_mon_answers.sort { |uuid, mon_list|
         #     mon_list["answers"].sort_by {
-
-        #     }
-        # }
         
         # @pdf_mon_answers = @pdf_mon_answers.map { |key|
         #     [key, @pdf_reg_answers["answers"][key]]
@@ -839,11 +831,6 @@ class V2::PdfReportController < MrttApiController
         # @pdf_mon_answers = @pdf_mon_answers.sort_by { |uuid, mon_list|
         #     mon_list["answers"][:key]
         # }
-
-        category_order = pdf_order_by_section
-        # @pdf_reg_answers = @pdf_reg_answers.sort_by { |key, value| category_order[key] }
-        
-        # puts @pdf_reg_answers
 
         site_row["site_id"] = site.id
         site_row["site_name"] = site.site_name
@@ -860,22 +847,7 @@ class V2::PdfReportController < MrttApiController
         # }
         @single_site.push(site_row)
 
-        # Site.all.each { |site|
-        #     registration_intervention_answers.each { |answer|
-        #         site_row[answer.question_id] = answer.answer_value
-        #     }
-
-        #     # generate Mapbox url
-        #     # site_row["site_map"] = generate_mapbox_url(site_row["1.3"])
-
-            
-        # }
-
-        test_value = "REPORT"
-
         # Set up PDFKit options
-        # header_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_header.html")
-
         header_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_header.html")
         footer_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_footer.html")
 
@@ -886,17 +858,13 @@ class V2::PdfReportController < MrttApiController
             :margin_left => '0.5in',
             :enable_local_file_access => true,
             :quiet => false,
-            # :header_html => header_html_path,
             :header_html => header_html_path,
-            # :header_line => true,
             :header_spacing => '5',
             :footer_html => footer_html_path,
-            # :footer_right => "[page]",
             :footer_spacing => '2'
         }
 
         # Render the HTML template as a string
-        # html = render_to_string(:template => 'v2/pdf_report/sites.pdf', :formats => 'html', :layout => false)
         html = render_to_string(:template => 'v2/pdf_report/single_site', :formats => [:html])
 
         # Create a new PDFKit object and convert the HTML to a PDF file
@@ -906,11 +874,6 @@ class V2::PdfReportController < MrttApiController
 
         # Send the generated PDF file as a download
         send_file pdf_file.path, :type => 'application/pdf', :disposition => 'attachment', :filename => 'single_site.pdf'
-        # Render the HTML (temporary solution)
-        # render(:template => 'v2/pdf_report/single_site', :formats => [:html])
-        # html = render_to_string(:template => 'v2/pdf_report/single_site', :formats => [:html])
-        # kit = PDFKit.new(html, :page_size => 'Letter')
-        # pdf = kit.to_pdf
     end
 
     def export_pdf
