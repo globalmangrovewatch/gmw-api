@@ -23,27 +23,39 @@
         <div class= "<%= cycle('white', 'mint') -%> question-padding">
           <table>   
             <tr class="question-row-alignment">
-              <td class="td-padding"><%= key %></td>          
+              <td class="question-number"><%= key %></td>          
               <td><b><%= item[:name] %></b></td>
             </tr>
-            <% item[:value].each do |x| %>
+            <% if item[:value].is_a?(String) -%>
               <tr>
                 <td></td>
-                <% if x.class == Hash -%>
-                  <td>
-                    <% x.each do |key, value| -%>
-                      <b><%= key.capitalize -%>:</b> <%= value -%>
-                    <% end -%>
-                  </td>
-                <%  elsif x.class == String &&  x.start_with?("#{Rails.root}/tmp/") -%>
-                  <td>
-                    <img src="<%= x -%>" alt="site boundary"/>
-                  </td>
-                <% else -%>
-                  <td><%= x %></td>
-                <% end -%>
+                <td><%= item[:value] -%></td>
               </tr>
-            <% end %>
+            <% elsif item[:value].is_a?(Array) -%>
+              <tr>
+                <td></td>
+                <td>
+                  <table class="answers-table">
+                    <% item[:value].each do |x| %>
+                      <% if x.class == Hash -%>
+                        <tr>
+                          <td>&bull;</td>
+                          <% x.each do |key, value| -%>
+                            <td>
+                              <b><%= key.capitalize -%>:</b> <%= value -%>
+                            </td>
+                          <% end -%>
+                        </tr>
+                      <%  elsif x.class == String &&  x.start_with?("#{Rails.root}/tmp/") -%>
+                        <img src="<%= x -%>" alt="site boundary"/>
+                      <% else -%>
+                        <li><%= x %></li>
+                      <% end -%>
+                    <% end %>
+                  </table>
+                </td>
+              </tr>
+            <% end -%>
           </table>
         </div>
       <% end %>
@@ -51,7 +63,7 @@
     <% end %>
 
     <!-- Start of Monitoring Answers -->
-    
+
     <% @pdf_mon_answers.each do |uuid, values| %>      
       <h2><%= values["category"] %></h2>
       <h2>Date of Entry: <%= values["monitoring_date"] %></h2>
@@ -60,24 +72,38 @@
         <hr class="no-margin">
         <div class= "<%= cycle('white', 'mint') -%> question-padding">
           <table>   
-            <tr>
-              <td class="td-padding"><%= key %></td>          
+            <tr class="question-row-alignment">
+              <td class="question-number"><%= key %></td>          
               <td><b><%= item[:name] %></b></td>
             </tr>
-            <% item[:value].each do |x| %>
+            <% if item[:value].is_a?(String) -%>
               <tr>
                 <td></td>
-                <% if x.class == Hash -%>
-                  <td>
-                    <% x.each do |key, value| -%>
-                      <b><%= key.capitalize -%>:</b> <%= value -%>, 
-                    <% end -%>
-                  </td>
-                <% else -%>
-                  <td><%= x %></td>
-                <% end -%>
+                <td><%= item[:value] -%></td>
               </tr>
-            <% end %>
+            <% elsif item[:value].is_a?(Array) -%>
+              <tr>
+                <td></td>
+                <td>
+                  <table class="answers-table">
+                    <% item[:value].each do |x| %>
+                      <% if x.class == Hash -%>
+                        <tr>
+                          <td>&bull;</td>
+                          <% x.each do |key, value| -%>
+                            <td>
+                              <b><%= key.capitalize -%>:</b> <%= value -%>
+                            </td>
+                          <% end -%>
+                        </tr>
+                      <% else -%>
+                        <li><%= x %></li>
+                      <% end -%>
+                    <% end %>
+                  </table>
+                </td>
+              </tr>
+            <% end -%>
           </table>
         </div>
       <% end %>
