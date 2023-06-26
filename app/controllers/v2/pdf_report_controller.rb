@@ -447,16 +447,16 @@ class V2::PdfReportController < MrttApiController
             site[:name] = pdf_format[question_id]["name"]
             case pdf_format[question_id]["type"]
             when "string"
-                site[:value] = [answer_value.to_s]
+                site[:value] = answer_value.to_s
             when "list"
                 site[:value] = answer_value
             when "date"
-                site[:value] = [DateTime.parse(site[:value]).to_date.to_s]
+                site[:value] = DateTime.parse(site[:value]).to_date.to_s
             when "boolean"
                 if site[:value]
-                    site[:value] = ["Yes"]
+                    site[:value] = "Yes"
                 else
-                    site[:value] = ["No"]
+                    site[:value] = "No"
                 end
             when "multiselect"
                 select_array = []
@@ -534,7 +534,7 @@ class V2::PdfReportController < MrttApiController
                 site[:value].each { |x|
                     stakeholder = x["stakeholder"]
                     stakeholder_type = x["stakeholderType"]
-                    stakeholder_array.push("Name: #{stakeholder}, Type: #{stakeholder_type}")
+                    stakeholder_array.push({name: stakeholder, type: stakeholder_type})
                 }
                 site[:value] = stakeholder_array
             # TODO - needs testing
@@ -592,7 +592,7 @@ class V2::PdfReportController < MrttApiController
                     funder_name = x["funderName"]
                     funder_type = x["funderType"]
                     percentage = x["percentage"]
-                    funders_array.push([funder_name, funder_type, percentage])
+                    funders_array.push({name: funder_name, type: funder_type, percent: percentage})
                 }
                 site[:value] = funders_array
             when "7.4 cost total"
@@ -606,7 +606,7 @@ class V2::PdfReportController < MrttApiController
                         cost_type = x["costType"]
                         cost = x["cost"]
                         currency = x["currency"]
-                        cost_array.push("#{cost_type}, #{cost}#{currency}")
+                        cost_array.push({type: cost_type, cost: "#{cost}#{currency}"})
                     end
                 }
                 if cost_array.empty?
