@@ -1,4 +1,5 @@
 class V2::PdfReportController < MrttApiController
+    # This method could be transferred to it's own file. It is the main way question types are determined
     def pdf_report_formatter
         pdf_report_formatter = {
             "1.1a" => { 
@@ -424,7 +425,10 @@ class V2::PdfReportController < MrttApiController
                 "category" => "The Ecological Status and Outcomes"
             }
         }
-    
+        return pdf_report_formatter
+    end
+
+    # Order for registration and intervention sections
     def pdf_order_by_section
         pdf_order_by_section = [
             "Site Details and Location",
@@ -437,9 +441,7 @@ class V2::PdfReportController < MrttApiController
         ]
     end
 
-        return pdf_report_formatter
-    end
-
+    # Where the main formatting of answers happens, determines what is to be passed to the html
     def format_answers(site, question_id, answer_value, pdf_answers)
         pdf_format = pdf_report_formatter
         if pdf_format.key?(question_id)
@@ -681,12 +683,10 @@ class V2::PdfReportController < MrttApiController
             else
                 site[:value] = ["TODO"]
             end             
-        
-        else
-            
         end
     end
 
+    # Methods answers_by_site, answers, get_answers_by_site, report_params originally from other controllers
     def answers_by_site
         site_id = report_params[:site_id]
         @site_id, @registration_intervention_answers, @monitoring_answers = get_answers_by_site(site_id)
@@ -748,7 +748,8 @@ class V2::PdfReportController < MrttApiController
         params.except(:format, :site).permit(:site_id)
     end
 
-    def sort_answers(registration_intervention_answers, monitoring_answers)
+    # Distributes and sets up the dictionary of each question/answer to send to format answers
+    def distribute_answers(registration_intervention_answers, monitoring_answers)
         pdf_format = pdf_report_formatter
         registration_intervention_answers.each { |reg_answer|
             if reg_answer.answer_value.present? || reg_answer.answer_value == false
@@ -789,137 +790,33 @@ class V2::PdfReportController < MrttApiController
         }
     end
 
-    def export_pdf_single_site
-        site = Site.find(params[:site_id])
-        @pdf_reg_answers = Hash.new { |h, k| h[k] = h.dup.clear }
-        @pdf_mon_answers = Hash.new { |h, k| h[k] = h.dup.clear }
-        @single_site = []
-        @answer_array = []
-        site_row = {}
-        
-        site_id, registration_intervention_answers, monitoring_answers, landscape = get_answers_by_site(site.id)
-        # answers = monitoring_answers.uuid
-        
-        # puts pdf_format
-        @pdf_landscape = landscape.landscape_name
-        sort_answers(registration_intervention_answers, monitoring_answers)
-
+    # Sorts based on the desired order
+    def sort_answers
+        # Sort registration answers by question value
         @pdf_reg_answers.each { |key, value| 
             @pdf_reg_answers[key] = value.sort
         }
+        # Sort registration answers by section (Uses pdf_order by section)
         category_order = pdf_order_by_section
         @pdf_reg_answers = category_order.map { |key|
             [key, @pdf_reg_answers[key]]
         }
-              
+            
+        # Sort monitoring answers by question value
         @pdf_mon_answers.each { |uuid, mon_list|
             mon_list["answers"] = mon_list["answers"].sort
         }
+        # Sort monitoring answers by monitoring date
         @pdf_mon_answers = @pdf_mon_answers.sort_by { |uuid, mon_list|
             mon_list["monitoring_date"]
         }
+        # Sort monitoring answers by category
         @pdf_mon_answers = @pdf_mon_answers.sort_by { |uuid, mon_list|
             mon_list["category"]
         }
-        # @pdf_mon_answers = @pdf_mon_answers.sort { |uuid, mon_list|
-        #     mon_list["answers"].sort_by {
-        
-        # @pdf_mon_answers = @pdf_mon_answers.map { |key|
-        #     [key, @pdf_reg_answers["answers"][key]]
-        # }
-        
-        # @pdf_mon_answers = @pdf_mon_answers.sort_by { |uuid, mon_list|
-        #     mon_list["answers"][:key]
-        # }
-
-        site_row["site_id"] = site.id
-        site_row["site_name"] = site.site_name
-
-        # puts site_row["1.3"]
-
-        # answers.each { |answer|
-        #     site_row[answer.question_id] = answer.answers
-        #     puts answers.question_id
-        # }
-        # site.monitoring_answers.each { |answer|
-        #     item["answer_value"] = answer.uuid
-        #     @answer_array.push(item)
-        # }
-        @single_site.push(site_row)
-
-        # Set up PDFKit options
-        header_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_header.html")
-        footer_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_footer.html")
-
-        options = {
-            :margin_top => '0.7in',
-            :margin_right => '0.5in',
-            :margin_bottom => '0.7in',
-            :margin_left => '0.5in',
-            :enable_local_file_access => true,
-            :quiet => false,
-            :header_html => header_html_path,
-            :header_spacing => '5',
-            :footer_html => footer_html_path,
-            :footer_spacing => '2'
-        }
-
-        # Render the HTML template as a string
-        html = render_to_string(:template => 'v2/pdf_report/single_site', :formats => [:html])
-
-        # Create a new PDFKit object and convert the HTML to a PDF file
-        kit = PDFKit.new(html, options)
-        kit.stylesheets << "#{Rails.root}/app/assets/stylesheets/pdf_report.css"
-        pdf_file = kit.to_file("#{Rails.root}/tmp/single_site.pdf")
-
-        # Send the generated PDF file as a download
-        send_file pdf_file.path, :type => 'application/pdf', :disposition => 'attachment', :filename => 'single_site.pdf'
     end
 
-    def export_pdf
-        @all_site_rows = []
-        Site.all.each { |site|
-            site_row = {}
-            site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id)
-
-            site_row["site_id"] = site.id
-            site_row["site_name"] = site.site_name
-
-            # registration_intervention_answers.each { |answer|
-            #     site_row[answer.question_id] = answer.answer_value
-            # }
-
-            # generate Mapbox url
-            site_row["site_map"] = generate_mapbox_url(site_row["1.3"])
-            puts site_row["1.3"]
-
-            @all_site_rows.push(site_row)
-        }
-
-        # Set up PDFKit options
-        options = {
-            :margin_top => '0.5in',
-            :margin_right => '0.5in',
-            :margin_bottom => '0.5in',
-            :margin_left => '0.5in'
-        }
-
-        # Render the HTML template as a string
-        # html = render_to_string(:template => 'v2/pdf_report/sites.pdf', :formats => 'html', :layout => false)
-        html = render_to_string(:template => 'v2/pdf_report/sites', :formats => [:html])
-        # render(:template => 'v2/pdf_report/sites', :formats => [:html])
-        # Create a new PDFKit object and convert the HTML to a PDF file
-        # File.write("#{Rails.root}/tmp/sites.pdf", '')
-        pdf_file = PDFKit.new(html, options).to_file("#{Rails.root}/tmp/sites.pdf")
-        # kit = PDFKit.new(html, :page_size => 'Letter')
-        # pdf = kit.to_pdf
-        # file = kit.to_file("#{Rails.root}/tmp/sites.pdf")
-
-        # Send the generated PDF file as a download
-        send_file pdf_file.path, :type => 'application/pdf', :disposition => 'attachment', :filename => 'sites.pdf'
-        # send_data(pdf, type: 'application/pdf', disposition: 'attachment', filename: 'sites.pdf')
-    end
-
+    # GEOSPATIAL METHODS
     def generate_site_boundary_preview(geojson)
         url = nil
         if geojson.present?         
@@ -966,5 +863,54 @@ class V2::PdfReportController < MrttApiController
             result = ""
         end
         return result
+    end
+
+    def export_pdf_single_site
+        site = Site.find(params[:site_id])
+        @pdf_reg_answers = Hash.new { |h, k| h[k] = h.dup.clear }
+        @pdf_mon_answers = Hash.new { |h, k| h[k] = h.dup.clear }
+        
+        # Single site used for title
+        @single_site = []
+        site_row = {} 
+        
+        site_id, registration_intervention_answers, monitoring_answers, landscape = get_answers_by_site(site.id)
+        
+        @pdf_landscape = landscape.landscape_name
+
+        distribute_answers(registration_intervention_answers, monitoring_answers)
+        sort_answers
+
+        site_row["site_id"] = site.id
+        site_row["site_name"] = site.site_name
+        @single_site.push(site_row)
+
+        # Set up PDFKit options
+        header_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_header.html")
+        footer_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_footer.html")
+
+        options = {
+            :margin_top => '0.7in',
+            :margin_right => '0.5in',
+            :margin_bottom => '0.7in',
+            :margin_left => '0.5in',
+            :enable_local_file_access => true,
+            :quiet => false,
+            :header_html => header_html_path,
+            :header_spacing => '5',
+            :footer_html => footer_html_path,
+            :footer_spacing => '2'
+        }
+
+        # Render the HTML template as a string
+        html = render_to_string(:template => 'v2/pdf_report/single_site', :formats => [:html])
+
+        # Create a new PDFKit object and convert the HTML to a PDF file
+        kit = PDFKit.new(html, options)
+        kit.stylesheets << "#{Rails.root}/app/assets/stylesheets/pdf_report.css"
+        pdf_file = kit.to_file("#{Rails.root}/tmp/single_site.pdf")
+
+        # Send the generated PDF file as a download
+        send_file pdf_file.path, :type => 'application/pdf', :disposition => 'attachment', :filename => 'single_site.pdf'
     end
 end
