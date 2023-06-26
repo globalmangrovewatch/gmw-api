@@ -1,5 +1,5 @@
 # Create an MRTT admin
-# Sample usage: 
+# Sample usage:
 #   $ rails runner db/create_admin.rb "Angelo (admin)" "angelo@sparkgeo.com" "some-password"
 name = ARGV[0]
 email = ARGV[1]
@@ -12,18 +12,18 @@ if email_exists
 end
 
 admin = User.new({
-    name: name,
-    email: email,
-    password: password,
-    password_confirmation: password,
-  })
+  name: name,
+  email: email,
+  password: password,
+  password_confirmation: password
+})
 admin.toggle!(:admin)
 
 if admin.valid?
-  admin.save()
+  admin.save
 elsif admin.errors.any?
   admin.errors.full_messages.each do |msg|
-  puts msg
+    puts msg
   end
 else
   puts "Unknown error happened while creating an admin user."
