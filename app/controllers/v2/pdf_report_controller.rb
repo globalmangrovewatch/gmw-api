@@ -497,7 +497,7 @@ class V2::PdfReportController < MrttApiController
             x["mainCauseAnswers"].each { |y|
               main_cause_answer = y["mainCauseAnswer"]
               level_of_degradation = y["levelOfDegredation"]
-              causes_array.push("#{main_cause_answer}, Level of Degredation: #{level_of_degradation}")
+              causes_array.push("#{main_cause_answer}, Impact: #{level_of_degradation}")
             }
           end
           if x["subCauses"].present?
@@ -506,7 +506,7 @@ class V2::PdfReportController < MrttApiController
               y["subCauseAnswers"].each { |z|
                 sub_cause_answer = z["subCauseAnswer"]
                 level_of_degradation = z["levelOfDegredation"]
-                causes_array.push("#{sub_cause_answer}, Level of Degredation: #{level_of_degradation}")
+                causes_array.push("#{sub_cause_answer}, Impact: #{level_of_degradation}")
               }
             }
           end
