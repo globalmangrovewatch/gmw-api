@@ -845,8 +845,9 @@ class V2::PdfReportController < MrttApiController
 
   def sanitize_geojson(geojson)
     # ensure geojson is valid with respect to Right Hand Rule since
+    geojson_to_json = geojson.to_json.delete("\\")
     result = %x(
-          echo '#{geojson.to_json}' | \
+          echo '#{geojson_to_json}' | \
           ogr2ogr -f GeoJSON \
           -lco RFC7946=YES \
           -lco COORDINATE_PRECISION=5 \
