@@ -848,14 +848,15 @@ class V2::PdfReportController < MrttApiController
 
   def sanitize_geojson(geojson)
     # ensure geojson is valid with respect to Right Hand Rule since
-    result = %x(
-            echo '#{geojson.to_json}' | \
-            ogr2ogr -f GeoJSON \
-            -lco RFC7946=YES \
-            -lco COORDINATE_PRECISION=5 \
-            -makevalid \
-            /vsistdout/ \
-            /vsistdin/).delete("\n").delete(" ")
+    # result = %x(
+    #         echo '#{geojson.to_json}' | \
+    #         ogr2ogr -f GeoJSON \
+    #         -lco RFC7946=YES \
+    #         -lco COORDINATE_PRECISION=5 \
+    #         -makevalid \
+    #         /vsistdout/ \
+    #         /vsistdin/).delete("\n").delete(" ")
+    result = geojson # dummy line for now
     # check child process exit
     if $?.exitstatus != 0
       result = ""
