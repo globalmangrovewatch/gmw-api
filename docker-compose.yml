@@ -4,7 +4,6 @@ services:
     image: postgis/postgis:11-3.3-alpine
     volumes:
       - ./tmp/db:/var/lib/postgresql/data:z
-      - ./database.sql:/tmp/database.sql
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
