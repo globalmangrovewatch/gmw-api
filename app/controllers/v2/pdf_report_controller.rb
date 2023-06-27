@@ -856,8 +856,7 @@ class V2::PdfReportController < MrttApiController
             -makevalid \
             /vsistdout/ \
             /vsistdin/).delete("\n").delete(" ")
-
-            # check child process exit
+    # check child process exit
     if $?.exitstatus != 0
       result = ""
     end
