@@ -1,24 +1,55 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
+<!-- Taken from wkhtmltopdf docs at https://wkhtmltopdf.org/usage/wkhtmltopdf.txt -->
 <html>
-<head>
+  <head>
     <script>
-        function subst() {
-        var vars={};
-        var x=document.location.search.substring(1).split('&');
-        for(var i in x) {var z=x[i].split('=',2);vars[z[0]] = unescape(z[1]);}
-        var x=['frompage','topage','page','webpage','section','subsection','subsubsection'];
-            for(var i in x) {
-                var y = document.getElementsByClassName(x[i]);
-                for(var j=0; j<y.length; ++j) y[j].textContent = vars[x[i]];
-            }
+      function subst() {
+        var vars = {};
+        var query_strings_from_url = document.location.search
+          .substring(1)
+          .split("&");
+        for (var query_string in query_strings_from_url) {
+          if (query_strings_from_url.hasOwnProperty(query_string)) {
+            var temp_var = query_strings_from_url[query_string].split("=", 2);
+            vars[temp_var[0]] = decodeURI(temp_var[1]);
+          }
         }
+        var css_selector_classes = [
+          "page",
+          "frompage",
+          "topage",
+          "webpage",
+          "section",
+          "subsection",
+          "date",
+          "isodate",
+          "time",
+          "title",
+          "doctitle",
+          "sitepage",
+          "sitepages",
+        ];
+        for (var css_class in css_selector_classes) {
+          if (css_selector_classes.hasOwnProperty(css_class)) {
+            var element = document.getElementsByClassName(
+              css_selector_classes[css_class]
+            );
+            for (var j = 0; j < element.length; ++j) {
+              element[j].textContent = vars[css_selector_classes[css_class]];
+            }
+          }
+        }
+      }
     </script>
-</head>
-<body style="border:0; margin: 0;" onload="subst()">
+  </head>
+  <body style="border: 0; margin: 0" onload="subst()">
     <table style="border-bottom: 1px solid black; width: 100%">
-        <tr>
-                <td><span class="subsubsection"></span></td>
-                <td style="text-align:right"><span class="section"></span></td>
-        </tr>
-</header>
+      <tr>
+        <td class="subsection"></td>
+        <td style="text-align: right">
+          <span class="section"></span>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

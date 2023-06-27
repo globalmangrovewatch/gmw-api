@@ -624,29 +624,24 @@ class V2::PdfReportController < MrttApiController
         }
         site[:value] = cost_array
       when "9.4 social outcomes"
-        outcomes_array = []
+        outcomes_hash = {
+          "question" => "9.4",
+          "answers" => []
+        }
         site[:value].each { |x|
-          outcome = []
-          main_label = "Outcome: #{x["mainLabel"]}: #{x["secondaryLabel"]}"
           sub_label = x["child"].to_s
-          type = "- Type: #{x["type"]}"
-          outcome.push(main_label, sub_label, type)
+          current_outcome = {"main_label" => "#{x["mainLabel"]}: #{x["secondaryLabel"]}", "sub_label" => sub_label, "data" => {"type" => x["type"]}}
           if x["trend"].present?
-            trend = "- Trend: #{x["trend"]}"
-            outcome.push(trend)
+            current_outcome["data"]["trend"] = x["trend"]
           end
           if x["measurement"].present?
-            measurement = "- Measurement: #{x["measurement"]} #{x["unit"]}"
-            comparison = "- Comparison: #{x["comparison"]} = #{x["value"]}"
-            outcome.push(measurement, comparison)
+            current_outcome["data"]["measurement"] = "#{x["measurement"]} #{x["unit"]}"
+            current_outcome["data"]["comparison"] = "#{x["comparison"]} = #{x["value"]}"
           end
-          outcome.push("- Linked aims:")
-          x["linkedAims"].each { |aim| outcome.push("-- #{aim}") }
-          outcome.each { |y|
-            outcomes_array.push(y)
-          }
+          current_outcome["data"]["linked aims"] = x["linkedAims"]
+          outcomes_hash["answers"].push(current_outcome)
         }
-        site[:value] = outcomes_array
+        site[:value] = outcomes_hash
       when "10.3a area"
         area_array = []
         if !site[:value].empty?
@@ -658,25 +653,21 @@ class V2::PdfReportController < MrttApiController
           pdf_answers.delete(question_id)
         end
       when "10.7 eco outcomes"
-        outcomes_array = []
-        site[:value].each { |x|
-          outcome = []
-          main_label = "Outcome #{x["mainLabel"]}: #{x["secondaryLabel"]}"
-          sub_label = x["child"].to_s
-          type = "- #{x["indicator"]}: #{x["metric"]}"
-          outcome.push(main_label, sub_label, type)
-          if x["measurement"].present? || x["measurementComparison"].present?
-            measurement = "- Measurement: #{x["measurement"]} #{x["unit"]}"
-            comparison = "- Comparison: #{x["comparison"]} = #{x["measurementComparison"]}"
-            outcome.push(measurement, comparison)
-          end
-          outcome.push("- Linked aims:")
-          x["linkedAims"].each { |aim| outcome.push("-- #{aim}") }
-          outcome.each { |y|
-            outcomes_array.push(y)
-          }
+        outcomes_hash = {
+          "question" => "10.7",
+          "answers" => []
         }
-        site[:value] = outcomes_array
+        site[:value].each { |x|
+          sub_label = x["child"].to_s
+          current_outcome = {"main_label" => "#{x["mainLabel"]}: #{x["secondaryLabel"]}", "sub_label" => sub_label, "data" => {"type" => "#{x["indicator"]}: #{x["metric"]}"}}
+          if x["measurement"].present? || x["measurementComparison"].present?
+            current_outcome["data"]["measurement"] = "#{x["measurement"]} #{x["unit"]}"
+            current_outcome["data"]["comparison"] = "#{x["comparison"]} = #{x["measurementComparison"]}"
+          end
+          current_outcome["data"]["linked aims"] = x["linkedAims"]
+          outcomes_hash["answers"].push(current_outcome)
+        }
+        site[:value] = outcomes_hash
       when "VOID"
         pdf_answers.delete(question_id)
       else
@@ -861,8 +852,7 @@ class V2::PdfReportController < MrttApiController
           -lco COORDINATE_PRECISION=5 \
           -makevalid \
           /vsistdout/ \
-          /vsistdin/
-          ).delete("\n").delete(" ")
+          /vsistdin/).delete("\n").delete(" ")
     # check child process exit
     if $?.exitstatus != 0
       result = ""
@@ -888,7 +878,7 @@ class V2::PdfReportController < MrttApiController
 
     site_row["site_id"] = site.id
     site_row["site_name"] = site.site_name
-    @single_site.push(site_row)
+    @single_site = site_row
 
     # Set up PDFKit options
     header_html_path = URI("#{Rails.root}/app/views/v2/pdf_report/single_site_header.html")

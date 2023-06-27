@@ -6,18 +6,14 @@
   </head>
   <body>
     
-    <% @single_site.each do |site_row| %>
-      <h1 class="heading-invisible"><%= @pdf_landscape %> - <%= site_row['site_name'] %></h1>
-      <h2 class="font-heading">
-        Landscape: <%= @pdf_landscape %><br>
-        Site: <%= site_row['site_name'] %>
-      </h2>
-    <% end %>
+    <h1 class="heading-invisible">
+      Landscape: <%= @pdf_landscape %> - Site: <%= @single_site['site_name'] %>
+    </h1>
 
     <!-- Start of Registration Answers -->
-    <h3 class="heading-invisible">REGISTRATION / INTERVENTION</h3>
+    <h2 class="heading-invisible">REGISTRATION / INTERVENTION</h2>
     <% @pdf_reg_answers.each do |category, questions| %>
-      <h2><%= category %></h2>
+      <div class="h2-heading"><%= category %></div>
       <% questions.each do |key, item| %>
         <hr class="no-margin">
         <div class= "<%= cycle('white', 'mint') -%> question-padding">
@@ -65,9 +61,9 @@
     <!-- Start of Monitoring Answers -->
 
     <% @pdf_mon_answers.each do |uuid, values| %>      
-      <h2><%= values["category"] %></h2>
-      <h2>Date of Entry: <%= values["monitoring_date"] %></h2>
-      <h3 class="heading-invisible">MONITORING</h3>
+      <div class="h2-heading"><%= values["category"] %></div>
+      <div class="h2-heading">Date of Entry: <%= values["monitoring_date"] %></div>
+      <h2 class="heading-invisible">MONITORING</h2>
       <% values["answers"].each do |key, item| %>
         <hr class="no-margin">
         <div class= "<%= cycle('white', 'mint') -%> question-padding">
@@ -101,6 +97,34 @@
                       <% end -%>
                     <% end %>
                   </table>
+                </td>
+              </tr>
+            <% elsif item[:value].is_a?(Hash) -%>
+              <tr>
+                <td></td>
+                <td>
+                  <% item[:value]["answers"].each do |answer| -%>
+                    <p><b><%= answer["main_label"] -%></b></p>
+                    <p><%= answer["sub_label"] -%></p>
+                    <table class="answers-table">
+                      <% answer["data"].each do |key, value| -%>
+                        <tr>
+                          <td>
+                            <%= key.capitalize -%>:
+                          </td>
+                          <td>
+                            <% if value.is_a?(Array) -%>
+                              <% value.each do |nested_value| -%>
+                                <%= nested_value -%><br>
+                              <% end -%>
+                            <% else -%>
+                              <%= value -%>
+                            <% end -%>
+                          </td>
+                        </tr>
+                      <% end -%>
+                    </table>
+                  <% end -%>
                 </td>
               </tr>
             <% end -%>
