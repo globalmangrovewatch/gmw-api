@@ -40,6 +40,8 @@ Rails.application.routes.draw do
       get "/widgets/drivers_of_change", to: "widgets#drivers_of_change"
       get "/widgets/sites_filters", to: "widgets#sites_filters"
       get "/widgets/sites", to: "widgets#sites"
+      get "/widgets/flood_protection", to: "widgets#flood_protection"
+      get "/widgets/national_dashboard", to: "widgets#national_dashboard"
 
       ## Geometry file conversion
       post "/spatial_file/converter", to: "file_converter#convert"
@@ -70,6 +72,10 @@ Rails.application.routes.draw do
       get "/report/answers", to: "report#answers"
       get "/report/answers/:site_id", to: "report#answers_by_site"
       get "/report/answers_as_pdf/:site_id", to: "pdf_report#export_pdf_single_site", as: "single_site"
+      get "/report/answers_as_xlsx", to: "report#answers_as_xlsx"
+
+      get "/report/answers", to: "report#answers"
+      get "/report/answers/:site_id", to: "report#answers_by_site"
     end
   end
 end

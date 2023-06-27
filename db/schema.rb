@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_15_102127) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_07_115240) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -101,6 +101,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_15_102127) do
     t.index ["location_id"], name: "index_ecosystem_services_on_location_id"
   end
 
+  create_table "flood_protections", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "indicator", null: false
+    t.string "period", null: false
+    t.float "value", null: false
+    t.string "unit", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id", "indicator", "period"], name: "index_flood_protections_on_location_id_and_indicator_and_period", unique: true
+    t.index ["location_id"], name: "index_flood_protections_on_location_id"
+  end
+
   create_table "habitat_extents", force: :cascade do |t|
     t.bigint "location_id", null: false
     t.enum "indicator", default: "habitat_extent_area", null: false, enum_type: "habitat_extent_indicators"
@@ -140,6 +152,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_15_102127) do
     t.datetime "updated_at", null: false
     t.index ["landscape_id"], name: "index_landscapes_organizations_on_landscape_id"
     t.index ["organization_id"], name: "index_landscapes_organizations_on_organization_id"
+  end
+
+  create_table "location_resources", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "link"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_location_resources_on_location_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -204,6 +226,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_15_102127) do
     t.string "uuid"
     t.string "form_type"
     t.index ["site_id"], name: "index_monitoring_answers_on_site_id"
+  end
+
+  create_table "national_dashboards", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "source"
+    t.string "indicator", null: false
+    t.integer "year", null: false
+    t.float "value", null: false
+    t.string "layer_info"
+    t.string "layer_link"
+    t.string "download_link"
+    t.string "unit", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_national_dashboards_on_location_id"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -327,13 +364,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_15_102127) do
   add_foreign_key "degradation_treemaps", "locations"
   add_foreign_key "drivers_of_changes", "locations"
   add_foreign_key "ecosystem_services", "locations"
+  add_foreign_key "flood_protections", "locations"
   add_foreign_key "habitat_extents", "locations"
   add_foreign_key "international_statuses", "locations"
   add_foreign_key "landscapes_organizations", "landscapes"
   add_foreign_key "landscapes_organizations", "organizations"
+  add_foreign_key "location_resources", "locations"
   add_foreign_key "mangrove_data", "locations"
   add_foreign_key "mitigation_potentials", "locations"
   add_foreign_key "monitoring_answers", "sites"
+  add_foreign_key "national_dashboards", "locations"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "registration_intervention_answers", "sites"

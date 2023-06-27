@@ -25,6 +25,7 @@ module MangroveAtlasApi
     config.load_defaults 7.0
     config.autoload_paths << Rails.root.join("lib")
     config.eager_load_paths << Rails.root.join("lib")
+    config.data_types = config_for(:answers_types)
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

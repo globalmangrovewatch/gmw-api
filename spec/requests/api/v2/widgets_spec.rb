@@ -96,9 +96,10 @@ RSpec.describe "API V2 Widgets", type: :request do
       produces "application/json"
       parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
 
-      let(:location) { create :location }
-      let!(:specie_1) { create :specie, locations: [location] }
-      let!(:specie_2) { create :specie }
+      let(:location_1) { create :location }
+      let(:location_2) { create :location }
+      let!(:specie_1) { create :specie, locations: [location_1] }
+      let!(:specie_2) { create :specie, locations: [location_2] }
 
       response 200, "Success" do
         schema type: :object,
@@ -114,7 +115,7 @@ RSpec.describe "API V2 Widgets", type: :request do
           }
 
         context "when location_id is used" do
-          let(:location_id) { location.id }
+          let(:location_id) { location_1.id }
 
           run_test!
 
@@ -124,6 +125,7 @@ RSpec.describe "API V2 Widgets", type: :request do
 
           it "returns correct id of found record" do
             expect(response_json["data"]["species"].pluck("id")).to eq([specie_1.id])
+            expect(response_json["metadata"]["worldwide_total"]).to eq(2)
           end
         end
 
@@ -132,6 +134,11 @@ RSpec.describe "API V2 Widgets", type: :request do
 
           it "matches snapshot" do
             expect(response.body).to match_snapshot("api/v2/widgets/biodiversity_get_worldwide")
+          end
+
+          it "returns correct id of found records" do
+            expect(response_json["data"]["species"].pluck("id")).to eq([specie_1.id, specie_2.id])
+            expect(response_json["metadata"]["worldwide_total"]).to eq(2)
           end
         end
       end
@@ -423,6 +430,7 @@ RSpec.describe "API V2 Widgets", type: :request do
       consumes "application/json"
       produces "application/json"
       parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
+      parameter name: :slug, in: :query, type: :string, description: "Slug of the ecosystem service. Default: all", required: false
 
       response 200, "Success" do
         schema type: :object,
@@ -438,8 +446,8 @@ RSpec.describe "API V2 Widgets", type: :request do
           }
 
         let(:location) { create :location }
-        let!(:ecosystem_service_1) { create :ecosystem_service, location: location }
-        let!(:ecosystem_service_2) { create :ecosystem_service }
+        let!(:ecosystem_service_1) { create :ecosystem_service, location: location, indicator: "bivalve" }
+        let!(:ecosystem_service_2) { create :ecosystem_service, indicator: "AGB" }
 
         context "when location_id is used" do
           let(:location_id) { location.id }
@@ -451,7 +459,8 @@ RSpec.describe "API V2 Widgets", type: :request do
           end
 
           it "returns correct data" do
-            expect(response_json["data"].pluck("value")).to eq([ecosystem_service_1.value])
+            expect(response_json["data"].pluck("indicator")).to match_array(EcosystemService.indicators.keys)
+            expect(response_json["data"].pluck("value").compact).to eq([ecosystem_service_1.value])
           end
         end
 
@@ -463,7 +472,17 @@ RSpec.describe "API V2 Widgets", type: :request do
           end
 
           it "returns correct data" do
-            expect(response_json["data"].pluck("value")).to match_array([ecosystem_service_1.value, ecosystem_service_2.value])
+            expect(response_json["data"].pluck("indicator")).to match_array(EcosystemService.indicators.keys)
+            expect(response_json["data"].pluck("value").compact).to match_array([ecosystem_service_1.value, ecosystem_service_2.value])
+          end
+
+          context "when filtering by slug" do
+            let(:slug) { "restoration-value" }
+
+            it "returns correct data" do
+              expect(response_json["data"].pluck("indicator")).to match_array(%w[AGB SOC])
+              expect(response_json["data"].pluck("value")).to match_array([nil, ecosystem_service_2.value])
+            end
           end
         end
       end
@@ -936,6 +955,7 @@ RSpec.describe "API V2 Widgets", type: :request do
       tags "Widgets"
       consumes "application/json"
       produces "application/json"
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: false
       parameter name: :organization, in: :query, type: :array, items: {type: :string}, description: "Organization name", required: false
       parameter name: :ecological_aim, in: :query, type: :array, items: {type: :string}, required: false
       parameter name: :socioeconomic_aim, in: :query, type: :array, items: {type: :string}, required: false
@@ -999,8 +1019,17 @@ RSpec.describe "API V2 Widgets", type: :request do
             "selectedValues" => ["Formal mangrove protection ", "None"], "isOtherChecked" => false
           }
       end
-      let!(:site_1) { create :site, landscape: landscape_1 }
-      let!(:site_2) { create :site, registration_intervention_answers: [registration_intervention_answer_1, registration_intervention_answer_2, registration_intervention_answer_3] }
+      let(:location) { create :location, geometry: {type: "Polygon", coordinates: [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]]} }
+      let!(:site_1) do
+        create :site,
+          landscape: landscape_1,
+          area: RGeo::GeoJSON.decode({type: "Polygon", coordinates: [[[10, 10], [11, 10], [11, 11], [10, 11]]]}.to_json)
+      end
+      let!(:site_2) do
+        create :site,
+          registration_intervention_answers: [registration_intervention_answer_1, registration_intervention_answer_2, registration_intervention_answer_3],
+          area: RGeo::GeoJSON.decode({type: "Polygon", coordinates: [[[0, 0], [1, 0], [1, 1], [0, 1]]]}.to_json)
+      end
       let!(:site_3) { create :site, registration_intervention_answers: [registration_intervention_answer_4, registration_intervention_answer_5] }
       let!(:site_4) { create :site }
 
@@ -1021,6 +1050,14 @@ RSpec.describe "API V2 Widgets", type: :request do
 
         it "contains all available sites" do
           expect(response_json["data"].pluck("id")).to match_array(Site.pluck(:id))
+        end
+
+        context "when used location filter" do
+          let(:location_id) { location.id }
+
+          it "contains only sites at given location" do
+            expect(response_json["data"].pluck("id")).to eq([site_2.id])
+          end
         end
 
         context "when used organization filter" do
@@ -1072,6 +1109,7 @@ RSpec.describe "API V2 Widgets", type: :request do
         end
 
         context "when using multiple filters together" do
+          let(:location_id) { location.id }
           let(:ecological_aim) { ["Increase native flora/vegetation (non-mangrove)"] }
           let(:socioeconomic_aim) { ["Tourism and recreation"] }
           let(:cause_of_decline) { ["Residential %26 commercial development"] }
@@ -1079,6 +1117,98 @@ RSpec.describe "API V2 Widgets", type: :request do
           it "contains only sites for given filters" do
             expect(response_json["data"].pluck("id")).to eq([site_2.id])
           end
+        end
+      end
+    end
+  end
+
+  path "/api/v2/widgets/flood_protection" do
+    get "Retrieves the data for the flood protection widget" do
+      tags "Widgets"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: true
+      parameter name: :indicator, in: :query, type: :string, required: true
+
+      let(:location_1) { create :location }
+      let(:location_2) { create :location }
+      let!(:flood_protection_1) { create :flood_protection, indicator: "area", location: location_1 }
+      let!(:flood_protection_2) { create :flood_protection, indicator: "population", location: location_1 }
+      let!(:flood_protection_3) { create :flood_protection, indicator: "area", location: location_2 }
+
+      let(:location_id) { location_1.id }
+      let(:indicator) { "area" }
+
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {
+              type: :array,
+              items: {"$ref" => "#/components/schemas/flood_protection"}
+            },
+            metadata: {
+              :type => :object,
+              "$ref" => "#/components/schemas/metadata"
+            }
+          }
+
+        run_test!
+
+        it "matches snapshot", generate_swagger_example: true do
+          expect(response.body).to match_snapshot("api/v2/widgets/flood_protection_get_location")
+        end
+
+        it "returns correct data" do
+          expect(response_json["data"].pluck("value")).to match_array([flood_protection_1.value, 0.0, 0.0])
+          expect(response_json["data"].pluck("period")).to match_array(FloodProtection.periods.keys)
+          expect(response_json["metadata"]["max"]).to eq([flood_protection_1.value, flood_protection_3.value].max)
+          expect(response_json["metadata"]["min"]).to eq([flood_protection_1.value, flood_protection_3.value].min)
+        end
+      end
+    end
+  end
+
+  path "/api/v2/widgets/national_dashboard" do
+    get "Retrieves the data for the national dashboard widget" do
+      tags "Widgets"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :location_id, in: :query, type: :string, description: "Location id", required: true
+
+      let(:location) { create :location }
+      let!(:national_dashboard_1) { create :national_dashboard, location: location }
+      let!(:national_dashboard_2) { create :national_dashboard }
+      let!(:location_resource) { create :location_resource, location: location }
+
+      let(:location_id) { location.id }
+
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {
+              type: :array,
+              items: {"$ref" => "#/components/schemas/national_dashboard"}
+            },
+            metadata: {
+              :type => :object,
+              "$ref" => "#/components/schemas/metadata"
+            }
+          }
+
+        run_test!
+
+        it "matches snapshot", generate_swagger_example: true do
+          expect(response.body).to match_snapshot("api/v2/widgets/national_dashboard")
+        end
+
+        it "returns correct data" do
+          expect(response_json["data"].first["indicator"]).to eq(national_dashboard_1.indicator)
+          expect(response_json["data"].first["sources"].first["source"]).to eq(national_dashboard_1.source)
+          expect(response_json["data"].first["sources"].first["data_source"].pluck("value")).to eq([national_dashboard_1.value])
+        end
+
+        it "returns correct metadata" do
+          expect(response_json["metadata"]["other_resources"].pluck("name")).to eq([location_resource.name])
         end
       end
     end
