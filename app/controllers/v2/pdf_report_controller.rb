@@ -1,7 +1,7 @@
 class V2::PdfReportController < MrttApiController
   # This method could be transferred to it's own file. It is the main way question types are determined
   def pdf_report_formatter
-    pdf_report_formatter = {
+    {
       "1.1a" => {
         "name" => "Project start date",
         "type" => "date",
@@ -429,7 +429,7 @@ class V2::PdfReportController < MrttApiController
 
   # Order for registration and intervention sections
   def pdf_order_by_section
-    pdf_order_by_section = [
+    [
       "Site Details and Location",
       "Site Background",
       "Restoration Aims",
@@ -717,8 +717,10 @@ class V2::PdfReportController < MrttApiController
       @restricted_sections = (
         site.section_data_visibility ?
           site.section_data_visibility.map { |key, value|
-            value == "private" ? key : nil
-          }.select{ |i|
+            if value == "private"
+              key
+            end
+          }.select { |i|
             !i.nil?
           } : []
       )
@@ -743,7 +745,7 @@ class V2::PdfReportController < MrttApiController
     monitoring_events.each { |key, value|
       monitoring_answers.push(value)
     }
-    return site.id, registration_intervention_answers, monitoring_answers, landscape
+    [registration_intervention_answers, monitoring_answers, landscape]
   end
 
   def report_params
@@ -771,25 +773,25 @@ class V2::PdfReportController < MrttApiController
     }
     monitoring_answers.each { |mon_answer|
       @pdf_mon_answers[mon_answer["uuid"]]["monitoring_date"] = mon_answer["monitoring_date"].to_date.to_s
-        mon_answer["answers"].each { |question_id, answer_value|
-          if answer_value.present? || answer_value == false
+      mon_answer["answers"].each { |question_id, answer_value|
+        if answer_value.present? || answer_value == false
 
-            if question_id == "10.4a"
-              question_id = "10.3a"
-            end
-
-            if pdf_format.key?(question_id)
-              category = pdf_format[question_id]["category"]
-              @pdf_mon_answers[mon_answer["uuid"]]["category"] = category
-            end
-
-            pdf_answers = @pdf_mon_answers[mon_answer["uuid"]]["answers"]
-            site = @pdf_mon_answers[mon_answer["uuid"]]["answers"][question_id]
-
-            format_answers(site, question_id, answer_value, pdf_answers)
+          if question_id == "10.4a"
+            question_id = "10.3a"
           end
-        }
+
+          if pdf_format.key?(question_id)
+            category = pdf_format[question_id]["category"]
+            @pdf_mon_answers[mon_answer["uuid"]]["category"] = category
+          end
+
+          pdf_answers = @pdf_mon_answers[mon_answer["uuid"]]["answers"]
+          site = @pdf_mon_answers[mon_answer["uuid"]]["answers"][question_id]
+
+          format_answers(site, question_id, answer_value, pdf_answers)
+        end
       }
+    }
   end
 
   # Sorts based on the desired order
@@ -831,9 +833,9 @@ class V2::PdfReportController < MrttApiController
     # download image and save to temporary file to be included in pdf
     begin
       image_path = "#{Rails.root}/tmp/#{SecureRandom.uuid}.jpeg"
-      download = URI.open(url)
+      download = URI.parse(url).open
       IO.copy_stream(download, image_path)
-    rescue => exception
+    rescue # => exception
       image_path = "#{Rails.root}/tmp/site-boundary-preview-not-available.jpeg"
     end
     image_path
@@ -847,24 +849,25 @@ class V2::PdfReportController < MrttApiController
       coord[0] = coord[0].truncate(2)
       coord[1] = coord[1].truncate(2)
     }
-    return geojson
+    geojson
   end
 
   def sanitize_geojson(geojson)
     # ensure geojson is valid with respect to Right Hand Rule since
-    result = `echo '#{geojson.to_json}' | \
+    result = %x(
+          echo '#{geojson.to_json}' | \
           ogr2ogr -f GeoJSON \
           -lco RFC7946=YES \
           -lco COORDINATE_PRECISION=5 \
           -makevalid \
           /vsistdout/ \
-          /vsistdin/`.gsub("\n", "")
-               .gsub(" ", "")
+          /vsistdin/
+          ).delete("\n").delete(" ")
     # check child process exit
     if $?.exitstatus != 0
       result = ""
     end
-    return result
+    result
   end
 
   def export_pdf_single_site
@@ -876,7 +879,7 @@ class V2::PdfReportController < MrttApiController
     @single_site = []
     site_row = {}
 
-    site_id, registration_intervention_answers, monitoring_answers, landscape = get_answers_by_site(site.id)
+    registration_intervention_answers, monitoring_answers, landscape = get_answers_by_site(site.id)
 
     @pdf_landscape = landscape.landscape_name
 
