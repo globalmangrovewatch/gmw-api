@@ -479,7 +479,8 @@ class V2::PdfReportController < MrttApiController
         }
         site[:value] = country_array
       when "1.3 map"
-        site[:value] = [generate_site_boundary_preview(answer_value)]
+        site[:value] = "(Temporarily Unavailable)"
+        # site[:value] = [generate_site_boundary_preview(answer_value)]
       when "2.1 stakeholders"
         stakeholder_array = []
         site[:value].each { |x|
@@ -816,6 +817,8 @@ class V2::PdfReportController < MrttApiController
     url = nil
     if geojson.present?
       geojson = sanitize_geojson(geojson)
+      # geojson = geojson["features"][0]
+      # geojson = reduce_precision_geojson(geojson)
       geojson = CGI.escape(geojson)
       token = ENV["MAPBOX_ACCESS_TOKEN"]
       url = "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/geojson(#{geojson})/auto/300x200@2x?access_token=#{token}"
@@ -845,16 +848,16 @@ class V2::PdfReportController < MrttApiController
 
   def sanitize_geojson(geojson)
     # ensure geojson is valid with respect to Right Hand Rule since
-    geojson_to_json = geojson.to_json.delete("\\")
     result = %x(
-          echo '#{geojson_to_json}' | \
-          ogr2ogr -f GeoJSON \
-          -lco RFC7946=YES \
-          -lco COORDINATE_PRECISION=5 \
-          -makevalid \
-          /vsistdout/ \
-          /vsistdin/).delete("\n").delete(" ")
-    # check child process exit
+            echo '#{geojson.to_json}' | \
+            ogr2ogr -f GeoJSON \
+            -lco RFC7946=YES \
+            -lco COORDINATE_PRECISION=5 \
+            -makevalid \
+            /vsistdout/ \
+            /vsistdin/).delete("\n").delete(" ")
+
+            # check child process exit
     if $?.exitstatus != 0
       result = ""
     end
