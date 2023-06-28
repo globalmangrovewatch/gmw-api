@@ -26,6 +26,29 @@
     {
       "warning_type": "Command Injection",
       "warning_code": 14,
+      "fingerprint": "1f30317d6bb7ccc13fbd2100f5f0a9abae1187cdf734466e03fbcb8430c76f67",
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "app/controllers/v2/pdf_report_controller.rb",
+      "line": 855,
+      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
+      "code": "`\n            echo '#{geojson.to_json}' |\n            ogr2ogr -f GeoJSON             -lco RFC7946=YES             -lco COORDINATE_PRECISION=5             -makevalid             /vsistdout/             /vsistdin/`",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "V2::PdfReportController",
+        "method": "sanitize_geojson"
+      },
+      "user_input": "geojson.to_json",
+      "confidence": "Medium",
+      "cwe_id": [
+        77
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
       "fingerprint": "38623cc840f776cf5570955ff366c35a012bfdb28fd9a8103e4d3df5fea22f41",
       "check_name": "Execute",
       "message": "Possible command injection",
