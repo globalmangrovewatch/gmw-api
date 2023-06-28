@@ -694,7 +694,7 @@ class V2::PdfReportController < MrttApiController
     }
   end
 
-  def get_answers_by_site(site_id)
+  def get_answers_by_site(site_id, public_only = true)
     site = Site.find(site_id)
     landscape = site.landscape
     organization_ids = landscape.organization_ids
@@ -704,7 +704,7 @@ class V2::PdfReportController < MrttApiController
     # Instead of returning: insufficient_privilege && return
     # We restrict the sections instead
     @restricted_sections = []
-    if !(current_user.is_admin || current_user.is_member_of_any(organization_ids))
+    if !(current_user.is_admin || current_user.is_member_of_any(organization_ids)) || public_only
       @restricted_sections = (
         site.section_data_visibility ?
           site.section_data_visibility.map { |key, value|
@@ -736,11 +736,11 @@ class V2::PdfReportController < MrttApiController
     monitoring_events.each { |key, value|
       monitoring_answers.push(value)
     }
-    [registration_intervention_answers, monitoring_answers, landscape]
+    [registration_intervention_answers.select { |answer| !@restricted_sections.include?(answer.question_id.split(".")[0]) }, monitoring_answers, landscape]
   end
 
   def report_params
-    params.except(:format, :site).permit(:site_id)
+    params.except(:format, :site).permit(:site_id, :public_only)
   end
 
   # Distributes and sets up the dictionary of each question/answer to send to format answers
@@ -868,6 +868,12 @@ class V2::PdfReportController < MrttApiController
 
   def export_pdf_single_site
     site = Site.find(params[:site_id])
+    public_only = ActiveModel::Type::Boolean.new.cast(report_params[:public_only])
+
+    if public_only.nil?
+      public_only = true
+    end
+
     @pdf_reg_answers = Hash.new { |h, k| h[k] = h.dup.clear }
     @pdf_mon_answers = Hash.new { |h, k| h[k] = h.dup.clear }
 
@@ -875,7 +881,7 @@ class V2::PdfReportController < MrttApiController
     @single_site = []
     site_row = {}
 
-    registration_intervention_answers, monitoring_answers, landscape = get_answers_by_site(site.id)
+    registration_intervention_answers, monitoring_answers, landscape = get_answers_by_site(site.id, public_only)
 
     @pdf_landscape = landscape.landscape_name
 
