@@ -58,4 +58,3 @@ RSpec.describe "v2/report", type: :request do
     end
   end
 end
-
