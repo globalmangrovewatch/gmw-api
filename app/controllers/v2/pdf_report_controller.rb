@@ -479,8 +479,7 @@ class V2::PdfReportController < MrttApiController
         }
         site[:value] = country_array
       when "1.3 map"
-        site[:value] = "(Temporarily Unavailable)"
-        # site[:value] = [generate_site_boundary_preview(answer_value)]
+        site[:value] = [generate_site_boundary_preview(answer_value)]
       when "2.1 stakeholders"
         stakeholder_array = []
         site[:value].each { |x|
@@ -852,15 +851,14 @@ class V2::PdfReportController < MrttApiController
 
   def sanitize_geojson(geojson)
     # ensure geojson is valid with respect to Right Hand Rule since
-    # result = %x(
-    #         echo '#{geojson.to_json}' | \
-    #         ogr2ogr -f GeoJSON \
-    #         -lco RFC7946=YES \
-    #         -lco COORDINATE_PRECISION=5 \
-    #         -makevalid \
-    #         /vsistdout/ \
-    #         /vsistdin/).delete("\n").delete(" ")
-    result = geojson # dummy line for now
+    result = %x(
+            echo '#{geojson.to_json}' | \
+            ogr2ogr -f GeoJSON \
+            -lco RFC7946=YES \
+            -lco COORDINATE_PRECISION=5 \
+            -makevalid \
+            /vsistdout/ \
+            /vsistdin/).delete("\n").delete(" ")
     # check child process exit
     if $?.exitstatus != 0
       result = ""
