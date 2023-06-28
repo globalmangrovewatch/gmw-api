@@ -800,7 +800,11 @@ class V2::PdfReportController < MrttApiController
 
     # Sort monitoring answers by question value
     @pdf_mon_answers.each { |uuid, mon_list|
-      mon_list["answers"] = mon_list["answers"].sort
+      mon_list["answers"] = mon_list["answers"].sort.to_h
+      # If new questions are added that are greater than 10 in a set, add the logic in here
+      if mon_list["answers"]["8.10"].present?
+        mon_list["answers"]["8.10"] = mon_list["answers"].delete("8.10")
+      end
     }
     # Sort monitoring answers by monitoring date
     @pdf_mon_answers = @pdf_mon_answers.sort_by { |uuid, mon_list|
