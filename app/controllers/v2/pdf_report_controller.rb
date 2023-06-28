@@ -799,7 +799,11 @@ class V2::PdfReportController < MrttApiController
 
     # Sort monitoring answers by question value
     @pdf_mon_answers.each { |uuid, mon_list|
-      mon_list["answers"] = mon_list["answers"].sort
+      mon_list["answers"] = mon_list["answers"].sort.to_h
+      # If new questions are added that are greater than 10 in a set, add the logic in here
+      if mon_list["answers"]["8.10"].present?
+        mon_list["answers"]["8.10"] = mon_list["answers"].delete("8.10")
+      end
     }
     # Sort monitoring answers by monitoring date
     @pdf_mon_answers = @pdf_mon_answers.sort_by { |uuid, mon_list|
@@ -816,6 +820,8 @@ class V2::PdfReportController < MrttApiController
     url = nil
     if geojson.present?
       geojson = sanitize_geojson(geojson)
+      # geojson = geojson["features"][0]
+      # geojson = reduce_precision_geojson(geojson)
       geojson = CGI.escape(geojson)
       token = ENV["MAPBOX_ACCESS_TOKEN"]
       url = "https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/geojson(#{geojson})/auto/300x200@2x?access_token=#{token}"
@@ -846,13 +852,13 @@ class V2::PdfReportController < MrttApiController
   def sanitize_geojson(geojson)
     # ensure geojson is valid with respect to Right Hand Rule since
     result = %x(
-          echo '#{geojson.to_json}' | \
-          ogr2ogr -f GeoJSON \
-          -lco RFC7946=YES \
-          -lco COORDINATE_PRECISION=5 \
-          -makevalid \
-          /vsistdout/ \
-          /vsistdin/).delete("\n").delete(" ")
+            echo '#{geojson.to_json}' | \
+            ogr2ogr -f GeoJSON \
+            -lco RFC7946=YES \
+            -lco COORDINATE_PRECISION=5 \
+            -makevalid \
+            /vsistdout/ \
+            /vsistdin/).delete("\n").delete(" ")
     # check child process exit
     if $?.exitstatus != 0
       result = ""
