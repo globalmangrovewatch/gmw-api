@@ -41,4 +41,21 @@ RSpec.describe "v2/report", type: :request do
       end
     end
   end
+
+  path "/api/v2/report/answers_as_pdf/:site_id" do
+    get("answers_as_pdf report") do
+      tags "Report"
+      produces "application/pdf"
+      parameter name: "site_id", in: :path, required: true, type: :integer, description: "Site id"
+      parameter name: "public_only", in: :query, required: false, schema: {type: :boolean, default: true}, description: "If true, retrieve only answers marked as public."
+      response(200, "successful") do
+        description "A pdf file."
+        schema type: :file,
+          properties: {}
+        before { skip }
+        run_test!
+      end
+    end
+  end
 end
+
