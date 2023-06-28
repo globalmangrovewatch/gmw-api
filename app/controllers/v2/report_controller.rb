@@ -62,7 +62,11 @@ class V2::ReportController < MrttApiController
     # query parameters
     site_id = report_params[:site_id]
     organization_id = report_params[:organization_id]
-    public_only = ActiveModel::Type::Boolean.new.cast(report_params[:public_only]) || true
+    public_only = ActiveModel::Type::Boolean.new.cast(report_params[:public_only])
+
+    if public_only.nil?
+      public_only = true
+    end
 
     # prep
     empty_answer = nil
@@ -105,7 +109,7 @@ class V2::ReportController < MrttApiController
 
     sites.each { |site|
       site_row = {}
-      site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id, public_only = :public_only)
+      site_id, registration_intervention_answers, monitoring_answers = get_answers_by_site(site.id, public_only)
 
       site_row["site_id"] = site.id
       site_row["site_name"] = site.site_name
@@ -176,7 +180,7 @@ class V2::ReportController < MrttApiController
   end
 
   def report_params
-    params.except(:format, :site).permit(:site_id, :organization_id)
+    params.except(:format, :site).permit(:site_id, :organization_id, :public_only)
   end
 
   def to_human_readable(question, answer)
