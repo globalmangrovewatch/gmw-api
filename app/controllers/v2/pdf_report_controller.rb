@@ -646,7 +646,7 @@ class V2::PdfReportController < MrttApiController
         if @keep_answer.nil?
           @keep_answer = DateTime.parse(site[:value]).to_date.to_s
           pdf_answers.delete(question_id)
-        else     
+        else
           base_date = DateTime.parse(site[:value]).to_date.to_s
           if base_date > @keep_answer
             start_date = @keep_answer
