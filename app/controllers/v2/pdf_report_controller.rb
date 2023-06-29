@@ -364,13 +364,13 @@ class V2::PdfReportController < MrttApiController
         "category" => "The Ecological Status and Outcomes"
       },
       "10.1a" => {
-        "name" => "Ecological monitoring start date:",
-        "type" => "date",
+        "name" => "Ecological monitoring start and end dates:",
+        "type" => "10.1a 10.1b start end date",
         "category" => "The Ecological Status and Outcomes"
       },
       "10.1b" => {
-        "name" => "Ecological monitoring end date:",
-        "type" => "date",
+        "name" => "Ecological monitoring start and end dates:",
+        "type" => "10.1a 10.1b start end date",
         "category" => "The Ecological Status and Outcomes"
       },
       "10.2" => {
@@ -642,6 +642,23 @@ class V2::PdfReportController < MrttApiController
           outcomes_hash["answers"].push(current_outcome)
         }
         site[:value] = outcomes_hash
+      when "10.1a 10.1b start end date"
+        if @keep_answer.nil?
+          @keep_answer = DateTime.parse(site[:value]).to_date.to_s
+          pdf_answers.delete(question_id)
+        else
+          base_date = DateTime.parse(site[:value]).to_date.to_s
+          if base_date > @keep_answer
+            start_date = @keep_answer
+            end_date = base_date
+          else
+            start_date = base_date
+            end_date = @keep_answer
+          end
+          site[:value] = "#{start_date} to #{end_date}"
+          @keep_answer = nil
+          pdf_answers["10.1"] = pdf_answers.delete(question_id)
+        end
       when "10.3a area"
         area_array = []
         if !site[:value].empty?
