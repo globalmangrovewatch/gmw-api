@@ -356,6 +356,15 @@ RSpec.configure do |config|
               value: {type: :number}
             }
           },
+          fishery: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
+              year: {type: :number},
+              value: {type: :number},
+              category: {type: :string}
+            }
+          },
           file_converter: {
             type: :object,
             properties: {

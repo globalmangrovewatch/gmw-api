@@ -1213,4 +1213,53 @@ RSpec.describe "API V2 Widgets", type: :request do
       end
     end
   end
+
+  path "/api/v2/widgets/fisheries" do
+    get "Retrieves the data for the fisheries widget" do
+      tags "Widgets"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :location_id, in: :query, type: :string, description: "Location id", required: true
+      parameter name: :year, in: :query, type: :string, description: "Year. Default last available year", required: false
+
+      let(:location) { create :location }
+      let!(:fishery_1) { create :fishery, location: location, year: 2018 }
+      let!(:fishery_2) { create :fishery, location: location, year: 2019 }
+      let!(:fishery_3) { create :fishery, year: 2018 }
+
+      let(:location_id) { location.id }
+
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {
+              type: :array,
+              items: {"$ref" => "#/components/schemas/fishery"}
+            },
+            metadata: {
+              :type => :object,
+              "$ref" => "#/components/schemas/metadata"
+            }
+          }
+
+        run_test!
+
+        it "matches snapshot", generate_swagger_example: true do
+          expect(response.body).to match_snapshot("api/v2/widgets/get_fishery")
+        end
+
+        it "returns correct data" do
+          expect(response_json["data"].pluck("value")).to eq([fishery_2.value])
+        end
+
+        context "when year is specified" do
+          let(:year) { 2018 }
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([fishery_1.value])
+          end
+        end
+      end
+    end
+  end
 end

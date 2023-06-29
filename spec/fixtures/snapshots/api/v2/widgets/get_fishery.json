@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "indicator": "cum",
+      "value": 98628.73,
+      "year": 2019,
+      "category": "0 - 50"
+    }
+  ],
+  "metadata": {
+    "location_id": "89",
+    "unit": "fishing days"
+  }
+}
