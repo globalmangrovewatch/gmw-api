@@ -643,19 +643,29 @@ class V2::PdfReportController < MrttApiController
         }
         site[:value] = outcomes_hash
       when "10.1a 10.1b start end date"
+        no_date = ["No start date", "in progress"]
         if @keep_answer.nil?
-          @keep_answer = DateTime.parse(site[:value]).to_date.to_s
+          @keep_answer = if !site[:value].to_s.blank?
+            DateTime.parse(site[:value]).to_date.to_s
+          elsif question_id == "10.1a"
+            no_date[0]
+          else
+            no_date[1]
+          end
           pdf_answers.delete(question_id)
         else
-          base_date = DateTime.parse(site[:value]).to_date.to_s
-          if base_date > @keep_answer
-            start_date = @keep_answer
-            end_date = base_date
+          base_date = if !site[:value].to_s.blank?
+            DateTime.parse(site[:value]).to_date.to_s
+          elsif question_id == "10.1a"
+            no_date[0]
           else
-            start_date = base_date
-            end_date = @keep_answer
+            no_date[1]
           end
-          site[:value] = "#{start_date} to #{end_date}"
+          site[:value] = if question_id == "10.1a"
+            "#{base_date} to #{@keep_answer}"
+          else
+            "#{@keep_answer} to #{base_date}"
+          end
           @keep_answer = nil
           pdf_answers["10.1"] = pdf_answers.delete(question_id)
         end
@@ -781,8 +791,9 @@ class V2::PdfReportController < MrttApiController
     }
     monitoring_answers.each { |mon_answer|
       @pdf_mon_answers[mon_answer["uuid"]]["monitoring_date"] = mon_answer["monitoring_date"].to_date.to_s
+      null_accepted = ["10.1a", "10.1b"]
       mon_answer["answers"].each { |question_id, answer_value|
-        if answer_value.present? || answer_value == false
+        if answer_value.present? || answer_value == false || question_id.in?(null_accepted)
 
           if question_id == "10.4a"
             question_id = "10.3a"
