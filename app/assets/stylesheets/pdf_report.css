@@ -1,0 +1,69 @@
+body {
+    color: #0D3E3C;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.heading-invisible {
+    width: 2px !important;
+    height: 2px !important;
+    padding: 0 !important;
+    margin: 0;
+    overflow: hidden !important;
+    opacity: 0 !important;
+}
+
+.neutral { background-color: #737373; }
+.primary { background-color: #0D3E3C; }
+.white { background-color: #FFFFFF; }
+.mint { background-color: rgba(163, 209, 98, 0.08); }
+
+.font-heading {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+ }
+
+.no-margin {
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+.question-padding { 
+    padding-top: 16px;
+    padding-bottom: 32px;
+}
+
+.question-number {
+    min-width: 40px;
+}
+
+.question-row-alignment {
+    vertical-align: top;
+}
+
+.answers-table {
+    width: 100%;
+    border-spacing: 8px 2px;
+    margin-left: -8px;
+}
+
+.answers-table td {
+    width: 0.1%;
+    white-space: nowrap;
+    vertical-align: top
+}
+
+.answers-table td:last-child {
+    width: 100%;
+}
+
+.pagebreak { page-break-after: always; } /* page-break-after works, as well */
+
+.left { float: left; }
+.right { float: right; }
+
+.h2-heading {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0.83em 0;
+}

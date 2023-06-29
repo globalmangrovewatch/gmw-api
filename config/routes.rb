@@ -72,10 +72,8 @@ Rails.application.routes.draw do
 
       get "/report/answers", to: "report#answers"
       get "/report/answers/:site_id", to: "report#answers_by_site"
+      get "/report/answers_as_pdf/:site_id", to: "pdf_report#export_pdf_single_site", as: "single_site"
       get "/report/answers_as_xlsx", to: "report#answers_as_xlsx"
-
-      get "/report/answers", to: "report#answers"
-      get "/report/answers/:site_id", to: "report#answers_by_site"
     end
   end
 end

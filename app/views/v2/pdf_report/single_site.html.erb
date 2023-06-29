@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>Site Report</title>
+  </head>
+  <body>
+    
+    <h1 class="heading-invisible">
+      Landscape: <%= @pdf_landscape %> - Site: <%= @single_site['site_name'] %>
+    </h1>
+
+    <!-- Start of Registration Answers -->
+    <h2 class="heading-invisible">REGISTRATION / INTERVENTION</h2>
+    <% @pdf_reg_answers.each do |category, questions| %>
+      <div class="h2-heading"><%= category %></div>
+      <% questions.each do |key, item| %>
+        <hr class="no-margin">
+        <div class= "<%= cycle('white', 'mint') -%> question-padding">
+          <table>   
+            <tr class="question-row-alignment">
+              <td class="question-number"><%= key %></td>          
+              <td><b><%= item[:name] %></b></td>
+            </tr>
+            <% if item[:value].is_a?(String) -%>
+              <tr>
+                <td></td>
+                <td><%= item[:value] -%></td>
+              </tr>
+            <% elsif item[:value].is_a?(Array) -%>
+              <tr>
+                <td></td>
+                <td>
+                  <table class="answers-table">
+                    <% item[:value].each do |x| %>
+                      <% if x.class == Hash -%>
+                        <tr>
+                          <td>&bull;</td>
+                          <% x.each do |key, value| -%>
+                            <td>
+                              <b><%= key.capitalize -%>:</b> <%= value -%>
+                            </td>
+                          <% end -%>
+                        </tr>
+                      <%  elsif x.class == String &&  x.start_with?("#{Rails.root}/tmp/") -%>
+                        <img src="<%= x -%>" alt="site boundary"/>
+                      <% else -%>
+                        <li><%= x %></li>
+                      <% end -%>
+                    <% end %>
+                  </table>
+                </td>
+              </tr>
+            <% end -%>
+          </table>
+        </div>
+      <% end %>
+      <div class="pagebreak"> </div>
+    <% end %>
+
+    <!-- Start of Monitoring Answers -->
+
+    <% @pdf_mon_answers.each do |uuid, values| %>      
+      <div class="h2-heading"><%= values["category"] %></div>
+      <div class="h2-heading">Date of Entry: <%= values["monitoring_date"] %></div>
+      <h2 class="heading-invisible">MONITORING</h2>
+      <% values["answers"].each do |key, item| %>
+        <hr class="no-margin">
+        <div class= "<%= cycle('white', 'mint') -%> question-padding">
+          <table>   
+            <tr class="question-row-alignment">
+              <td class="question-number"><%= key %></td>          
+              <td><b><%= item[:name] %></b></td>
+            </tr>
+            <% if item[:value].is_a?(String) -%>
+              <tr>
+                <td></td>
+                <td><%= item[:value] -%></td>
+              </tr>
+            <% elsif item[:value].is_a?(Array) -%>
+              <tr>
+                <td></td>
+                <td>
+                  <table class="answers-table">
+                    <% item[:value].each do |x| %>
+                      <% if x.class == Hash -%>
+                        <tr>
+                          <td>&bull;</td>
+                          <% x.each do |key, value| -%>
+                            <td>
+                              <b><%= key.capitalize -%>:</b> <%= value -%>
+                            </td>
+                          <% end -%>
+                        </tr>
+                      <% else -%>
+                        <li><%= x %></li>
+                      <% end -%>
+                    <% end %>
+                  </table>
+                </td>
+              </tr>
+            <% elsif item[:value].is_a?(Hash) -%>
+              <tr>
+                <td></td>
+                <td>
+                  <% item[:value]["answers"].each do |answer| -%>
+                    <p><b><%= answer["main_label"] -%></b></p>
+                    <p><%= answer["sub_label"] -%></p>
+                    <table class="answers-table">
+                      <% answer["data"].each do |key, value| -%>
+                        <tr>
+                          <td>
+                            <%= key.capitalize -%>:
+                          </td>
+                          <td>
+                            <% if value.is_a?(Array) -%>
+                              <% value.each do |nested_value| -%>
+                                <%= nested_value -%><br>
+                              <% end -%>
+                            <% else -%>
+                              <%= value -%>
+                            <% end -%>
+                          </td>
+                        </tr>
+                      <% end -%>
+                    </table>
+                  <% end -%>
+                </td>
+              </tr>
+            <% end -%>
+          </table>
+        </div>
+      <% end %>
+      <div class="pagebreak"> </div>
+    <% end %>  
+    
+  
+  </body>
+</html>

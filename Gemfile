@@ -99,4 +99,7 @@ gem "devise-jwt"
 gem "rgeo-geojson"
 gem "activerecord-postgis-adapter"
 
+gem "pdfkit", "~> 0.8.7"
+
+gem "wkhtmltopdf-binary", "~> 0.12.6"
 gem "caxlsx", "~> 3.3"
