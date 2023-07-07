@@ -7,7 +7,8 @@ ActiveAdmin.register NationalDashboard do
     }
   })
 
-  permit_params :source, :indicator, :year, :value, :layer_info, :layer_link, :download_link, :unit, :location_id
+  permit_params :source, :indicator, :year, :value, :layer_info, :layer_link, :download_link, :source_layer,
+    :unit, :location_id
 
   form do |f|
     f.inputs "Details" do
@@ -19,6 +20,7 @@ ActiveAdmin.register NationalDashboard do
       f.input :layer_info
       f.input :layer_link
       f.input :download_link
+      f.input :source_layer
     end
 
     f.inputs "Location" do
@@ -29,7 +31,9 @@ ActiveAdmin.register NationalDashboard do
   end
 
   csv do
+    column :location_id
     column :source
+    column :source_layer
     column :indicator
     column :value
     column :unit
@@ -37,7 +41,6 @@ ActiveAdmin.register NationalDashboard do
     column :layer_info
     column :layer_link
     column :download_link
-    column :location_id
   end
 
   controller do
