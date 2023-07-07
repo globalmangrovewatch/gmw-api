@@ -24,6 +24,10 @@ FactoryBot.define do
       Faker::Config.random = Random.new(n)
       Faker::Internet.url
     end
+    sequence(:source_layer) do |n|
+      Faker::Config.random = Random.new(n)
+      Faker::Lorem.word
+    end
     sequence(:value) do |n|
       Faker::Config.random = Random.new(n)
       Faker::Number.decimal

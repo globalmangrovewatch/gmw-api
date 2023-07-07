@@ -13,6 +13,7 @@ json.data do
             json.layer_info record.layer_info
             json.layer_link record.layer_link
             json.download_link record.download_link
+            json.source_layer record.source_layer
           end
         end
       end
