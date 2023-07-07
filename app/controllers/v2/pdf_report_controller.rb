@@ -529,7 +529,12 @@ class V2::PdfReportController < MrttApiController
             measurements_array.push({type: measurement_type, value: measurement_value})
           end
         }
-        site[:value] = measurements_array
+        if measurements_array.any?
+          site[:value] = measurements_array
+        else
+          pdf_answers.delete(question_id)
+        end
+        
       when "6.1 10.2 stakeholders"
         stakeholder_array = []
         site[:value].each { |x|
