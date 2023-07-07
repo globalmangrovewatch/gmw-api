@@ -3,12 +3,12 @@
     {
       "indicator": "area",
       "period": "annual",
-      "value": 0.0
+      "value": 68950.02
     },
     {
       "indicator": "area",
       "period": "25_year",
-      "value": 68950.02
+      "value": 0.0
     },
     {
       "indicator": "area",
@@ -25,6 +25,6 @@
       "100_year"
     ],
     "min": 68950.02,
-    "max": 99388.06
+    "max": 85187.83
   }
 }

@@ -344,7 +344,8 @@ class V2::WidgetsController < ApiController
   def flood_protection
     @location_id = params[:location_id]
     @indicator = params[:indicator]
-    @data = FloodProtection.where indicator: @indicator, location_id: @location_id
+    @period = params[:period]
+    @data = FloodProtection.where indicator: @indicator, period: @period, location_id: @location_id
   end
 
   def national_dashboard

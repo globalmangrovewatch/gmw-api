@@ -10,6 +10,6 @@ json.metadata do
   json.location_id @location_id
   json.unit FloodProtection::UNITS_BY_INDICATOR[@indicator.to_sym]
   json.periods FloodProtection.periods.keys
-  json.min FloodProtection.where(indicator: @indicator).minimum :value
-  json.max FloodProtection.where(indicator: @indicator).maximum :value
+  json.min FloodProtection.where(indicator: @indicator, period: @period).minimum :value
+  json.max FloodProtection.where(indicator: @indicator, period: @period).maximum :value
 end
