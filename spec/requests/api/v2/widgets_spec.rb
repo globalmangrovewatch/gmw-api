@@ -1129,7 +1129,6 @@ RSpec.describe "API V2 Widgets", type: :request do
       produces "application/json"
       parameter name: :location_id, in: :query, type: :string, description: "Location id. Default: worldwide", required: true
       parameter name: :indicator, in: :query, type: :string, required: true
-      parameter name: :period, in: :query, type: :string, required: true
 
       let(:location_1) { create :location }
       let(:location_2) { create :location }
@@ -1149,7 +1148,6 @@ RSpec.describe "API V2 Widgets", type: :request do
 
       let(:location_id) { location_1.id }
       let(:indicator) { "area" }
-      let(:period) { flood_protection_1.period }
 
       response 200, "Success" do
         schema type: :object,
@@ -1173,8 +1171,10 @@ RSpec.describe "API V2 Widgets", type: :request do
         it "returns correct data" do
           expect(response_json["data"].pluck("value")).to match_array([flood_protection_1.value, 0.0, 0.0])
           expect(response_json["data"].pluck("period")).to match_array(FloodProtection.periods.keys)
-          expect(response_json["metadata"]["max"]).to eq([flood_protection_1.value, flood_protection_4.value].max)
-          expect(response_json["metadata"]["min"]).to eq([flood_protection_1.value, flood_protection_4.value].min)
+          expect(response_json["metadata"]["limits"]["annual"]["max"]).to eq([flood_protection_1.value, flood_protection_4.value].max)
+          expect(response_json["metadata"]["limits"]["annual"]["min"]).to eq([flood_protection_1.value, flood_protection_4.value].min)
+          expect(response_json["metadata"]["limits"]["25_year"]["max"]).to eq(flood_protection_3.value)
+          expect(response_json["metadata"]["limits"]["25_year"]["min"]).to eq(flood_protection_3.value)
         end
       end
     end

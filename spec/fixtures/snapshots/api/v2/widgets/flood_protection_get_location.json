@@ -17,14 +17,26 @@
     }
   ],
   "metadata": {
-    "location_id": "2504",
+    "location_id": "2033",
     "unit": "km2",
     "periods": [
       "annual",
       "25_year",
       "100_year"
     ],
-    "min": 68950.02,
-    "max": 85187.83
+    "limits": {
+      "annual": {
+        "min": 68950.02,
+        "max": 85187.83
+      },
+      "25_year": {
+        "min": 99388.06,
+        "max": 99388.06
+      },
+      "100_year": {
+        "min": 0,
+        "max": 0
+      }
+    }
   }
 }
