@@ -58,6 +58,11 @@ class V2::ReportController < MrttApiController
     [site.id, registration_intervention_answers.select { |answer| !@restricted_sections.include?(answer.question_id.split(".")[0]) }, monitoring_answers]
   end
 
+  def get_question_names
+    pdf_controller = V2::PdfReportController.new
+    pdf_controller.pdf_report_formatter
+  end
+
   def answers_as_xlsx
     # query parameters
     site_id = report_params[:site_id]
@@ -70,10 +75,16 @@ class V2::ReportController < MrttApiController
 
     # prep
     empty_answer = nil
-    question_key_ids = {
+    question_hash = get_question_names
+    question_section_mappings = {
       registration: ["1.1a", "1.1b", "1.1c", "1.2", "1.3", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "3.1", "3.2", "3.3", "4.1", "4.2", "5.1", "5.2", "5.2a", "5.2b", "5.2c", "5.3", "5.3a", "5.3b", "5.3c", "5.3d", "5.3e", "5.3f", "5.3g", "5.4", "5.5"],
       intervention: ["6.1", "6.2", "6.2a", "6.2b", "6.2c", "6.3", "6.3a", "6.4", "7.1", "7.2", "7.3", "7.4", "7.5", "7.5a", "7.6"],
       monitoring: ["8.1", "8.2", "8.3", "8.4", "8.4a", "8.4b", "8.4c", "8.5", "8.5a", "8.6", "8.7", "8.8", "8.9", "8.10", "9.1", "9.2", "9.2a", "9.3", "9.3a", "9.3b", "9.4", "9.5", "10.1", "10.1a", "10.1b", "10.2", "10.3", "10.3a", "10.4", "10.4a", "10.5", "10.6", "10.6a", "10.7", "10.8"]
+    }
+    question_key_ids = {
+      registration: question_hash.select{ |k, v| question_section_mappings[:registration].include? k}.map{ |k, v| "#{k} - #{v['name']}" },
+      intervention: question_hash.select{ |k, v| question_section_mappings[:intervention].include? k}.map{ |k, v| "#{k} - #{v['name']}" },
+      monitoring: question_hash.select{ |k, v| question_section_mappings[:monitoring].include? k}.map{ |k, v| "#{k} - #{v['name']}" }
     }
 
     columns = ["site_id", "site_name"]
@@ -142,7 +153,7 @@ class V2::ReportController < MrttApiController
     all_sites_rows.each { |site_row|
       row = []
       registration_sheet_columns.each { |column|
-        cell_value = site_row[column] || empty_answer
+        cell_value = site_row[column.split(" - ")[0]] || empty_answer
         row.push(cell_value)
       }
       registration_worksheet.add_row row, style: style_row
@@ -155,7 +166,7 @@ class V2::ReportController < MrttApiController
     all_sites_rows.each { |site_row|
       row = []
       intervention_sheet_columns.each { |column|
-        cell_value = site_row[column] || empty_answer
+        cell_value = site_row[column.split(" - ")[0]] || empty_answer
         row.push(cell_value)
       }
       intervention_worksheet.add_row row, style: style_row
@@ -168,7 +179,7 @@ class V2::ReportController < MrttApiController
     monitoring_sites_rows.each { |site_row|
       row = []
       monitoring_sheet_columns.each { |column|
-        cell_value = site_row[column] || empty_answer
+        cell_value = site_row[column.split(" - ")[0]] || empty_answer
         row.push(cell_value)
       }
       monitoring_worksheet.add_row row, style: style_row
