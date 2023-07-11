@@ -82,9 +82,9 @@ class V2::ReportController < MrttApiController
       monitoring: ["8.1", "8.2", "8.3", "8.4", "8.4a", "8.4b", "8.4c", "8.5", "8.5a", "8.6", "8.7", "8.8", "8.9", "8.10", "9.1", "9.2", "9.2a", "9.3", "9.3a", "9.3b", "9.4", "9.5", "10.1", "10.1a", "10.1b", "10.2", "10.3", "10.3a", "10.4", "10.4a", "10.5", "10.6", "10.6a", "10.7", "10.8"]
     }
     question_key_ids = {
-      registration: question_hash.select{ |k, v| question_section_mappings[:registration].include? k}.map{ |k, v| "#{k} - #{v['name']}" },
-      intervention: question_hash.select{ |k, v| question_section_mappings[:intervention].include? k}.map{ |k, v| "#{k} - #{v['name']}" },
-      monitoring: question_hash.select{ |k, v| question_section_mappings[:monitoring].include? k}.map{ |k, v| "#{k} - #{v['name']}" }
+      registration: question_hash.select { |k, v| question_section_mappings[:registration].include? k }.map { |k, v| "#{k} - #{v["name"]}" },
+      intervention: question_hash.select { |k, v| question_section_mappings[:intervention].include? k }.map { |k, v| "#{k} - #{v["name"]}" },
+      monitoring: question_hash.select { |k, v| question_section_mappings[:monitoring].include? k }.map { |k, v| "#{k} - #{v["name"]}" }
     }
 
     columns = ["site_id", "site_name"]
