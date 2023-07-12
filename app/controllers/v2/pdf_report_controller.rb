@@ -348,7 +348,7 @@ class V2::PdfReportController < MrttApiController
         "category" => "Sociological and Governance Status and Outcomes"
       },
       "9.4" => {
-        "name" => "What were the socioeconomic outcomes of the project activities at the site? Please fill the measurement data for the selected socioeconomic outcomes.",
+        "name" => "What were the socioeconomic outcomes of the project activities at the site?",
         "type" => "9.4 social outcomes",
         "category" => "Sociological and Governance Status and Outcomes"
       },
