@@ -154,7 +154,7 @@ class V2::ReportController < MrttApiController
           if eco_start_end_date.any?
             puts eco_start_end_date["10.1a"]
             puts eco_start_end_date["10.1b"]
-            monitoring_site_row["10.1"] = "start date: #{eco_start_end_date['10.1a']}\nend date: #{eco_start_end_date['10.1b']}"
+            monitoring_site_row["10.1"] = "start date: #{eco_start_end_date["10.1a"]}\nend date: #{eco_start_end_date["10.1b"]}"
           end
           monitoring_sites_rows.push(monitoring_site_row)
         }
