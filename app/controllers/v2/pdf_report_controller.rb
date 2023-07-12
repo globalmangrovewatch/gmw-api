@@ -348,7 +348,7 @@ class V2::PdfReportController < MrttApiController
         "category" => "Sociological and Governance Status and Outcomes"
       },
       "9.4" => {
-        "name" => "What were the socioeconomic outcomes of the project activities at the site? Please fill the measurement data for the selected socioeconomic outcomes.",
+        "name" => "What were the socioeconomic outcomes of the project activities at the site?",
         "type" => "9.4 social outcomes",
         "category" => "Sociological and Governance Status and Outcomes"
       },
@@ -359,7 +359,7 @@ class V2::PdfReportController < MrttApiController
       },
       # Void because of 10.1a and 10.1b answering the question instead
       "10.1" => {
-        "name" => "What were the dates of the ecological monitoring being reported on?",
+        "name" => "Ecological monitoring start and end dates:",
         "type" => "VOID",
         "category" => "The Ecological Status and Outcomes"
       },
