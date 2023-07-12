@@ -1132,9 +1132,19 @@ RSpec.describe "API V2 Widgets", type: :request do
 
       let(:location_1) { create :location }
       let(:location_2) { create :location }
-      let!(:flood_protection_1) { create :flood_protection, indicator: "area", location: location_1 }
-      let!(:flood_protection_2) { create :flood_protection, indicator: "population", location: location_1 }
-      let!(:flood_protection_3) { create :flood_protection, indicator: "area", location: location_2 }
+      let(:location_3) { create :location }
+      let!(:flood_protection_1) do
+        create :flood_protection, indicator: "area", location: location_1, period: "annual"
+      end
+      let!(:flood_protection_2) do
+        create :flood_protection, indicator: "population", location: location_1, period: "annual"
+      end
+      let!(:flood_protection_3) do
+        create :flood_protection, indicator: "area", location: location_2, period: "25_year"
+      end
+      let!(:flood_protection_4) do
+        create :flood_protection, indicator: "area", location: location_3, period: "annual"
+      end
 
       let(:location_id) { location_1.id }
       let(:indicator) { "area" }
@@ -1161,8 +1171,10 @@ RSpec.describe "API V2 Widgets", type: :request do
         it "returns correct data" do
           expect(response_json["data"].pluck("value")).to match_array([flood_protection_1.value, 0.0, 0.0])
           expect(response_json["data"].pluck("period")).to match_array(FloodProtection.periods.keys)
-          expect(response_json["metadata"]["max"]).to eq([flood_protection_1.value, flood_protection_3.value].max)
-          expect(response_json["metadata"]["min"]).to eq([flood_protection_1.value, flood_protection_3.value].min)
+          expect(response_json["metadata"]["limits"]["annual"]["max"]).to eq([flood_protection_1.value, flood_protection_4.value].max)
+          expect(response_json["metadata"]["limits"]["annual"]["min"]).to eq([flood_protection_1.value, flood_protection_4.value].min)
+          expect(response_json["metadata"]["limits"]["25_year"]["max"]).to eq(flood_protection_3.value)
+          expect(response_json["metadata"]["limits"]["25_year"]["min"]).to eq(flood_protection_3.value)
         end
       end
     end

@@ -344,6 +344,8 @@ class V2::WidgetsController < ApiController
   def flood_protection
     @location_id = params[:location_id]
     @indicator = params[:indicator]
+    @limits = FloodProtection.select("period, min(value) as min, max(value) as max")
+      .where(indicator: @indicator).group("period").group_by(&:period)
     @data = FloodProtection.where indicator: @indicator, location_id: @location_id
   end
 

@@ -534,7 +534,6 @@ class V2::PdfReportController < MrttApiController
         else
           pdf_answers.delete(question_id)
         end
-        
       when "6.1 10.2 stakeholders"
         stakeholder_array = []
         site[:value].each { |x|
