@@ -1169,7 +1169,7 @@ RSpec.describe "API V2 Widgets", type: :request do
         end
 
         it "returns correct data" do
-          expect(response_json["data"].pluck("value")).to match_array([flood_protection_1.value, 0.0, 0.0])
+          expect(response_json["data"].pluck("value")).to match_array([flood_protection_1.value, nil, nil])
           expect(response_json["data"].pluck("period")).to match_array(FloodProtection.periods.keys)
           expect(response_json["metadata"]["limits"]["annual"]["max"]).to eq([flood_protection_1.value, flood_protection_4.value].max)
           expect(response_json["metadata"]["limits"]["annual"]["min"]).to eq([flood_protection_1.value, flood_protection_4.value].min)
