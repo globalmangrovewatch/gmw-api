@@ -353,7 +353,7 @@ RSpec.configure do |config|
             properties: {
               indicator: {type: :string},
               period: {type: :string},
-              value: {type: :number, nullable: true},
+              value: {type: :number, nullable: true}
             }
           },
           fishery: {
