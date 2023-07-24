@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_07_124051) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_24_113736) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -90,6 +90,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_07_124051) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_drivers_of_changes_on_location_id"
+  end
+
+  create_table "ecoregion_reports", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "url", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "ecoregions", force: :cascade do |t|
+    t.string "indicator", null: false
+    t.float "value", null: false
+    t.string "category", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "ecosystem_services", force: :cascade do |t|
