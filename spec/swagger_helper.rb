@@ -365,6 +365,14 @@ RSpec.configure do |config|
               category: {type: :string}
             }
           },
+          ecoregion: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
+              value: {type: :number},
+              category: {type: :string}
+            }
+          },
           file_converter: {
             type: :object,
             properties: {

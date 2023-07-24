@@ -1257,7 +1257,7 @@ RSpec.describe "API V2 Widgets", type: :request do
         run_test!
 
         it "matches snapshot", generate_swagger_example: true do
-          expect(response.body).to match_snapshot("api/v2/widgets/get_fishery")
+          expect(response.body).to match_snapshot("api/v2/widgets/fishery_get_location")
         end
 
         it "returns correct data" do
@@ -1270,6 +1270,53 @@ RSpec.describe "API V2 Widgets", type: :request do
           it "returns correct data" do
             expect(response_json["data"].pluck("value")).to eq([fishery_1.value])
           end
+        end
+      end
+    end
+  end
+
+  path "/api/v2/widgets/ecoregions" do
+    get "Retrieves the data for the ecoregions widget" do
+      tags "Widgets"
+      consumes "application/json"
+      produces "application/json"
+
+      let!(:ecoregion_1) { create :ecoregion, category: "ce" }
+      let!(:ecoregion_2) { create :ecoregion, category: "en" }
+      let!(:ecoregion_3) { create :ecoregion, category: "dd" }
+      let!(:ecoregion_report) { create :ecoregion_report }
+
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {
+              type: :array,
+              items: {"$ref" => "#/components/schemas/ecoregion"}
+            },
+            metadata: {
+              :type => :object,
+              "$ref" => "#/components/schemas/metadata"
+            }
+          }
+
+        run_test!
+
+        it "matches snapshot", generate_swagger_example: true do
+          expect(response.body).to match_snapshot("api/v2/widgets/ecoregion_get_worldwide")
+        end
+
+        it "returns correct data" do
+          expect(response_json["data"].pluck("value")).to eq(Ecoregion.pluck(:value))
+          expect(response_json["data"].pluck("indicator")).to eq(Ecoregion.pluck(:indicator))
+          expect(response_json["data"].pluck("category")).to eq(Ecoregion.pluck(:category))
+        end
+
+        it "returns correct total value at metadata" do
+          expect(response_json["metadata"]["ecoregion_total"]).to eq(ecoregion_1.value + ecoregion_2.value)
+        end
+
+        it "returns correct reports at metadata" do
+          expect(response_json["metadata"]["reports"].pluck("name")).to eq([ecoregion_report.name])
         end
       end
     end
