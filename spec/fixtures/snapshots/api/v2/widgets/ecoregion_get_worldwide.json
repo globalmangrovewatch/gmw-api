@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "indicator": "ecoregion_asssessment",
+      "category": "ce",
+      "value": 68950.02
+    },
+    {
+      "indicator": "ecoregion_asssessment",
+      "category": "en",
+      "value": 98628.73
+    },
+    {
+      "indicator": "ecoregion_asssessment",
+      "category": "dd",
+      "value": 99388.06
+    }
+  ],
+  "metadata": {
+    "ecoregion_total": 167578.75,
+    "reports": [
+      {
+        "name": "voluptatem",
+        "url": "http://kutch-spencer.com/moises"
+      }
+    ]
+  }
+}

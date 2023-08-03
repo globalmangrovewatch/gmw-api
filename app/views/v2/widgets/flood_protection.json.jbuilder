@@ -2,7 +2,7 @@ json.data do
   json.array! FloodProtection.periods.keys.each do |period|
     json.indicator @indicator
     json.period period
-    json.value @data.detect { |d| d.period == period }&.value.to_f
+    json.value @data.detect { |d| d.period == period }&.value
   end
 end
 

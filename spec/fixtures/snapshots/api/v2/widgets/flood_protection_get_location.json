@@ -8,12 +8,12 @@
     {
       "indicator": "area",
       "period": "25_year",
-      "value": 0.0
+      "value": null
     },
     {
       "indicator": "area",
       "period": "100_year",
-      "value": 0.0
+      "value": null
     }
   ],
   "metadata": {

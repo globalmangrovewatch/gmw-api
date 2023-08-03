@@ -360,4 +360,9 @@ class V2::WidgetsController < ApiController
     @year = params[:year] || Fishery.maximum(:year) || Time.current.year
     @data = Fishery.where location_id: @location_id, year: @year
   end
+
+  def ecoregions
+    @data = Ecoregion.all
+    @reports = EcoregionReport.all
+  end
 end

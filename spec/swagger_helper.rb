@@ -353,7 +353,7 @@ RSpec.configure do |config|
             properties: {
               indicator: {type: :string},
               period: {type: :string},
-              value: {type: :number}
+              value: {type: :number, nullable: true}
             }
           },
           fishery: {
@@ -361,6 +361,14 @@ RSpec.configure do |config|
             properties: {
               indicator: {type: :string},
               year: {type: :number},
+              value: {type: :number},
+              category: {type: :string}
+            }
+          },
+          ecoregion: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
               value: {type: :number},
               category: {type: :string}
             }
