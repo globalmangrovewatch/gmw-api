@@ -4,6 +4,7 @@ json.data do
     json.value fishery.value
     json.year @year
     json.category fishery.category
+    json.fishery_type fishery.fishery_type
   end
 end
 

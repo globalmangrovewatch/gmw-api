@@ -1,10 +1,11 @@
 {
   "data": [
     {
-      "indicator": "cum",
+      "indicator": "fish",
       "value": 98628.73,
       "year": 2019,
-      "category": "0 - 50"
+      "category": "0 - 50",
+      "fishery_type": "absolute"
     }
   ],
   "metadata": {

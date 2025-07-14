@@ -362,7 +362,8 @@ RSpec.configure do |config|
               indicator: {type: :string},
               year: {type: :number},
               value: {type: :number},
-              category: {type: :string}
+              category: {type: :string},
+              fishery_type: {type: :string}
             }
           },
           ecoregion: {

@@ -1262,6 +1262,7 @@ RSpec.describe "API V2 Widgets", type: :request do
 
         it "returns correct data" do
           expect(response_json["data"].pluck("value")).to eq([fishery_2.value])
+          expect(response_json["data"].pluck("fishery_type")).to eq([fishery_2.fishery_type])
         end
 
         context "when year is specified" do

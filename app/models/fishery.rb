@@ -12,5 +12,17 @@ class Fishery < ApplicationRecord
     "range_max" => "range_max"
   }, prefix: true
 
+  enum :indicator, {
+    "fish" => "fish",
+    "bivalve" => "bivalve",
+    "crab" => "crab",
+    "shrimp" => "shrimp"
+  }
+
+  enum :fishery_type, {
+    "absolute" => "absolute",
+    "density" => "density"
+  }
+
   validates_presence_of :indicator, :category, :value, :year
 end
