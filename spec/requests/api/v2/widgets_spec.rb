@@ -1275,6 +1275,81 @@ RSpec.describe "API V2 Widgets", type: :request do
     end
   end
 
+  path "/api/v2/widgets/fishery_mitigation_potentials" do
+    get "Retrieves the data for the fisheries mitigation potentials widget" do
+      tags "Widgets"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :location_id, in: :query, type: :string, description: "Location id", required: true
+      parameter name: :indicator,
+        in: :query,
+        type: :string,
+        description: "Indicator is an enum value between: fish, bivalve, crab and shrimp",
+        required: false
+      parameter name: :indicator_type,
+        in: :query,
+        type: :string,
+        description: "Indicator Type: absolute or density",
+        required: false
+
+      let(:first_location) { create :location }
+      let(:second_location) { create :location }
+      let!(:fishery_mitigation_potential_1) {
+        create :fishery_mitigation_potential, location: second_location, indicator: "fish", value: 1.0
+      }
+      let!(:fishery_mitigation_potential_2) {
+        create :fishery_mitigation_potential, location: second_location, indicator_type: "absolute", value: 2.0
+      }
+      let!(:fishery_mitigation_potential_3) { create :fishery_mitigation_potential, location: first_location }
+
+      let(:location_id) { first_location.id }
+
+      response 200, "Success" do
+        schema type: :object,
+          properties: {
+            data: {
+              type: :array,
+              items: {"$ref" => "#/components/schemas/fishery_mitigation_potential"}
+            },
+            metadata: {
+              :type => :object,
+              "$ref" => "#/components/schemas/metadata"
+            }
+          }
+
+        run_test!
+
+        context "when only location_id is passed" do
+          let(:location_id) { first_location.id }
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([fishery_mitigation_potential_3.value])
+            expect(response_json["data"].pluck("indicator")).to eq([fishery_mitigation_potential_3.indicator])
+            expect(response_json["data"].pluck("indicator_type")).to eq([fishery_mitigation_potential_3.indicator_type])
+          end
+        end
+
+        context "when indicator is specified" do
+          let(:location_id) { second_location.id }
+          let(:indicator) { "fish" }
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([fishery_mitigation_potential_1.value])
+          end
+        end
+
+        context "when indicator_type is specified" do
+          let(:location_id) { second_location.id }
+          let(:indicator_type) { "absolute" }
+
+          it "returns correct data" do
+            expect(response_json["data"].pluck("value")).to eq([fishery_mitigation_potential_2.value])
+          end
+        end
+      end
+    end
+  end
+
   path "/api/v2/widgets/ecoregions" do
     get "Retrieves the data for the ecoregions widget" do
       tags "Widgets"

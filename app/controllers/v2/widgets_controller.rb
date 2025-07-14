@@ -361,6 +361,22 @@ class V2::WidgetsController < ApiController
     @data = Fishery.where location_id: @location_id, year: @year
   end
 
+  # GET /v2/widgets/fishery_mitigation_potentials
+  def fishery_mitigation_potentials
+    @location_id = params[:location_id]
+    @indicator = params[:indicator]
+    @indicator_type = params[:indicator_type]
+
+    condition = {
+      location_id: @location_id
+    }
+
+    condition[:indicator] = @indicator if @indicator
+    condition[:indicator_type] = @indicator_type if @indicator_type
+
+    @data = FisheryMitigationPotential.where(**condition)
+  end
+
   def ecoregions
     @data = Ecoregion.all
     @reports = EcoregionReport.all
