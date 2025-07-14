@@ -8,9 +8,9 @@ ActiveAdmin.register FisheryMitigationPotential do
   })
 
   permit_params :indicator, :value, :fishery_type, :location_id
- 
+
   form do |f|
-    f.inputs 'Details' do
+    f.inputs "Details" do
       f.input :indicator, as: :select,
         collection: FisheryMitigationPotential.indicators,
         default: FisheryMitigationPotential.indicators.first,
@@ -24,7 +24,7 @@ ActiveAdmin.register FisheryMitigationPotential do
       f.input :value
     end
 
-    f.inputs 'Location' do
+    f.inputs "Location" do
       f.input :location, as: :select
     end
 
@@ -40,8 +40,7 @@ ActiveAdmin.register FisheryMitigationPotential do
 
   controller do
     def csv_filename
-      'fishery_mitigation_potentials.csv'
+      "fishery_mitigation_potentials.csv"
     end
   end
-
 end
