@@ -7,7 +7,7 @@ ActiveAdmin.register FisheryMitigationPotential do
     }
   })
 
-  permit_params :indicator, :value, :fishery_type, :location_id
+  permit_params :indicator, :value, :indicator_type, :location_id
 
   form do |f|
     f.inputs "Details" do
