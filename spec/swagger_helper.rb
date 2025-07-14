@@ -365,6 +365,14 @@ RSpec.configure do |config|
               category: {type: :string}
             }
           },
+          fishery_mitigation_potential: {
+            type: :object,
+            properties: {
+              indicator: {type: :string},
+              value: {type: :number},
+              indicator_type: {type: :string}
+            }
+          },
           ecoregion: {
             type: :object,
             properties: {
