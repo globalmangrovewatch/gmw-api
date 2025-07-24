@@ -33,4 +33,8 @@ class Site < ApplicationRecord
   def intervention_types
     RegistrationInterventionAnswer.answer_for_site("6.2", id)
   end
+
+  def organization_names
+    landscape.organizations.pluck(:organization_name)
+  end
 end

@@ -98,14 +98,18 @@ class RegistrationInterventionAnswer < ApplicationRecord
 
   scope :answer_for_site, ->(question_id, site_id) do
       where(question_id: question_id, site_id: site_id)
-        .select("ARRAY(SELECT TRIM(REPLACE(jsonb_array_elements(answer_value -> 'selectedValues')::text, '\"', ''))")
-        .distinct
+        .pluck(Arel.sql("ARRAY(SELECT TRIM(REPLACE(jsonb_array_elements(answer_value -> 'selectedValues')::text, '\"', '')))"))
+        .flatten
+        .compact
+        .uniq
   end
 
-  scope :category_for_site, ->(question_id, site_it) do
+  scope :category_for_site, ->(question_id, site_id) do
     where(question_id: question_id, site_id: site_id)
-      .select("ARRAY[(jsonb_array_elements(answer_value) ->> 'mainCauseLabel')]::text[]")
-      .distinct
+      .pluck(Arel.sql("ARRAY[(jsonb_array_elements(answer_value) ->> 'mainCauseLabel')]::text[]"))
+      .flatten
+      .compact
+      .uniq
   end
 
   scope :with_selected_values, ->(question_id, selected_values) do

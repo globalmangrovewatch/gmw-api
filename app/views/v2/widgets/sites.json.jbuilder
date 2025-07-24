@@ -11,6 +11,7 @@ json.data do
     json.socioeconomic_aims data.socioeconomic_aims
     json.community_activities data.community_activities
     json.intervention_types data.intervention_types
+    json.organizations data.organization_names
   end
 end
 

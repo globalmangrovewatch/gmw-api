@@ -1,76 +1,150 @@
 {
   "data": [
     {
-      "id": 69,
+      "id": 2053,
       "site_name": "Site 1",
-      "landscape_id": 69,
+      "landscape_id": 2053,
       "landscape_name": "Landscape 1",
       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[10,10],[11,10],[11,11],[10,11],[10,10]]]}",
-      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[10.5,10.5]}"
+      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[10.5,10.5]}",
+      "causes_of_decline": [],
+      "ecological_aims": [],
+      "socioeconomic_aims": [],
+      "community_activities": [],
+      "intervention_types": [],
+      "organizations": [
+        "Organization 1"
+      ]
     },
     {
-      "id": 70,
+      "id": 2054,
       "site_name": "Site 2",
-      "landscape_id": 70,
+      "landscape_id": 2054,
       "landscape_name": "Landscape 2",
       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
-      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}",
+      "causes_of_decline": [],
+      "ecological_aims": [],
+      "socioeconomic_aims": [],
+      "community_activities": [],
+      "intervention_types": [],
+      "organizations": []
     },
     {
-      "id": 71,
+      "id": 2055,
       "site_name": "Site 3",
-      "landscape_id": 71,
+      "landscape_id": 2055,
       "landscape_name": "Landscape 3",
       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
-      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}",
+      "causes_of_decline": [],
+      "ecological_aims": [],
+      "socioeconomic_aims": [],
+      "community_activities": [],
+      "intervention_types": [],
+      "organizations": []
     },
     {
-      "id": 72,
+      "id": 2056,
       "site_name": "Site 4",
-      "landscape_id": 72,
+      "landscape_id": 2056,
       "landscape_name": "Landscape 4",
       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
-      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}",
+      "causes_of_decline": [],
+      "ecological_aims": [],
+      "socioeconomic_aims": [],
+      "community_activities": [],
+      "intervention_types": [],
+      "organizations": []
     },
     {
-      "id": 73,
+      "id": 2057,
       "site_name": "Site 5",
-      "landscape_id": 73,
+      "landscape_id": 2057,
       "landscape_name": "Landscape 5",
       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[1,0],[1,1],[0,1],[0,0]]]}",
-      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[0.5,0.5]}"
+      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[0.5,0.5]}",
+      "causes_of_decline": [
+        "Residential & commercial development",
+        "Agriculture & aquaculture",
+        "Natural system modifications",
+        "Climate change & severe weather"
+      ],
+      "ecological_aims": [
+        "Increase native flora/vegetation (non-mangrove)",
+        "Increase habitat connectivity"
+      ],
+      "socioeconomic_aims": [
+        "Tourism and recreation",
+        "Safeguard cultural or spiritual importance",
+        "Unknown",
+        "None"
+      ],
+      "community_activities": [],
+      "intervention_types": [],
+      "organizations": []
     },
     {
-      "id": 74,
+      "id": 2058,
       "site_name": "Site 6",
-      "landscape_id": 74,
+      "landscape_id": 2058,
       "landscape_name": "Landscape 6",
       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
-      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}",
+      "causes_of_decline": [],
+      "ecological_aims": [],
+      "socioeconomic_aims": [],
+      "community_activities": [],
+      "intervention_types": [],
+      "organizations": []
     },
     {
-      "id": 75,
+      "id": 2059,
       "site_name": "Site 7",
-      "landscape_id": 75,
+      "landscape_id": 2059,
       "landscape_name": "Landscape 7",
       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
-      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}",
+      "causes_of_decline": [],
+      "ecological_aims": [],
+      "socioeconomic_aims": [],
+      "community_activities": [],
+      "intervention_types": [],
+      "organizations": []
     },
     {
-      "id": 76,
+      "id": 2060,
       "site_name": "Site 8",
-      "landscape_id": 76,
+      "landscape_id": 2060,
       "landscape_name": "Landscape 8",
       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
-      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}",
+      "causes_of_decline": [],
+      "ecological_aims": [],
+      "socioeconomic_aims": [],
+      "community_activities": [
+        "Formal mangrove protection",
+        "None"
+      ],
+      "intervention_types": [
+        "Vegetation clearance and suppression"
+      ],
+      "organizations": []
     },
     {
-      "id": 77,
+      "id": 2061,
       "site_name": "Site 9",
-      "landscape_id": 77,
+      "landscape_id": 2061,
       "landscape_name": "Landscape 9",
       "site_area": "{\"type\":\"Polygon\",\"coordinates\":[[[-16.609301736,12.603397456],[-16.613187506,12.600979269],[-16.612117512,12.597983983],[-16.609921206,12.5985061],[-16.608851212,12.600374719],[-16.609301736,12.603397456]]]}",
-      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}"
+      "site_centroid": "{\"type\":\"Point\",\"coordinates\":[-16.610831584,12.60048394]}",
+      "causes_of_decline": [],
+      "ecological_aims": [],
+      "socioeconomic_aims": [],
+      "community_activities": [],
+      "intervention_types": [],
+      "organizations": []
     }
   ],
   "metadata": {
