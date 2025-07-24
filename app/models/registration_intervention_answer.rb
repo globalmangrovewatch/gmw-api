@@ -96,6 +96,18 @@ class RegistrationInterventionAnswer < ApplicationRecord
 
   belongs_to :site
 
+  scope :answer_for_site, ->(question_id, site_id) do
+      where(question_id: question_id, site_id: site_id)
+        .select("ARRAY(SELECT TRIM(REPLACE(jsonb_array_elements(answer_value -> 'selectedValues')::text, '\"', ''))")
+        .distinct
+  end
+
+  scope :category_for_site, ->(question_id, site_it) do
+    where(question_id: question_id, site_id: site_id)
+      .select("ARRAY[(jsonb_array_elements(answer_value) ->> 'mainCauseLabel')]::text[]")
+      .distinct
+  end
+
   scope :with_selected_values, ->(question_id, selected_values) do
     query = where(question_id: question_id)
       .where("(ARRAY(SELECT TRIM(REPLACE(elem::text, '\"', '')) FROM jsonb_array_elements(answer_value -> 'selectedValues') elem) && ARRAY[:values]::text[])",

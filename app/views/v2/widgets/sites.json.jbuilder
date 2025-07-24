@@ -6,6 +6,11 @@ json.data do
     json.landscape_name data.landscape.landscape_name
     json.site_area data.site_area
     json.site_centroid data.site_centroid
+    json.causes_of_decline data.causes_of_decline
+    json.ecological_aims data.ecological_aims
+    json.socioeconomic_aims data.socioeconomic_aims
+    json.community_activities data.community_activities
+    json.intervention_types data.intervention_types
   end
 end
 
