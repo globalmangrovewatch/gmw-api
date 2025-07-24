@@ -14,6 +14,7 @@ class Site < ApplicationRecord
     where id: RegistrationInterventionAnswer.with_selected_values(question_id, selected_values).select(:site_id)
   end
 
+  # TODO if this is too much of a performance penalty, we can try to retrieve this in a single query (avoid N+1)
   def causes_of_decline
     RegistrationInterventionAnswer.category_for_site("4.2", id)
   end
