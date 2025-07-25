@@ -345,7 +345,13 @@ RSpec.configure do |config|
               landscape_id: {type: :integer},
               landscape_name: {type: :string},
               site_area: {type: :string},
-              site_centroid: {type: :string}
+              site_centroid: {type: :string},
+              organizations: {type: :array, items: {type: :string}},
+              intervention_types: {type: :array, items: {type: :string}},
+              cause_of_declines: {type: :array, items: {type: :string}},
+              ecological_aims: {type: :array, items: {type: :string}},
+              socioeconomic_aims: {type: :array, items: {type: :string}},
+              community_activities: {type: :array, items: {type: :string}}
             }
           },
           flood_protection: {
