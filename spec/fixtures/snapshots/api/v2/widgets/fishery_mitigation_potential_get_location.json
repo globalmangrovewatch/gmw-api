@@ -1,0 +1,13 @@
+{
+  "data": [
+    {
+      "indicator": "bivalve",
+      "value": 68950.02,
+      "indicator_type": "density"
+    }
+  ],
+  "metadata": {
+    "location_id": "578",
+    "unit": "fishing days"
+  }
+}
