@@ -1,7 +1,4 @@
-binutils 
+libgeos-dev
+libproj-dev
 gdal-bin
 libgdal-dev
-build-essential
-libgeos-dev
-proj-bin
-libproj-dev
