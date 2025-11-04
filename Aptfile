@@ -1,3 +1,7 @@
 binutils 
 gdal-bin
 libgdal-dev
+build-essential
+libgeos-dev
+proj-bin
+libproj-dev
