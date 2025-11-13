@@ -2,3 +2,5 @@ libgeos-dev
 libproj-dev
 gdal-bin
 libgdal-dev
+build-essential
+geos-bin
