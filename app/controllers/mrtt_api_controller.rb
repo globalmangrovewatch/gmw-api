@@ -1,5 +1,6 @@
 class MrttApiController < ActionController::API
   before_action :authenticate_user!
+  
   rescue_from Exception, with: :exception
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ActiveRecord::RecordNotUnique, with: :record_not_unique
@@ -26,5 +27,27 @@ class MrttApiController < ActionController::API
 
   def forbidden_role_change
     render json: {message: "Changing your own role is not allowed"}, status: :forbidden
+  end
+
+  private
+
+  def authenticate_user_from_token!
+    secret = ENV['SECRET_KEY_BASE'] || Rails.application.secret_key_base
+    jwt_payload = JWT.decode(request.headers['Authorization'].to_s.split(' ').last, 
+                             secret, 
+                             true, 
+                             { algorithm: 'HS256' }).first
+    @current_user_id = jwt_payload['sub']
+  rescue JWT::DecodeError
+    nil
+  end
+
+  def current_user
+    @current_user ||= User.find(@current_user_id) if @current_user_id
+  end
+
+  def authenticate_user!
+    authenticate_user_from_token!
+    render json: { error: 'Unauthorized' }, status: :unauthorized unless current_user
   end
 end
