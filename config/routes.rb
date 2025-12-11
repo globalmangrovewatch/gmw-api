@@ -2,6 +2,9 @@ Rails.application.routes.draw do
   mount Rswag::Ui::Engine => "/api-docs"
   mount Rswag::Api::Engine => "/api-docs"
 
+  # Handle CORS preflight requests
+  match '*path', to: 'application#cors_preflight', via: :options
+
   # Token auth
   devise_for :users, controllers: {
     sessions: "users/sessions",
