@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_07_14_082954) do
+ActiveRecord::Schema[7.0].define(version: 2025_12_16_123820) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -278,6 +278,8 @@ ActiveRecord::Schema[7.0].define(version: 2025_07_14_082954) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "source_layer"
+    t.string "legal_status"
+    t.boolean "mangrove_breakthrough_committed"
     t.index ["location_id"], name: "index_national_dashboards_on_location_id"
   end
 

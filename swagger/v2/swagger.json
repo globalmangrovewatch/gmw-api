@@ -2635,6 +2635,8 @@
                   "data": [
                     {
                       "indicator": "floods",
+                      "legal_status": "forest",
+                      "mangrove_breakthrough_committed": true,
                       "sources": [
                         {
                           "source": "voluptatem",
@@ -2658,6 +2660,10 @@
                   ],
                   "metadata": {
                     "location_id": "2920",
+                    "legal_status_options": [
+                      "mangrove",
+                      "forest"
+                    ],
                     "other_resources": [
                       {
                         "name": "voluptatem",
@@ -2942,6 +2948,13 @@
             "type": "number",
             "nullable": true,
             "description": "total number of species in the world"
+          },
+          "legal_status_options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
           },
           "location_resources": {
             "type": "array",
@@ -3455,6 +3468,14 @@
         "properties": {
           "indicator": {
             "type": "string"
+          },
+          "legal_status": {
+            "type": "string",
+            "nullable": true
+          },
+          "mangrove_breakthrough_committed": {
+            "type": "boolean",
+            "nullable": true
           },
           "sources": {
             "type": "array",
