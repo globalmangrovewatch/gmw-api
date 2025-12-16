@@ -134,6 +134,392 @@
         }
       }
     },
+    "/users": {
+      "post": {
+        "summary": "User Registration (Sign Up)",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                      },
+                      "email": {
+                        "type": "string",
+                        "example": "john@example.com"
+                      },
+                      "password": {
+                        "type": "string",
+                        "example": "password123"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "email",
+                      "password"
+                    ]
+                  }
+                },
+                "required": [
+                  "user"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Signed up sucessfully."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Email has already been taken"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update User Profile",
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                      },
+                      "email": {
+                        "type": "string",
+                        "example": "john@example.com"
+                      },
+                      "password": {
+                        "type": "string",
+                        "example": "newpassword123",
+                        "description": "Optional - only required if changing password"
+                      },
+                      "current_password": {
+                        "type": "string",
+                        "example": "oldpassword123",
+                        "description": "Required only if changing password"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "user"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User profile updated sucessfully."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Current password is invalid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/password": {
+      "post": {
+        "summary": "Request Password Reset",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "example": "john@example.com"
+                      }
+                    },
+                    "required": [
+                      "email"
+                    ]
+                  }
+                },
+                "required": [
+                  "user"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset instructions sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "The password reset instruction was sent to john@example.com"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Reset Password with Token",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user": {
+                    "type": "object",
+                    "properties": {
+                      "reset_password_token": {
+                        "type": "string",
+                        "example": "abc123token"
+                      },
+                      "password": {
+                        "type": "string",
+                        "example": "newpassword123"
+                      },
+                      "password_confirmation": {
+                        "type": "string",
+                        "example": "newpassword123"
+                      }
+                    },
+                    "required": [
+                      "reset_password_token",
+                      "password",
+                      "password_confirmation"
+                    ]
+                  }
+                },
+                "required": [
+                  "user"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "The password was reset successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - Invalid token or passwords don't match",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "reset_password_token": [
+                          "is invalid"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/confirmation": {
+      "get": {
+        "summary": "Confirm Email Address",
+        "tags": [
+          "Authentication"
+        ],
+        "parameters": [
+          {
+            "name": "confirmation_token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Email confirmation token sent via email"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Email confirmed, redirects to login page"
+          },
+          "422": {
+            "description": "Unprocessable Entity - Invalid confirmation token"
+          }
+        }
+      }
+    },
+    "/users/current_user": {
+      "get": {
+        "summary": "Get Current User",
+        "tags": [
+          "Authentication"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current user retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "example": "john@example.com"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/spatial_file/converter": {
       "post": {
         "summary": "Converts a geospatial format into a valid geojson",
