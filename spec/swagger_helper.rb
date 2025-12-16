@@ -39,6 +39,14 @@ RSpec.configure do |config|
         }
       ],
       components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: :http,
+            scheme: :bearer,
+            bearerFormat: 'JWT',
+            description: 'JWT token obtained from /users/sign_in endpoint'
+          }
+        },
         schemas: {
           metadata: {
             type: :object,
