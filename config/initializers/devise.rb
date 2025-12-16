@@ -311,7 +311,14 @@ Devise.setup do |config|
 
   # Token auth
   config.jwt do |jwt|
-    jwt.secret = ENV["SECRET_KEY_BASE"]
+    jwt.secret = ENV["SECRET_KEY_BASE"] || Rails.application.secret_key_base
     jwt.expiration_time = 30.days.to_i
+    jwt.dispatch_requests = [
+      ['POST', %r{^/users/sign_in$}]
+    ]
+    jwt.revocation_requests = [
+      ['DELETE', %r{^/users/sign_out$}]
+    ]
+    jwt.aud_header = 'JWT_AUD'
   end
 end

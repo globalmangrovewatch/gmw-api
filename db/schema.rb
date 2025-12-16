@@ -124,7 +124,6 @@ ActiveRecord::Schema[7.0].define(version: 2025_07_14_082954) do
     t.integer "year", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "fishery_type"
     t.index ["location_id"], name: "index_fisheries_on_location_id"
   end
 
