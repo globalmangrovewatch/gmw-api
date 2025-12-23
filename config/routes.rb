@@ -16,6 +16,11 @@ Rails.application.routes.draw do
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
+  # Test notification endpoint (only available in non-production)
+  unless Rails.env.production?
+    post "/test_notification", to: "test_notifications#send_test"
+  end
+
   scope :api do
     namespace :v2, defaults: {format: :json} do
       resources :locations
