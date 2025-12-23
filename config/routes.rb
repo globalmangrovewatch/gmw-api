@@ -16,8 +16,8 @@ Rails.application.routes.draw do
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
-  # Test notification endpoint (only available in non-production)
-  unless Rails.env.production?
+  # Test notification endpoint (disabled based on ENV variable)
+  unless ENV['DISABLE_TEST_NOTIFICATION'] == 'true'
     post "/test_notification", to: "test_notifications#send_test"
   end
 
