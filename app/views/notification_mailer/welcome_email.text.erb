@@ -1,0 +1,12 @@
+Welcome to GMW API, <%= @template_data[:name] %>!
+
+Thank you for joining our platform. We're excited to have you on board.
+
+Your account has been successfully created and you can now start using our services.
+
+<% if @template_data[:activation_url].present? %>
+Activate your account: <%= @template_data[:activation_url] %>
+<% end %>
+
+If you have any questions, feel free to reach out to our support team.
+

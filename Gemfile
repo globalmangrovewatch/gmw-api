@@ -95,6 +95,10 @@ end
 # Token auth
 gem "devise-jwt"
 
+# Background jobs
+gem "sidekiq", "~> 7.0"
+gem "redis", "~> 5.0"
+
 # Geo
 gem "rgeo-geojson"
 gem "activerecord-postgis-adapter"

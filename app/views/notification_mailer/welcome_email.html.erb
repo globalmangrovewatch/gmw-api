@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .email-container {
+        background-color: #f4f4f4;
+        padding: 20px;
+        border-radius: 5px;
+      }
+      .email-content {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 5px;
+      }
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+      }
+      .button {
+        display: inline-block;
+        padding: 12px 24px;
+        background-color: #3498db;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 5px;
+        margin: 20px 0;
+      }
+      .footer {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #ecf0f1;
+        font-size: 12px;
+        color: #7f8c8d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="email-content">
+        <h1>Welcome to GMW API, <%= @template_data[:name] %>!</h1>
+        <p>Thank you for joining our platform. We're excited to have you on board.</p>
+        <p>Your account has been successfully created and you can now start using our services.</p>
+        <% if @template_data[:activation_url].present? %>
+          <a href="<%= @template_data[:activation_url] %>" class="button">Activate Your Account</a>
+        <% end %>
+        <div class="footer">
+          <p>If you have any questions, feel free to reach out to our support team.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+

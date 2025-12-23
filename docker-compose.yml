@@ -8,7 +8,16 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
   web:
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
@@ -16,12 +25,29 @@ services:
       - .env
     environment:
       - RAILS_ENV=development
+      - REDIS_URL=redis://redis:6379/0
     volumes:
       - .:/mangroveAtlasApi
     ports:
       - "3000:3000"
     depends_on:
       - db
+      - redis
+
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    env_file:
+      - .env
+    environment:
+      - RAILS_ENV=development
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - .:/mangroveAtlasApi
+    depends_on:
+      - db
+      - redis
+
   mailhog:
     image: mailhog/mailhog
     logging:
@@ -29,3 +55,6 @@ services:
     ports:
       - 1025:1025
       - 8025:8025
+
+volumes:
+  redis_data:
