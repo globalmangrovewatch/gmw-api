@@ -87,6 +87,11 @@ Rails.application.routes.draw do
           patch :reorder
         end
       end
+
+      resource :notification_preferences, only: [:show, :update] do
+        post :toggle_location_alerts
+        post :bulk_toggle_location_alerts
+      end
     end
 
     namespace :v3, defaults: {format: :json} do
@@ -153,6 +158,11 @@ Rails.application.routes.draw do
         collection do
           patch :reorder
         end
+      end
+
+      resource :notification_preferences, only: [:show, :update] do
+        post :toggle_location_alerts
+        post :bulk_toggle_location_alerts
       end
     end
   end

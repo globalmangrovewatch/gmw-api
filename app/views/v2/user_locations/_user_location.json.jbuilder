@@ -2,6 +2,7 @@ json.id user_location.id
 json.name user_location.name
 json.position user_location.position
 json.bounds user_location.bounds
+json.alerts_enabled user_location.alerts_enabled
 json.created_at user_location.created_at
 json.updated_at user_location.updated_at
 

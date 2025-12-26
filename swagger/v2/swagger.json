@@ -3258,6 +3258,201 @@
         }
       }
     },
+    "/api/v2/notification_preferences": {
+      "get": {
+        "summary": "Get notification preferences",
+        "description": "Returns the current user's notification subscription preferences",
+        "tags": [
+          "Notification Preferences"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/notification_preferences"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "location_alerts": true,
+                    "newsletter": false,
+                    "platform_updates": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update notification preferences",
+        "description": "Update one or more notification subscription preferences",
+        "tags": [
+          "Notification Preferences"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/notification_preferences_update"
+              },
+              "example": {
+                "location_alerts": true,
+                "newsletter": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/notification_preferences"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
+    "/api/v2/notification_preferences/toggle_location_alerts": {
+      "post": {
+        "summary": "Toggle location alerts subscription",
+        "description": "Toggles the location alerts subscription on/off (flips the current value)",
+        "tags": [
+          "Notification Preferences"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/notification_preferences"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v2/notification_preferences/bulk_toggle_location_alerts": {
+      "post": {
+        "summary": "Bulk enable/disable alerts for all saved locations",
+        "description": "Sets alerts_enabled to true or false for ALL of the user's saved locations. This is useful when the user wants to quickly enable/disable alerts for all their locations at once.",
+        "tags": [
+          "Notification Preferences"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Set to true to enable alerts for all locations, false to disable"
+                  }
+                },
+                "required": ["enabled"]
+              },
+              "example": {
+                "enabled": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success - Returns all user locations with updated alerts_enabled status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/user_location"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "max_locations": {
+                          "type": "integer"
+                        },
+                        "current_count": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - enabled parameter required"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/v2/sites/{site_id}/registration_intervention_answers": {
       "get": {
         "summary": "Get registration intervention answers for a site",
@@ -4385,6 +4580,10 @@
               }
             }
           },
+          "alerts_enabled": {
+            "type": "boolean",
+            "description": "Whether location-based alerts are enabled for this specific location"
+          },
           "created_at": {
             "type": "string",
             "format": "date-time"
@@ -4493,6 +4692,12 @@
             "type": "integer",
             "nullable": true,
             "description": "Display order position"
+          },
+          "alerts_enabled": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Whether location-based alerts are enabled for this location. Defaults to true",
+            "default": true
           }
         }
       },
@@ -4524,6 +4729,11 @@
           "position": {
             "type": "integer",
             "nullable": true
+          },
+          "alerts_enabled": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Whether location-based alerts are enabled for this location"
           }
         }
       },
@@ -4596,6 +4806,42 @@
           }
         },
         "required": ["question_id", "answer_value"]
+      },
+      "notification_preferences": {
+        "type": "object",
+        "description": "User notification subscription preferences",
+        "properties": {
+          "location_alerts": {
+            "type": "boolean",
+            "description": "Subscribe to location-based alerts for saved locations"
+          },
+          "newsletter": {
+            "type": "boolean",
+            "description": "Subscribe to newsletter"
+          },
+          "platform_updates": {
+            "type": "boolean",
+            "description": "Subscribe to platform update notifications"
+          }
+        }
+      },
+      "notification_preferences_update": {
+        "type": "object",
+        "description": "Update notification preferences - all fields are optional, only provided fields will be updated",
+        "properties": {
+          "location_alerts": {
+            "type": "boolean",
+            "description": "Subscribe to location-based alerts"
+          },
+          "newsletter": {
+            "type": "boolean",
+            "description": "Subscribe to newsletter"
+          },
+          "platform_updates": {
+            "type": "boolean",
+            "description": "Subscribe to platform updates"
+          }
+        }
       }
     }
   }

@@ -32,6 +32,10 @@ FactoryBot.define do
         }
       end
     end
+
+    trait :with_alerts_disabled do
+      alerts_enabled { false }
+    end
   end
 end
 

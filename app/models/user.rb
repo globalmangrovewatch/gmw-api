@@ -57,6 +57,27 @@ class User < ApplicationRecord
     get_all_org_roles
   end
 
+  def alertable_locations
+    return UserLocation.none unless subscribed_to_location_alerts
+    user_locations.where(alerts_enabled: true)
+  end
+
+  def notification_preferences
+    {
+      location_alerts: subscribed_to_location_alerts,
+      newsletter: subscribed_to_newsletter,
+      platform_updates: subscribed_to_platform_updates
+    }
+  end
+
+  def update_notification_preferences(preferences)
+    updates = {}
+    updates[:subscribed_to_location_alerts] = preferences[:location_alerts] if preferences.key?(:location_alerts)
+    updates[:subscribed_to_newsletter] = preferences[:newsletter] if preferences.key?(:newsletter)
+    updates[:subscribed_to_platform_updates] = preferences[:platform_updates] if preferences.key?(:platform_updates)
+    update(updates) if updates.present?
+  end
+
   private
 
   def get_one_organization_user(organization_id)

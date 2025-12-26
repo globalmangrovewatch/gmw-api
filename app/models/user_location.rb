@@ -10,6 +10,7 @@ class UserLocation < ApplicationRecord
 
   scope :system_locations, -> { where.not(location_id: nil) }
   scope :custom_locations, -> { where(location_id: nil) }
+  scope :with_alerts_enabled, -> { where(alerts_enabled: true) }
 
   def custom_geometry=(value)
     return super(nil) if value.blank?

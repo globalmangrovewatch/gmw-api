@@ -56,7 +56,7 @@ class V2::UserLocationsController < MrttApiController
   end
 
   def user_location_params
-    params.permit(:name, :location_id, :position, bounds: {})
+    params.permit(:name, :location_id, :position, :alerts_enabled, bounds: {})
   end
 end
 
