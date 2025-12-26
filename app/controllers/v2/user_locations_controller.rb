@@ -10,6 +10,7 @@ class V2::UserLocationsController < MrttApiController
 
   def create
     @user_location = current_user.user_locations.build(user_location_params)
+    @user_location.custom_geometry = params[:custom_geometry] if params[:custom_geometry].present?
 
     if @user_location.save
       render :show, status: :created
@@ -19,7 +20,10 @@ class V2::UserLocationsController < MrttApiController
   end
 
   def update
-    if @user_location.update(user_location_params)
+    @user_location.assign_attributes(user_location_params)
+    @user_location.custom_geometry = params[:custom_geometry] if params[:custom_geometry].present?
+
+    if @user_location.save
       render :show
     else
       render json: {errors: @user_location.errors.full_messages}, status: :unprocessable_entity
@@ -52,7 +56,7 @@ class V2::UserLocationsController < MrttApiController
   end
 
   def user_location_params
-    params.permit(:name, :location_id, :position, :custom_geometry, bounds: {})
+    params.permit(:name, :location_id, :position, bounds: {})
   end
 end
 

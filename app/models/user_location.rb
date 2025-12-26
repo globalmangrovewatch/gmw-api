@@ -12,13 +12,22 @@ class UserLocation < ApplicationRecord
   scope :custom_locations, -> { where(location_id: nil) }
 
   def custom_geometry=(value)
-    if value.is_a?(Hash) || value.is_a?(String)
-      geojson = value.is_a?(String) ? value : value.to_json
-      parsed = RGeo::GeoJSON.decode(geojson, json_parser: :json)
-      super(parsed)
+    return super(nil) if value.blank?
+
+    geojson = case value
+    when String
+      value
+    when ActionController::Parameters, Hash
+      value.to_unsafe_h.to_json
     else
-      super
+      value.to_json
     end
+
+    parsed = RGeo::GeoJSON.decode(geojson, json_parser: :json)
+    super(parsed)
+  rescue => e
+    Rails.logger.error "Failed to parse custom_geometry: #{e.message}"
+    super(nil)
   end
 
   private
