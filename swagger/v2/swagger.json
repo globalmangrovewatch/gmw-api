@@ -3257,6 +3257,264 @@
           }
         }
       }
+    },
+    "/api/v2/sites/{site_id}/registration_intervention_answers": {
+      "get": {
+        "summary": "Get registration intervention answers for a site",
+        "description": "Returns all registration and intervention answers for a specific site. Non-admin users can only view public sections unless they are members of the site's organization.",
+        "tags": [
+          "MRTT - Sites"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Site ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/registration_intervention_answer"
+                  }
+                },
+                "example": [
+                  {
+                    "question_id": "1.1",
+                    "answer_value": "Example Site"
+                  },
+                  {
+                    "question_id": "1.3",
+                    "answer_value": {
+                      "type": "FeatureCollection",
+                      "features": [
+                        {
+                          "type": "Feature",
+                          "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [[[103.8, 1.3], [103.8, 1.2], [103.9, 1.2], [103.9, 1.3], [103.8, 1.3]]]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "question_id": "3.1",
+                    "answer_value": ["Increase mangrove area", "Improve mangrove condition/halt or reduce degradation"]
+                  }
+                ]
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Site not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Replace all registration intervention answers for a site",
+        "description": "Replaces all existing answers with the provided payload. Deletes all existing answers and creates new ones. Question 1.3 (site area) with GeoJSON geometry will update the site's geographic area. Requires admin or organization membership.",
+        "tags": [
+          "MRTT - Sites"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Site ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/registration_intervention_answer_input"
+                }
+              },
+              "example": [
+                {
+                  "question_id": "1.1",
+                  "answer_value": "My Mangrove Site"
+                },
+                {
+                  "question_id": "1.3",
+                  "answer_value": {
+                    "type": "FeatureCollection",
+                    "features": [
+                      {
+                        "type": "Feature",
+                        "geometry": {
+                          "type": "Polygon",
+                          "coordinates": [[[103.8, 1.3], [103.8, 1.2], [103.9, 1.2], [103.9, 1.3], [103.8, 1.3]]]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "question_id": "3.1",
+                  "answer_value": ["Increase mangrove area"]
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/registration_intervention_answer"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Duplicate question_id found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "1.1 was seen multiple times"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient privileges"
+          },
+          "404": {
+            "description": "Site not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Partially update registration intervention answers for a site",
+        "description": "Updates or creates specific answers without deleting existing ones. Only the provided question_ids are affected. Question 1.3 (site area) with GeoJSON geometry will update the site's geographic area. Requires admin or organization membership.",
+        "tags": [
+          "MRTT - Sites"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Site ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/registration_intervention_answer_input"
+                }
+              },
+              "example": [
+                {
+                  "question_id": "3.1",
+                  "answer_value": ["Increase mangrove area", "Improve mangrove condition/halt or reduce degradation"]
+                },
+                {
+                  "question_id": "3.2",
+                  "answer_value": ["Enhance fisheries/restore fishing grounds"]
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/registration_intervention_answer"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Duplicate question_id found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "3.1 was seen multiple times"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient privileges"
+          },
+          "404": {
+            "description": "Site not found"
+          }
+        }
+      }
     }
   },
   "servers": [
@@ -4268,6 +4526,76 @@
             "nullable": true
           }
         }
+      },
+      "registration_intervention_answer": {
+        "type": "object",
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "description": "Question identifier (e.g., '1.1', '1.3', '3.1')",
+            "example": "3.1"
+          },
+          "answer_value": {
+            "description": "Answer value - can be string, array, object, or GeoJSON for question 1.3 (site area)",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "object"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        "required": ["question_id", "answer_value"]
+      },
+      "registration_intervention_answer_input": {
+        "type": "object",
+        "description": "Input format for registration intervention answers. Question 1.3 expects GeoJSON FeatureCollection for site area.",
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "description": "Question identifier",
+            "example": "1.3"
+          },
+          "answer_value": {
+            "description": "Answer value - type varies by question. Question 1.3 requires GeoJSON FeatureCollection with polygon geometry.",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "object",
+                "description": "For question 1.3 (site area), this should be a GeoJSON FeatureCollection"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        "required": ["question_id", "answer_value"]
       }
     }
   }
