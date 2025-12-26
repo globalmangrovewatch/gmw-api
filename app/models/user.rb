@@ -6,6 +6,8 @@ class User < ApplicationRecord
     :recoverable,
     jwt_revocation_strategy: JwtDenylist
   has_and_belongs_to_many :organizations
+  has_many :user_locations, dependent: :destroy
+  has_many :saved_locations, through: :user_locations, source: :location
 
   def jwt_payload
     {
