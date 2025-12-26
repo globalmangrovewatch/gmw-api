@@ -13,7 +13,8 @@ class V2::NotificationPreferencesController < MrttApiController
   end
 
   def toggle_location_alerts
-    new_value = !current_user.subscribed_to_location_alerts
+    current_value = current_user.subscribed_to_location_alerts || false
+    new_value = !current_value
     if current_user.update(subscribed_to_location_alerts: new_value)
       @preferences = current_user.notification_preferences
       render :show
