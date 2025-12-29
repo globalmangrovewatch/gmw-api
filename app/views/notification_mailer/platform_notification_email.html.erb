@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= @notification.title %></title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: linear-gradient(135deg, #0077b6 0%, #00a896 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+      border-radius: 8px 8px 0 0;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .header .type {
+      font-size: 12px;
+      text-transform: uppercase;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+    .content {
+      background: #f9f9f9;
+      padding: 30px;
+      border: 1px solid #e0e0e0;
+      border-top: none;
+    }
+    .footer {
+      background: #333;
+      color: #999;
+      padding: 20px;
+      text-align: center;
+      font-size: 12px;
+      border-radius: 0 0 8px 8px;
+    }
+    .footer a {
+      color: #00a896;
+      text-decoration: none;
+    }
+    .button {
+      display: inline-block;
+      background: #0077b6;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="type">
+      <%= @notification.notification_type == "newsletter" ? "Newsletter" : "Platform Update" %>
+    </div>
+    <h1><%= @notification.title %></h1>
+  </div>
+
+  <div class="content">
+    <p>Hi<%= @user.name.present? ? " #{@user.name}" : "" %>,</p>
+
+    <%= simple_format(@notification.content) %>
+
+    <p>
+      <a href="<%= ENV.fetch('FRONTEND_URL', 'https://globalmangrovewatch.org') %>" class="button">
+        Visit Global Mangrove Watch
+      </a>
+    </p>
+  </div>
+
+  <div class="footer">
+    <p>
+      You received this email because you are subscribed to 
+      <%= @notification.notification_type == "newsletter" ? "our newsletter" : "platform updates" %>.
+    </p>
+    <p>
+      <a href="<%= ENV.fetch('FRONTEND_URL', 'https://globalmangrovewatch.org') %>/settings">
+        Manage your notification preferences
+      </a>
+    </p>
+    <p>© <%= Time.current.year %> Global Mangrove Watch</p>
+  </div>
+</body>
+</html>
+

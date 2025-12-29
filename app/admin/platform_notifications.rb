@@ -15,12 +15,14 @@ ActiveAdmin.register PlatformNotification do
   filter :title
   filter :notification_type, as: :select, collection: PlatformNotification.notification_types
   filter :published_at
+  filter :sent_at
   filter :created_at
 
   scope :all, default: true
   scope :published
   scope :draft
   scope :scheduled
+  scope :unsent, -> { where(sent_at: nil).where.not(published_at: nil) }
   scope :newsletters
   scope :platform_updates
 
@@ -67,6 +69,15 @@ ActiveAdmin.register PlatformNotification do
         status_tag "Draft", class: "grey"
       end
     end
+    column :sent_at do |notification|
+      if notification.sent?
+        status_tag "Sent", class: "green"
+      elsif notification.published?
+        status_tag "Pending", class: "orange"
+      else
+        status_tag "Not sent", class: "grey"
+      end
+    end
     column :published_at
     column :created_by do |notification|
       notification.created_by&.email || "N/A"
@@ -94,6 +105,13 @@ ActiveAdmin.register PlatformNotification do
         end
       end
       row :published_at
+      row :sent_at do |notification|
+        if notification.sent?
+          "#{notification.sent_at.strftime('%Y-%m-%d %H:%M:%S')} ✓"
+        else
+          "Not sent yet"
+        end
+      end
       row :created_by do |notification|
         notification.created_by&.email || "N/A"
       end
@@ -104,6 +122,21 @@ ActiveAdmin.register PlatformNotification do
     panel "Content" do
       div class: "notification-content" do
         simple_format resource.content
+      end
+    end
+
+    if resource.published?
+      panel "Subscriber Stats" do
+        subscriber_count = case resource.notification_type
+        when "newsletter"
+          User.where(subscribed_to_newsletter: true).count
+        when "platform_update"
+          User.where(subscribed_to_platform_updates: true).count
+        else
+          0
+        end
+
+        para "This notification will be sent to #{subscriber_count} subscribers."
       end
     end
   end
@@ -117,7 +150,7 @@ ActiveAdmin.register PlatformNotification do
 
     f.inputs "Publishing" do
       f.input :published_at, as: :datepicker,
-              hint: "Leave blank to save as draft. Set a future date to schedule."
+              hint: "Leave blank to save as draft. Set a future date to schedule. Emails are sent automatically when published."
     end
 
     f.actions
@@ -146,27 +179,33 @@ ActiveAdmin.register PlatformNotification do
     column :notification_type
     column :content
     column :published_at
+    column :sent_at
     column("Created By") { |n| n.created_by&.email }
     column :created_at
     column :updated_at
   end
 
-  batch_action :publish do |ids|
+  batch_action :publish_and_send do |ids|
     batch_action_collection.find(ids).each do |notification|
       notification.update(published_at: Time.current) if notification.draft?
     end
-    redirect_to collection_path, notice: "Selected notifications have been published."
+    redirect_to collection_path, notice: "Selected notifications have been published and emails queued."
   end
 
   batch_action :unpublish, confirm: "This will set notifications back to draft status. Are you sure?" do |ids|
     batch_action_collection.find(ids).each do |notification|
-      notification.update(published_at: nil)
+      notification.update(published_at: nil, sent_at: nil)
     end
     redirect_to collection_path, notice: "Selected notifications have been unpublished."
   end
 
   action_item :publish, only: :show, if: proc { resource.draft? } do
-    link_to "Publish Now", publish_admin_platform_notification_path(resource), method: :put
+    link_to "Publish & Send", publish_admin_platform_notification_path(resource), method: :put
+  end
+
+  action_item :resend, only: :show, if: proc { resource.published? && resource.sent? } do
+    link_to "Resend to Subscribers", resend_admin_platform_notification_path(resource), method: :put,
+            data: {confirm: "This will send the notification again to all subscribers. Continue?"}
   end
 
   action_item :unpublish, only: :show, if: proc { resource.published? } do
@@ -175,11 +214,17 @@ ActiveAdmin.register PlatformNotification do
 
   member_action :publish, method: :put do
     resource.update(published_at: Time.current)
-    redirect_to admin_platform_notification_path(resource), notice: "Notification has been published."
+    redirect_to admin_platform_notification_path(resource), notice: "Notification has been published and emails are being sent."
+  end
+
+  member_action :resend, method: :put do
+    resource.update_column(:sent_at, nil)
+    resource.send_to_subscribers!
+    redirect_to admin_platform_notification_path(resource), notice: "Notification is being resent to all subscribers."
   end
 
   member_action :unpublish, method: :put do
-    resource.update(published_at: nil)
+    resource.update(published_at: nil, sent_at: nil)
     redirect_to admin_platform_notification_path(resource), notice: "Notification has been unpublished."
   end
 end
