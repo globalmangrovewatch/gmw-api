@@ -9,6 +9,10 @@ class User < ApplicationRecord
   has_many :user_locations, dependent: :destroy
   has_many :saved_locations, through: :user_locations, source: :location
 
+  scope :admins, -> { where(admin: true) }
+  scope :subscribed_to_alerts, -> { where(subscribed_to_location_alerts: true) }
+  scope :subscribed_to_newsletter, -> { where(subscribed_to_newsletter: true) }
+
   def jwt_payload
     {
       meta: {

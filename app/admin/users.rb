@@ -15,9 +15,9 @@ ActiveAdmin.register User do
   filter :created_at
 
   scope :all, default: true
-  scope :admins, -> { where(admin: true) }
-  scope :subscribed_to_alerts, -> { where(subscribed_to_location_alerts: true) }
-  scope :subscribed_to_newsletter, -> { where(subscribed_to_newsletter: true) }
+  scope :admins
+  scope :subscribed_to_alerts
+  scope :subscribed_to_newsletter
 
   index do
     selectable_column
