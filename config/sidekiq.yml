@@ -3,6 +3,14 @@
   - default
   - mailers
 
+:scheduler:
+  :schedule:
+    check_location_alerts:
+      every: <%= ENV.fetch('ALERTS_CHECK_INTERVAL', '5m') %>
+      class: CheckLocationAlertsJob
+      queue: default
+      description: "Check for new location alert data"
+
 production:
   :concurrency: 10
 
@@ -11,4 +19,3 @@ development:
 
 staging:
   :concurrency: 5
-

@@ -45,4 +45,18 @@ class NotificationMailer < ApplicationMailer
       subject: subject
     )
   end
+
+  def location_alert_email(user:, location_id:, location_name:, new_dates:, latest_count: nil)
+    @user = user
+    @location_id = location_id
+    @location_name = location_name
+    @new_dates = new_dates
+    @latest_count = latest_count
+    @latest_date = new_dates.last
+
+    mail(
+      to: user.email,
+      subject: "[GMW Alert] New data available for #{location_name}"
+    )
+  end
 end

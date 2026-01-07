@@ -192,11 +192,18 @@ ActiveAdmin.register PlatformNotification do
     redirect_to collection_path, notice: "Selected notifications have been published and emails queued."
   end
 
-  batch_action :unpublish, confirm: "This will set notifications back to draft status. Are you sure?" do |ids|
+  batch_action :unpublish, confirm: "This will set unsent notifications back to draft status. Already sent notifications will be skipped. Are you sure?" do |ids|
+    unpublished_count = 0
+    skipped_count = 0
     batch_action_collection.find(ids).each do |notification|
-      notification.update(published_at: nil, sent_at: nil)
+      if notification.sent?
+        skipped_count += 1
+      else
+        notification.update(published_at: nil, sent_at: nil)
+        unpublished_count += 1
+      end
     end
-    redirect_to collection_path, notice: "Selected notifications have been unpublished."
+    redirect_to collection_path, notice: "#{unpublished_count} notifications unpublished. #{skipped_count} already-sent notifications skipped."
   end
 
   action_item :publish, only: :show, if: proc { resource.draft? } do
@@ -208,7 +215,7 @@ ActiveAdmin.register PlatformNotification do
             data: {confirm: "This will send the notification again to all subscribers. Continue?"}
   end
 
-  action_item :unpublish, only: :show, if: proc { resource.published? } do
+  action_item :unpublish, only: :show, if: proc { resource.scheduled? || (resource.published? && !resource.sent?) } do
     link_to "Unpublish", unpublish_admin_platform_notification_path(resource), method: :put
   end
 

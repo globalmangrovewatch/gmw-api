@@ -1,0 +1,33 @@
+🔔 LOCATION ALERT
+<%= "=" * 50 %>
+
+New Data for <%= @location_name %>
+
+<%= "-" * 50 %>
+
+Hi<%= @user.name.present? ? " #{@user.name}" : "" %>,
+
+New alert data has been detected for one of your saved locations:
+
+Location: <%= @location_name %>
+New data period: <%= Date.parse(@latest_date).strftime('%B %Y') rescue @latest_date %>
+<% if @latest_count.present? %>
+Alert count: <%= number_with_delimiter(@latest_count) %>
+<% end %>
+
+<% if @new_dates.length > 1 %>
+Note: <%= @new_dates.length %> new data periods were added.
+<% end %>
+
+---
+
+View on Global Mangrove Watch: <%= ENV.fetch('FRONTEND_URL', 'https://globalmangrovewatch.org') %>
+
+---
+
+You received this email because you have location alerts enabled for <%= @location_name %>.
+
+Manage your saved locations and alert preferences: <%= ENV.fetch('FRONTEND_URL', 'https://globalmangrovewatch.org') %>/settings
+
+© <%= Time.current.year %> Global Mangrove Watch
+

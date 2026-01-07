@@ -97,7 +97,11 @@ gem "devise-jwt"
 
 # Background jobs
 gem "sidekiq", "~> 7.0"
+gem "sidekiq-scheduler", "~> 5.0"
 gem "redis", "~> 5.0"
+
+# HTTP client
+gem "httparty", "~> 0.21"
 
 # Geo
 gem "rgeo-geojson"
