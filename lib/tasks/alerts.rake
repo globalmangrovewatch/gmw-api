@@ -84,10 +84,56 @@ namespace :alerts do
     puts "Error: #{e.class} - #{e.message}"
   end
 
-  desc "Reset all snapshots (will trigger notifications on next check)"
+  desc "Reset all snapshots (next check will re-seed without notifications)"
   task reset: :environment do
     count = LocationAlertSnapshot.delete_all
-    puts "Deleted #{count} snapshots."
+    puts "Deleted #{count} snapshots. Run 'rake alerts:check' to re-seed."
+  end
+
+  desc "Seed snapshots for all available locations (no notifications sent)"
+  task seed: :environment do
+    puts "[#{Time.current}] Seeding location alert snapshots for all locations..."
+
+    location_ids = Location.unscoped.pluck(:location_id).compact.uniq
+    location_ids << "worldwide" unless location_ids.include?("worldwide")
+
+    puts "Found #{location_ids.count} locations to seed"
+
+    endpoint = ENV.fetch(
+      "ALERTS_ENDPOINT_URL",
+      "https://us-central1-mangrove-atlas-246414.cloudfunctions.net/fetch-alerts"
+    )
+
+    success_count = 0
+    error_count = 0
+
+    location_ids.each_with_index do |location_id, index|
+      print "  [#{index + 1}/#{location_ids.count}] Seeding #{location_id}... "
+
+      response = HTTParty.get(
+        endpoint,
+        query: {location_id: location_id},
+        timeout: 30,
+        headers: {"Accept" => "application/json"}
+      )
+
+      if response.success? && response.parsed_response.is_a?(Array)
+        data = response.parsed_response
+        snapshot = LocationAlertSnapshot.find_or_initialize_by(location_id: location_id)
+        snapshot.update_from_response!(data)
+        puts "✓ (#{data.count} dates, latest: #{snapshot.latest_date})"
+        success_count += 1
+      else
+        puts "✗ (HTTP #{response.code})"
+        error_count += 1
+      end
+    rescue => e
+      puts "✗ (#{e.message})"
+      error_count += 1
+    end
+
+    puts ""
+    puts "[#{Time.current}] Seeding completed: #{success_count} success, #{error_count} errors"
   end
 end
 
