@@ -46,12 +46,10 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
-  def location_alert_email(user:, location_id:, location_name:, new_dates:, latest_count: nil)
+  def location_alert_email(user:, location_name:, new_dates:)
     @user = user
-    @location_id = location_id
     @location_name = location_name
     @new_dates = new_dates
-    @latest_count = latest_count
     @latest_date = new_dates.last
 
     mail(

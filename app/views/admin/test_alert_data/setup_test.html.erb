@@ -1,0 +1,51 @@
+<div class="panel">
+  <h3>Setup Test Location for User</h3>
+  
+  <div class="panel_contents">
+    <p>This will create a test location that you can use to test the alert sync functionality.</p>
+    
+    <%= form_tag create_test_location_admin_test_alert_data_index_path, method: :post do %>
+      <fieldset class="inputs">
+        <ol>
+          <li class="string input required">
+            <label for="user_id">User *</label>
+            <%= select_tag :user_id, 
+                options_from_collection_for_select(@users, :id, :email),
+                include_blank: "Select a user...",
+                required: true,
+                class: "select2" %>
+            <p class="inline-hints">Select a user who has location alerts enabled</p>
+          </li>
+          
+          <li class="string input optional">
+            <label for="location_id">Test Location ID</label>
+            <%= text_field_tag :location_id, "test_location", placeholder: "test_location" %>
+            <p class="inline-hints">Must start with "test_" (default: test_location)</p>
+          </li>
+        </ol>
+      </fieldset>
+      
+      <fieldset class="actions">
+        <%= submit_tag "Create Test Location", class: "button" %>
+        <%= link_to "Cancel", admin_test_alert_data_index_path, class: "button" %>
+      </fieldset>
+    <% end %>
+  </div>
+</div>
+
+<div class="panel">
+  <h3>Testing Instructions</h3>
+  
+  <div class="panel_contents">
+    <ol>
+      <li><strong>Create test location</strong> - Use the form above to add a test location to your user</li>
+      <li><strong>Verify snapshot</strong> - Go to "Location Alerts" and run "Sync Location Alerts" once (this seeds the initial snapshot)</li>
+      <li><strong>Add a new date</strong> - Go to "Test Alerts", find your test location, and click "Add Today's Date"</li>
+      <li><strong>Trigger sync again</strong> - Go to "Location Alerts" and run "Sync Location Alerts"</li>
+      <li><strong>Check email</strong> - You should receive an alert email for the new date</li>
+    </ol>
+    
+    <p><strong>Note:</strong> The first sync after creating a test location will NOT send notifications (it just seeds the baseline). Only subsequent syncs with new dates will trigger notifications.</p>
+  </div>
+</div>
+

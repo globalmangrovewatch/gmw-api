@@ -92,6 +92,10 @@ Rails.application.routes.draw do
         post :toggle_location_alerts
         post :bulk_toggle_location_alerts
       end
+
+      get "/test_alerts", to: "test_alerts#show"
+      post "/test_alerts", to: "test_alerts#create"
+      delete "/test_alerts", to: "test_alerts#destroy"
     end
 
     namespace :v3, defaults: {format: :json} do
