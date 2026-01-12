@@ -68,8 +68,10 @@ class UserLocation < ApplicationRecord
     geojson = case value
     when String
       value
-    when ActionController::Parameters, Hash
+    when ActionController::Parameters
       value.to_unsafe_h.to_json
+    when Hash
+      value.to_json
     else
       value.to_json
     end
