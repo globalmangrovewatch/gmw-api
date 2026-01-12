@@ -300,33 +300,73 @@ namespace :alerts do
       puts "=" * 50
       puts "STEP 1: Setup test location"
       puts "=" * 50
-      Rake::Task["alerts:test:setup"].invoke(email, location_id)
-      Rake::Task["alerts:test:setup"].reenable
+
+      user = User.find_by(email: email)
+      unless user
+        puts "Error: User not found: #{email}"
+        exit 1
+      end
+
+      unless user.subscribed_to_location_alerts?
+        user.update!(subscribed_to_location_alerts: true)
+        puts "Enabled location alerts for #{email}"
+      end
+
+      TestAlertData.for_location(location_id)
+
+      user_location = user.user_locations.find_by("bounds->>'test_location_id' = ?", location_id)
+      unless user_location
+        dummy_geometry = {"type" => "Point", "coordinates" => [0, 0]}
+        user_location = user.user_locations.create!(
+          name: "Test Location (#{location_id})",
+          alerts_enabled: true,
+          custom_geometry: dummy_geometry,
+          bounds: {test_location_id: location_id}
+        )
+        puts "Created test location '#{location_id}' for #{email}"
+      else
+        puts "Test location '#{location_id}' already exists for #{email}"
+      end
+      puts "User location ID: #{user_location.id}"
       puts ""
 
       puts "=" * 50
       puts "STEP 2: Initial sync (seeds snapshot, no notification)"
       puts "=" * 50
-      Rake::Task["alerts:sync"].invoke
-      Rake::Task["alerts:sync"].reenable
+
+      sync_run = AlertSyncRun.create!(status: :pending)
+      ProcessAlertSyncJob.perform_now(sync_run.id)
+      sync_run.reload
+      puts "Sync completed: #{sync_run.custom_locations_checked} locations checked"
       puts ""
 
       puts "=" * 50
       puts "STEP 3: Add new date to test data"
       puts "=" * 50
-      Rake::Task["alerts:test:add_date"].invoke(location_id)
-      Rake::Task["alerts:test:add_date"].reenable
+
+      test_data = TestAlertData.for_location(location_id)
+      new_date = Date.current.to_s
+      test_data.add_date!(new_date)
+      puts "Added date #{new_date} to #{location_id}"
+      puts "Current dates: #{test_data.dates.count}"
       puts ""
 
       puts "=" * 50
       puts "STEP 4: Sync again (should trigger notification)"
       puts "=" * 50
-      Rake::Task["alerts:sync"].invoke
-      Rake::Task["alerts:sync"].reenable
+
+      sync_run2 = AlertSyncRun.create!(status: :pending)
+      ProcessAlertSyncJob.perform_now(sync_run2.id)
+      sync_run2.reload
+      puts "Sync completed: #{sync_run2.notifications_sent} notifications sent"
       puts ""
 
       puts "=" * 50
-      puts "DONE! Check your email for the alert notification."
+      if sync_run2.notifications_sent > 0
+        puts "DONE! Check your email for the alert notification."
+      else
+        puts "DONE! No notifications sent (check if snapshot was created on step 2)."
+      end
       puts "=" * 50
     end
   end
