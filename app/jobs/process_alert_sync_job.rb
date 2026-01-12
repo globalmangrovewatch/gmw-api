@@ -75,9 +75,9 @@ class ProcessAlertSyncJob < ApplicationJob
   end
 
   def process_custom_locations
-    custom_user_locations = UserLocation.alertable.custom_locations
+    custom_user_locations = UserLocation.alertable.custom_and_test_locations
 
-    Rails.logger.info "[ProcessAlertSyncJob] Processing #{custom_user_locations.count} custom locations"
+    Rails.logger.info "[ProcessAlertSyncJob] Processing #{custom_user_locations.count} custom/test locations"
 
     custom_user_locations.find_each do |user_location|
       CheckCustomLocationAlertJob.perform_later(

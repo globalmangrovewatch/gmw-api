@@ -7,20 +7,26 @@ class CheckCustomLocationAlertJob < ApplicationJob
     @sync_run = AlertSyncRun.find_by(id: sync_run_id)
     user_location = UserLocation.find_by(id: user_location_id)
 
-    return unless user_location&.custom_location?
+    return unless user_location
+    return unless user_location.custom_location? || user_location.test_location?
     return unless user_location.alerts_enabled?
     return unless user_location.user&.subscribed_to_location_alerts?
 
-    Rails.logger.info "[CheckCustomLocationAlertJob] Checking custom location #{user_location_id}"
+    location_type = user_location.test_location? ? "test" : "custom"
+    Rails.logger.info "[CheckCustomLocationAlertJob] Checking #{location_type} location #{user_location_id}"
 
-    response_data = fetch_alerts_with_geometry(user_location.geometry_feature_collection)
+    response_data = if user_location.test_location?
+      fetch_alerts_by_id(user_location.test_location_id)
+    else
+      fetch_alerts_with_geometry(user_location.geometry_feature_collection)
+    end
     return if response_data.blank?
 
     snapshot = LocationAlertSnapshot.find_or_initialize_for_custom(user_location)
     new_dates = snapshot.persisted? ? snapshot.new_dates_in(response_data) : []
 
     if new_dates.any?
-      Rails.logger.info "[CheckCustomLocationAlertJob] New dates for custom location #{user_location_id}: #{new_dates.join(", ")}"
+      Rails.logger.info "[CheckCustomLocationAlertJob] New dates for #{location_type} location #{user_location_id}: #{new_dates.join(", ")}"
 
       NotifyLocationAlertJob.perform_later(
         user_id: user_location.user_id,

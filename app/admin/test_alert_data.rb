@@ -26,9 +26,15 @@ ActiveAdmin.register TestAlertData do
 
     TestAlertData.for_location(location_id)
 
-    user_location = user.user_locations.find_or_create_by!(location_id: location_id) do |ul|
-      ul.name = "Test Location (#{location_id})"
-      ul.alerts_enabled = true
+    user_location = user.user_locations.find_by("bounds->>'test_location_id' = ?", location_id)
+    unless user_location
+      dummy_geometry = {"type" => "Point", "coordinates" => [0, 0]}
+      user_location = user.user_locations.create!(
+        name: "Test Location (#{location_id})",
+        alerts_enabled: true,
+        custom_geometry: dummy_geometry,
+        bounds: {test_location_id: location_id}
+      )
     end
 
     redirect_to admin_test_alert_data_index_path,
@@ -82,20 +88,23 @@ ActiveAdmin.register TestAlertData do
       end
     end
 
-    snapshot = LocationAlertSnapshot.find_by(location_id: resource.location_id)
-    if snapshot
-      panel "Stored Snapshot" do
-        attributes_table_for snapshot do
-          row :id
-          row :latest_date
-          row :date_count
-          row :last_checked_at
+    users_with_location = UserLocation.where("bounds->>'test_location_id' = ?", resource.location_id).includes(:user)
+
+    if users_with_location.any?
+      first_user_location = users_with_location.first
+      snapshot = LocationAlertSnapshot.find_by(user_location_id: first_user_location.id)
+
+      if snapshot
+        panel "Stored Snapshot" do
+          attributes_table_for snapshot do
+            row :id
+            row :latest_date
+            row :date_count
+            row :last_checked_at
+          end
         end
       end
-    end
 
-    users_with_location = UserLocation.where(location_id: resource.location_id).includes(:user)
-    if users_with_location.any?
       panel "Users with this Test Location" do
         table_for users_with_location do
           column :user do |ul|

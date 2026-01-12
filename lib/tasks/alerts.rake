@@ -189,9 +189,18 @@ namespace :alerts do
 
       TestAlertData.for_location(location_id)
 
-      user_location = user.user_locations.find_or_create_by!(location_id: location_id) do |ul|
-        ul.name = "Test Location (#{location_id})"
-        ul.alerts_enabled = true
+      user_location = user.user_locations.find_by("bounds->>'test_location_id' = ?", location_id)
+      unless user_location
+        dummy_geometry = {
+          "type" => "Point",
+          "coordinates" => [0, 0]
+        }
+        user_location = user.user_locations.create!(
+          name: "Test Location (#{location_id})",
+          alerts_enabled: true,
+          custom_geometry: dummy_geometry,
+          bounds: {test_location_id: location_id}
+        )
       end
 
       puts "Created test location '#{location_id}' for #{email}"
@@ -254,20 +263,25 @@ namespace :alerts do
       end
       puts ""
 
-      snapshot = LocationAlertSnapshot.find_by(location_id: location_id)
-      if snapshot
-        puts "Snapshot:"
-        puts "  Last checked: #{snapshot.last_checked_at}"
-        puts "  Date count: #{snapshot.date_count}"
-        puts "  Latest date: #{snapshot.latest_date}"
+      user_locations = UserLocation.where("bounds->>'test_location_id' = ?", location_id).includes(:user)
+      first_ul = user_locations.first
+      if first_ul
+        snapshot = LocationAlertSnapshot.find_by(user_location_id: first_ul.id)
+        if snapshot
+          puts "Snapshot:"
+          puts "  Last checked: #{snapshot.last_checked_at}"
+          puts "  Date count: #{snapshot.date_count}"
+          puts "  Latest date: #{snapshot.latest_date}"
+        else
+          puts "Snapshot: Not yet created (run 'rake alerts:sync' first)"
+        end
       else
-        puts "Snapshot: Not yet created (run 'rake alerts:sync' first)"
+        puts "Snapshot: No user locations found for this test location"
       end
       puts ""
 
-      users = UserLocation.where(location_id: location_id).includes(:user)
       puts "Users with this location:"
-      users.each do |ul|
+      user_locations.each do |ul|
         status = ul.alerts_enabled && ul.user.subscribed_to_location_alerts? ? "✓" : "✗"
         puts "  #{status} #{ul.user.email} (alerts_enabled: #{ul.alerts_enabled})"
       end

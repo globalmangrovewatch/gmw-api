@@ -9,7 +9,9 @@ class SeedLocationSnapshotJob < ApplicationJob
 
     Rails.logger.info "[SeedLocationSnapshotJob] Seeding snapshot for user_location #{user_location_id}"
 
-    if user_location.custom_location?
+    if user_location.test_location?
+      seed_test_location(user_location)
+    elsif user_location.custom_location?
       seed_custom_location(user_location)
     else
       seed_system_location(user_location)
@@ -17,6 +19,17 @@ class SeedLocationSnapshotJob < ApplicationJob
   end
 
   private
+
+  def seed_test_location(user_location)
+    test_id = user_location.test_location_id
+    response_data = fetch_alerts_by_id(test_id)
+    return if response_data.blank?
+
+    snapshot = LocationAlertSnapshot.find_or_initialize_for_custom(user_location)
+    snapshot.update_from_response!(response_data)
+
+    Rails.logger.info "[SeedLocationSnapshotJob] Created test snapshot for user_location #{user_location.id} (#{test_id})"
+  end
 
   def seed_custom_location(user_location)
     response_data = fetch_alerts_with_geometry(user_location.geometry_feature_collection)

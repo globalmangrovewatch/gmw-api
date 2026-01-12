@@ -13,6 +13,7 @@ class UserLocation < ApplicationRecord
 
   scope :system_locations, -> { where.not(location_id: nil) }
   scope :custom_locations, -> { where(location_id: nil) }
+  scope :custom_and_test_locations, -> { where(location_id: nil) }
   scope :with_alerts_enabled, -> { where(alerts_enabled: true) }
   scope :alertable, -> {
     with_alerts_enabled
@@ -21,11 +22,19 @@ class UserLocation < ApplicationRecord
   }
 
   def custom_location?
-    custom_geometry.present?
+    custom_geometry.present? && !test_location?
   end
 
   def system_location?
     location_id.present?
+  end
+
+  def test_location?
+    test_location_id.present?
+  end
+
+  def test_location_id
+    bounds&.dig("test_location_id") || bounds&.dig(:test_location_id)
   end
 
   def geometry_as_geojson
