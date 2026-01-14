@@ -7,7 +7,7 @@ ActiveAdmin.register TestAlertData do
   filter :created_at
 
   action_item :add_test_location_to_user, only: :index do
-    link_to "Setup Test for User", setup_test_admin_test_alert_data_index_path
+    link_to "Setup Test for User", setup_test_admin_test_alert_data_path
   end
 
   collection_action :setup_test, method: :get do
@@ -20,7 +20,7 @@ ActiveAdmin.register TestAlertData do
     location_id = params[:location_id].presence || "test_location"
 
     unless location_id.start_with?("test_")
-      redirect_to setup_test_admin_test_alert_data_index_path, alert: "Location ID must start with 'test_'"
+      redirect_to setup_test_admin_test_alert_data_path, alert: "Location ID must start with 'test_'"
       return
     end
 
