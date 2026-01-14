@@ -37,7 +37,7 @@ ActiveAdmin.register TestAlertData do
       )
     end
 
-    redirect_to admin_test_alert_data_index_path,
+    redirect_to admin_test_alert_data_path,
       notice: "Test location '#{location_id}' created and added to #{user.email}. User location ID: #{user_location.id}"
   end
 
