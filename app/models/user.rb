@@ -9,6 +9,13 @@ class User < ApplicationRecord
   has_many :user_locations, dependent: :destroy
   has_many :saved_locations, through: :user_locations, source: :location
 
+  attr_accessor :password_reset_source
+
+  def send_reset_password_instructions_with_source(source = nil)
+    self.password_reset_source = source
+    send_reset_password_instructions
+  end
+
   scope :admins, -> { where(admin: true) }
   scope :subscribed_to_alerts, -> { where(subscribed_to_location_alerts: true) }
   scope :subscribed_to_newsletter, -> { where(subscribed_to_newsletter: true) }

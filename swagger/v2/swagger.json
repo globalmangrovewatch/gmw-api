@@ -315,6 +315,7 @@
     "/users/password": {
       "post": {
         "summary": "Request Password Reset",
+        "description": "Sends a password reset email to the user. The email will contain a link to reset the password. The redirect URL in the email can be customized using the 'source' parameter.",
         "tags": [
           "Authentication"
         ],
@@ -330,6 +331,12 @@
                       "email": {
                         "type": "string",
                         "example": "john@example.com"
+                      },
+                      "source": {
+                        "type": "string",
+                        "enum": ["gmw", "mrtt"],
+                        "example": "gmw",
+                        "description": "Optional. Specifies which frontend should handle the password reset. 'gmw' uses GMW_UI_BASE_URL, other values or omitted will use MRTT_UI_BASE_URL."
                       }
                     },
                     "required": [

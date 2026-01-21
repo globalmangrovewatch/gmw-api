@@ -4,7 +4,14 @@ class Users::PasswordsController < Devise::PasswordsController
   respond_to :json
 
   def create
-    self.resource = resource_class.send_reset_password_instructions(resource_params)
+    user = resource_class.find_by(email: resource_params[:email])
+    if user
+      source = params[:user][:source] || params[:source]
+      user.send_reset_password_instructions_with_source(source)
+    else
+      resource_class.send_reset_password_instructions(resource_params)
+    end
+    
     render json: {
       message: "The password reset instruction was sent to %s" % resource_params[:email]
     }
