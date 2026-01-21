@@ -1,4 +1,8 @@
 class V2::ReportController < MrttApiController
+  skip_before_action :authenticate_user!, only: [:answers_as_xlsx, :answers, :answers_by_site]
+  before_action :authenticate_user_unless_public_only, only: [:answers_as_xlsx]
+  before_action :try_authenticate_user, only: [:answers, :answers_by_site]
+
   def answers_by_site
     site_id = report_params[:site_id]
     @site_id, @registration_intervention_answers, @monitoring_answers = get_answers_by_site(site_id, false)
@@ -26,7 +30,8 @@ class V2::ReportController < MrttApiController
     # Instead of returning: insufficient_privilege && return
     # We restrict the sections instead
     @restricted_sections = []
-    if !(current_user.is_admin || current_user.is_member_of_any(organization_ids)) || public_only
+    is_privileged = current_user && (current_user.is_admin || current_user.is_member_of_any(organization_ids))
+    if !is_privileged || public_only
       @restricted_sections = (
           if site.section_data_visibility
             site.section_data_visibility.map { |key, value| (value == "private") ? key : nil }.select { |i| !i.nil? }
@@ -207,6 +212,21 @@ class V2::ReportController < MrttApiController
 
   def report_params
     params.except(:format, :site).permit(:site_id, :organization_id, :public_only)
+  end
+
+  def authenticate_user_unless_public_only
+    public_only = ActiveModel::Type::Boolean.new.cast(params[:public_only])
+    public_only = true if public_only.nil?
+
+    if public_only
+      try_authenticate_user
+    else
+      authenticate_user!
+    end
+  end
+
+  def try_authenticate_user
+    authenticate_user_from_token!
   end
 
   def to_human_readable(question, answer)
