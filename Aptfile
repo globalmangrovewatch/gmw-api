@@ -5,3 +5,4 @@ libgdal-dev
 build-essential
 geos-bin
 pkg-config
+wkhtmltopdf
