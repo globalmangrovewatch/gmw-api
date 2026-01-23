@@ -273,12 +273,17 @@ class V2::ReportController < MrttApiController
 
   def reduce_precision_geojson(geojson)
     geometry = geojson["geometry"]
-    coordinates = geometry["coordinates"]
-    coordinates_o = coordinates[0]
-    coordinates_o.each { |coord|
-      coord[0] = coord[0].truncate(2)
-      coord[1] = coord[1].truncate(2)
-    }
+    geometry["coordinates"] = truncate_coordinates(geometry["coordinates"])
     geojson
+  end
+
+  def truncate_coordinates(coords)
+    return coords unless coords.is_a?(Array)
+    
+    if coords.first.is_a?(Numeric)
+      coords.map { |c| c.is_a?(Numeric) ? c.truncate(2) : c }
+    else
+      coords.map { |c| truncate_coordinates(c) }
+    end
   end
 end
