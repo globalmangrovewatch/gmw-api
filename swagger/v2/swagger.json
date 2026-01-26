@@ -315,6 +315,7 @@
     "/users/password": {
       "post": {
         "summary": "Request Password Reset",
+        "description": "Sends a password reset email to the user. The email will contain a link to reset the password. The redirect URL in the email can be customized using the 'source' parameter.",
         "tags": [
           "Authentication"
         ],
@@ -330,6 +331,12 @@
                       "email": {
                         "type": "string",
                         "example": "john@example.com"
+                      },
+                      "source": {
+                        "type": "string",
+                        "enum": ["gmw", "mrtt"],
+                        "example": "gmw",
+                        "description": "Optional. Specifies which frontend should handle the password reset. 'gmw' uses GMW_UI_BASE_URL, other values or omitted will use MRTT_UI_BASE_URL."
                       }
                     },
                     "required": [
@@ -2635,6 +2642,8 @@
                   "data": [
                     {
                       "indicator": "floods",
+                      "legal_status": "forest",
+                      "mangrove_breakthrough_committed": true,
                       "sources": [
                         {
                           "source": "voluptatem",
@@ -2658,6 +2667,10 @@
                   ],
                   "metadata": {
                     "location_id": "2920",
+                    "legal_status_options": [
+                      "mangrove",
+                      "forest"
+                    ],
                     "other_resources": [
                       {
                         "name": "voluptatem",
@@ -2875,6 +2888,835 @@
           }
         }
       }
+    },
+    "/api/v2/user_locations": {
+      "get": {
+        "summary": "List user's saved locations",
+        "description": "Returns all saved locations for the authenticated user, including both system locations and custom geometries",
+        "tags": [
+          "User Locations"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/user_location"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "max_locations": {
+                          "type": "integer",
+                          "example": 5
+                        },
+                        "current_count": {
+                          "type": "integer",
+                          "example": 3
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error_response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a saved location",
+        "description": "Save a new location for the user. Can be either a system location (by location_id) or a custom geometry. Maximum 5 locations per user.",
+        "tags": [
+          "User Locations"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user_location_create"
+              },
+              "examples": {
+                "system_location": {
+                  "summary": "Save a system location",
+                  "value": {
+                    "name": "Indonesia",
+                    "location_id": 123
+                  }
+                },
+                "custom_geometry": {
+                  "summary": "Save a custom polygon",
+                  "value": {
+                    "name": "My Research Area",
+                    "custom_geometry": {
+                      "type": "Polygon",
+                      "coordinates": [[[-122.4, 37.8], [-122.4, 37.7], [-122.3, 37.7], [-122.3, 37.8], [-122.4, 37.8]]]
+                    },
+                    "bounds": {
+                      "north": 37.8,
+                      "south": 37.7,
+                      "east": -122.3,
+                      "west": -122.4
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/user_location"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error_response"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": ["Maximum of 5 saved locations allowed"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/user_locations/{id}": {
+      "get": {
+        "summary": "Get a saved location",
+        "description": "Returns a specific saved location by ID",
+        "tags": [
+          "User Locations"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User location ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/user_location"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a saved location",
+        "description": "Update an existing saved location",
+        "tags": [
+          "User Locations"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User location ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user_location_update"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/user_location"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a saved location",
+        "description": "Remove a saved location",
+        "tags": [
+          "User Locations"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User location ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/v2/user_locations/reorder": {
+      "patch": {
+        "summary": "Reorder saved locations",
+        "description": "Update the order of saved locations by providing an array of IDs in the desired order",
+        "tags": [
+          "User Locations"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "positions": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Array of user location IDs in the desired order",
+                    "example": [3, 1, 5, 2, 4]
+                  }
+                },
+                "required": ["positions"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/user_location"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "max_locations": {
+                          "type": "integer"
+                        },
+                        "current_count": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "positions parameter required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v2/notification_preferences": {
+      "get": {
+        "summary": "Get notification preferences",
+        "description": "Returns the current user's notification subscription preferences",
+        "tags": [
+          "Notification Preferences"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/notification_preferences"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "location_alerts": true,
+                    "newsletter": false,
+                    "platform_updates": true
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update notification preferences",
+        "description": "Update one or more notification subscription preferences",
+        "tags": [
+          "Notification Preferences"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/notification_preferences_update"
+              },
+              "example": {
+                "location_alerts": true,
+                "newsletter": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/notification_preferences"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
+    "/api/v2/notification_preferences/toggle_location_alerts": {
+      "post": {
+        "summary": "Toggle location alerts subscription",
+        "description": "Toggles the location alerts subscription on/off (flips the current value)",
+        "tags": [
+          "Notification Preferences"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/notification_preferences"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v2/notification_preferences/bulk_toggle_location_alerts": {
+      "post": {
+        "summary": "Bulk enable/disable alerts for all saved locations",
+        "description": "Sets alerts_enabled to true or false for ALL of the user's saved locations. This is useful when the user wants to quickly enable/disable alerts for all their locations at once.",
+        "tags": [
+          "Notification Preferences"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Set to true to enable alerts for all locations, false to disable"
+                  }
+                },
+                "required": ["enabled"]
+              },
+              "example": {
+                "enabled": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success - Returns all user locations with updated alerts_enabled status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/user_location"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "max_locations": {
+                          "type": "integer"
+                        },
+                        "current_count": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - enabled parameter required"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v2/sites/{site_id}/registration_intervention_answers": {
+      "get": {
+        "summary": "Get registration intervention answers for a site",
+        "description": "Returns all registration and intervention answers for a specific site. Non-admin users can only view public sections unless they are members of the site's organization.",
+        "tags": [
+          "MRTT - Sites"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Site ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/registration_intervention_answer"
+                  }
+                },
+                "example": [
+                  {
+                    "question_id": "1.1",
+                    "answer_value": "Example Site"
+                  },
+                  {
+                    "question_id": "1.3",
+                    "answer_value": {
+                      "type": "FeatureCollection",
+                      "features": [
+                        {
+                          "type": "Feature",
+                          "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [[[103.8, 1.3], [103.8, 1.2], [103.9, 1.2], [103.9, 1.3], [103.8, 1.3]]]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "question_id": "3.1",
+                    "answer_value": ["Increase mangrove area", "Improve mangrove condition/halt or reduce degradation"]
+                  }
+                ]
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Site not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Replace all registration intervention answers for a site",
+        "description": "Replaces all existing answers with the provided payload. Deletes all existing answers and creates new ones. Question 1.3 (site area) with GeoJSON geometry will update the site's geographic area. Requires admin or organization membership.",
+        "tags": [
+          "MRTT - Sites"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Site ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/registration_intervention_answer_input"
+                }
+              },
+              "example": [
+                {
+                  "question_id": "1.1",
+                  "answer_value": "My Mangrove Site"
+                },
+                {
+                  "question_id": "1.3",
+                  "answer_value": {
+                    "type": "FeatureCollection",
+                    "features": [
+                      {
+                        "type": "Feature",
+                        "geometry": {
+                          "type": "Polygon",
+                          "coordinates": [[[103.8, 1.3], [103.8, 1.2], [103.9, 1.2], [103.9, 1.3], [103.8, 1.3]]]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "question_id": "3.1",
+                  "answer_value": ["Increase mangrove area"]
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/registration_intervention_answer"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Duplicate question_id found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "1.1 was seen multiple times"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient privileges"
+          },
+          "404": {
+            "description": "Site not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Partially update registration intervention answers for a site",
+        "description": "Updates or creates specific answers without deleting existing ones. Only the provided question_ids are affected. Question 1.3 (site area) with GeoJSON geometry will update the site's geographic area. Requires admin or organization membership.",
+        "tags": [
+          "MRTT - Sites"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Site ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/registration_intervention_answer_input"
+                }
+              },
+              "example": [
+                {
+                  "question_id": "3.1",
+                  "answer_value": ["Increase mangrove area", "Improve mangrove condition/halt or reduce degradation"]
+                },
+                {
+                  "question_id": "3.2",
+                  "answer_value": ["Enhance fisheries/restore fishing grounds"]
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/registration_intervention_answer"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Duplicate question_id found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "3.1 was seen multiple times"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient privileges"
+          },
+          "404": {
+            "description": "Site not found"
+          }
+        }
+      }
     }
   },
   "servers": [
@@ -2942,6 +3784,13 @@
             "type": "number",
             "nullable": true,
             "description": "total number of species in the world"
+          },
+          "legal_status_options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
           },
           "location_resources": {
             "type": "array",
@@ -3456,6 +4305,14 @@
           "indicator": {
             "type": "string"
           },
+          "legal_status": {
+            "type": "string",
+            "nullable": true
+          },
+          "mangrove_breakthrough_committed": {
+            "type": "boolean",
+            "nullable": true
+          },
           "sources": {
             "type": "array",
             "items": {
@@ -3696,6 +4553,300 @@
           "link": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "user_location": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "position": {
+            "type": "integer",
+            "nullable": true
+          },
+          "bounds": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "north": {
+                "type": "number"
+              },
+              "south": {
+                "type": "number"
+              },
+              "east": {
+                "type": "number"
+              },
+              "west": {
+                "type": "number"
+              }
+            }
+          },
+          "alerts_enabled": {
+            "type": "boolean",
+            "description": "Whether location-based alerts are enabled for this specific location"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location_type": {
+            "type": "string",
+            "enum": ["system", "custom"],
+            "description": "Indicates whether this is a system location or a custom geometry"
+          },
+          "location": {
+            "type": "object",
+            "nullable": true,
+            "description": "Present when location_type is 'system'",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "iso": {
+                "type": "string"
+              },
+              "location_type": {
+                "type": "string"
+              },
+              "bounds": {
+                "type": "object",
+                "nullable": true
+              }
+            }
+          },
+          "custom_geometry": {
+            "type": "object",
+            "nullable": true,
+            "description": "GeoJSON geometry object. Present when location_type is 'custom'",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "Polygon"
+              },
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "array"
+                }
+              }
+            }
+          }
+        }
+      },
+      "user_location_create": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Display name for the saved location"
+          },
+          "location_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "ID of a system location. Mutually exclusive with custom_geometry"
+          },
+          "custom_geometry": {
+            "type": "object",
+            "nullable": true,
+            "description": "GeoJSON geometry object. Mutually exclusive with location_id",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "Polygon"
+              },
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "bounds": {
+            "type": "object",
+            "nullable": true,
+            "description": "Map viewport bounds for the location",
+            "properties": {
+              "north": {
+                "type": "number"
+              },
+              "south": {
+                "type": "number"
+              },
+              "east": {
+                "type": "number"
+              },
+              "west": {
+                "type": "number"
+              }
+            }
+          },
+          "position": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Display order position"
+          },
+          "alerts_enabled": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Whether location-based alerts are enabled for this location. Defaults to true",
+            "default": true
+          }
+        }
+      },
+      "user_location_update": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Display name for the saved location"
+          },
+          "bounds": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "north": {
+                "type": "number"
+              },
+              "south": {
+                "type": "number"
+              },
+              "east": {
+                "type": "number"
+              },
+              "west": {
+                "type": "number"
+              }
+            }
+          },
+          "position": {
+            "type": "integer",
+            "nullable": true
+          },
+          "alerts_enabled": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Whether location-based alerts are enabled for this location"
+          }
+        }
+      },
+      "registration_intervention_answer": {
+        "type": "object",
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "description": "Question identifier (e.g., '1.1', '1.3', '3.1')",
+            "example": "3.1"
+          },
+          "answer_value": {
+            "description": "Answer value - can be string, array, object, or GeoJSON for question 1.3 (site area)",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "object"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        "required": ["question_id", "answer_value"]
+      },
+      "registration_intervention_answer_input": {
+        "type": "object",
+        "description": "Input format for registration intervention answers. Question 1.3 expects GeoJSON FeatureCollection for site area.",
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "description": "Question identifier",
+            "example": "1.3"
+          },
+          "answer_value": {
+            "description": "Answer value - type varies by question. Question 1.3 requires GeoJSON FeatureCollection with polygon geometry.",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "object",
+                "description": "For question 1.3 (site area), this should be a GeoJSON FeatureCollection"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        "required": ["question_id", "answer_value"]
+      },
+      "notification_preferences": {
+        "type": "object",
+        "description": "User notification subscription preferences",
+        "properties": {
+          "location_alerts": {
+            "type": "boolean",
+            "description": "Subscribe to location-based alerts for saved locations"
+          },
+          "newsletter": {
+            "type": "boolean",
+            "description": "Subscribe to newsletter"
+          },
+          "platform_updates": {
+            "type": "boolean",
+            "description": "Subscribe to platform update notifications"
+          }
+        }
+      },
+      "notification_preferences_update": {
+        "type": "object",
+        "description": "Update notification preferences - all fields are optional, only provided fields will be updated",
+        "properties": {
+          "location_alerts": {
+            "type": "boolean",
+            "description": "Subscribe to location-based alerts"
+          },
+          "newsletter": {
+            "type": "boolean",
+            "description": "Subscribe to newsletter"
+          },
+          "platform_updates": {
+            "type": "boolean",
+            "description": "Subscribe to platform updates"
           }
         }
       }

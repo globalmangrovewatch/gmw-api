@@ -8,7 +8,8 @@ class MrttApiController < ActionController::API
   protected
 
   def exception(exception)
-    puts exception
+    Rails.logger.error "MrttApiController Exception: #{exception.class} - #{exception.message}"
+    Rails.logger.error exception.backtrace&.first(10)&.join("\n")
     render json: {error: "Unknown error occured"}, status: :bad_request
   end
 
@@ -32,13 +33,13 @@ class MrttApiController < ActionController::API
   private
 
   def authenticate_user_from_token!
-    secret = ENV['SECRET_KEY_BASE'] || Rails.application.secret_key_base
+    secret = Rails.application.secret_key_base
     jwt_payload = JWT.decode(request.headers['Authorization'].to_s.split(' ').last, 
                              secret, 
                              true, 
                              { algorithm: 'HS256' }).first
     @current_user_id = jwt_payload['sub']
-  rescue JWT::DecodeError
+  rescue JWT::DecodeError, JWT::VerificationError, JWT::ExpiredSignature
     nil
   end
 

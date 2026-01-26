@@ -1,4 +1,8 @@
 class V2::ReportController < MrttApiController
+  skip_before_action :authenticate_user!, only: [:answers_as_xlsx, :answers, :answers_by_site]
+  before_action :authenticate_user_unless_public_only, only: [:answers_as_xlsx]
+  before_action :try_authenticate_user, only: [:answers, :answers_by_site]
+
   def answers_by_site
     site_id = report_params[:site_id]
     @site_id, @registration_intervention_answers, @monitoring_answers = get_answers_by_site(site_id, false)
@@ -26,7 +30,8 @@ class V2::ReportController < MrttApiController
     # Instead of returning: insufficient_privilege && return
     # We restrict the sections instead
     @restricted_sections = []
-    if !(current_user.is_admin || current_user.is_member_of_any(organization_ids)) || public_only
+    is_privileged = current_user && (current_user.is_admin || current_user.is_member_of_any(organization_ids))
+    if !is_privileged || public_only
       @restricted_sections = (
           if site.section_data_visibility
             site.section_data_visibility.map { |key, value| (value == "private") ? key : nil }.select { |i| !i.nil? }
@@ -209,6 +214,21 @@ class V2::ReportController < MrttApiController
     params.except(:format, :site).permit(:site_id, :organization_id, :public_only)
   end
 
+  def authenticate_user_unless_public_only
+    public_only = ActiveModel::Type::Boolean.new.cast(params[:public_only])
+    public_only = true if public_only.nil?
+
+    if public_only
+      try_authenticate_user
+    else
+      authenticate_user!
+    end
+  end
+
+  def try_authenticate_user
+    authenticate_user_from_token!
+  end
+
   def to_human_readable(question, answer)
     # get answers data types
     dtypes = Rails.application.config.data_types
@@ -253,12 +273,17 @@ class V2::ReportController < MrttApiController
 
   def reduce_precision_geojson(geojson)
     geometry = geojson["geometry"]
-    coordinates = geometry["coordinates"]
-    coordinates_o = coordinates[0]
-    coordinates_o.each { |coord|
-      coord[0] = coord[0].truncate(2)
-      coord[1] = coord[1].truncate(2)
-    }
+    geometry["coordinates"] = truncate_coordinates(geometry["coordinates"])
     geojson
+  end
+
+  def truncate_coordinates(coords)
+    return coords unless coords.is_a?(Array)
+    
+    if coords.first.is_a?(Numeric)
+      coords.map { |c| c.is_a?(Numeric) ? c.truncate(2) : c }
+    else
+      coords.map { |c| truncate_coordinates(c) }
+    end
   end
 end

@@ -1,0 +1,41 @@
+<%= semantic_form_for :active_admin_import_model, url: do_import_admin_platform_notifications_path, html: { multipart: true } do |f| %>
+  <div class="panel">
+    <h3>Import Notifications from CSV</h3>
+    
+    <div class="panel_contents">
+      <div style="background: #f5f5f5; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+        <p style="margin: 0 0 10px 0;">
+          <strong>Need help with the CSV format?</strong>
+        </p>
+        <p style="margin: 0 0 10px 0;">
+          Download our sample CSV file to see the expected format with example data.
+        </p>
+        <p style="margin: 0;">
+          <%= link_to "Download Sample CSV", download_sample_csv_admin_platform_notifications_path, class: "button" %>
+        </p>
+      </div>
+
+      <fieldset class="inputs">
+        <legend><span>Select CSV File</span></legend>
+        <ol>
+          <li class="file input required">
+            <%= f.label :file, "CSV File" %>
+            <%= f.file_field :file %>
+          </li>
+        </ol>
+      </fieldset>
+    </div>
+  </div>
+
+  <fieldset class="actions">
+    <ol>
+      <li class="action input_action">
+        <%= f.submit "Import", class: "button" %>
+      </li>
+      <li class="cancel">
+        <%= link_to "Cancel", admin_platform_notifications_path %>
+      </li>
+    </ol>
+  </fieldset>
+<% end %>
+

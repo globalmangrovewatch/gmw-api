@@ -1,6 +1,8 @@
 json.data do
   json.array! @data.group_by(&:indicator) do |indicator, data|
     json.indicator indicator
+    json.legal_status data.first&.legal_status
+    json.mangrove_breakthrough_committed data.first&.mangrove_breakthrough_committed
     json.sources do
       json.array! data.group_by(&:source) do |source, data_source|
         json.source source
@@ -23,6 +25,7 @@ end
 
 json.metadata do
   json.location_id @location_id
+  json.legal_status_options NationalDashboard.legal_status_options
   json.other_resources do
     json.array! @location_resources do |location_resource|
       json.name location_resource.name

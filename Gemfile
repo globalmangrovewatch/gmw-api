@@ -95,11 +95,17 @@ end
 # Token auth
 gem "devise-jwt"
 
+# Background jobs
+gem "sidekiq", "~> 7.0"
+gem "sidekiq-scheduler", "~> 5.0"
+gem "redis", "~> 5.0"
+
+# HTTP client
+gem "httparty", "~> 0.21"
+
 # Geo
 gem "rgeo-geojson"
 gem "activerecord-postgis-adapter"
 
 gem "pdfkit", "~> 0.8.7"
-
-gem "wkhtmltopdf-binary", "~> 0.12.6"
 gem "caxlsx", "~> 3.3"

@@ -68,6 +68,11 @@ RSpec.configure do |config|
               max: {type: :number, nullable: true},
               note: {type: :string, nullable: true},
               worldwide_total: {type: :number, nullable: true, description: "total number of species in the world"},
+              legal_status_options: {
+                type: :array,
+                items: {type: :string},
+                nullable: true
+              },
               location_resources: {
                 type: :array,
                 items: {"$ref" => "#/components/schemas/location_resource"},
@@ -308,6 +313,8 @@ RSpec.configure do |config|
             type: :object,
             properties: {
               indicator: {type: :string},
+              legal_status: {type: :string, nullable: true},
+              mangrove_breakthrough_committed: {type: :boolean, nullable: true},
               sources: {
                 type: :array,
                 items: {

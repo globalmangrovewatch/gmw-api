@@ -5,3 +5,5 @@ libgdal-dev
 build-essential
 geos-bin
 pkg-config
+libblas3
+liblapack3

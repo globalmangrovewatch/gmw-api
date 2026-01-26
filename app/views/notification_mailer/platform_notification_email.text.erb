@@ -1,0 +1,23 @@
+<%= @notification.notification_type == "newsletter" ? "NEWSLETTER" : "PLATFORM UPDATE" %>
+<%= "=" * 50 %>
+
+<%= @notification.title %>
+
+<%= "-" * 50 %>
+
+Hi<%= @user.name.present? ? " #{@user.name}" : "" %>,
+
+<%= @notification.content %>
+
+---
+
+Visit Global Mangrove Watch: <%= ENV.fetch('FRONTEND_URL', 'https://globalmangrovewatch.org') %>
+
+---
+
+You received this email because you are subscribed to <%= @notification.notification_type == "newsletter" ? "our newsletter" : "platform updates" %>.
+
+Manage your notification preferences: <%= ENV.fetch('FRONTEND_URL', 'https://globalmangrovewatch.org') %>/settings
+
+© <%= Time.current.year %> Global Mangrove Watch
+

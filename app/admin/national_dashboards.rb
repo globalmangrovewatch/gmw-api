@@ -8,7 +8,7 @@ ActiveAdmin.register NationalDashboard do
   })
 
   permit_params :source, :indicator, :year, :value, :layer_info, :layer_link, :download_link, :source_layer,
-    :unit, :location_id
+    :unit, :location_id, :legal_status, :mangrove_breakthrough_committed
 
   form do |f|
     f.inputs "Details" do
@@ -17,6 +17,8 @@ ActiveAdmin.register NationalDashboard do
       f.input :value
       f.input :unit, as: :select, collection: NationalDashboard.units
       f.input :year
+      f.input :legal_status, as: :select, collection: NationalDashboard.legal_statuses
+      f.input :mangrove_breakthrough_committed
       f.input :layer_info
       f.input :layer_link
       f.input :download_link
@@ -38,6 +40,8 @@ ActiveAdmin.register NationalDashboard do
     column :value
     column :unit
     column :year
+    column :legal_status
+    column :mangrove_breakthrough_committed
     column :layer_info
     column :layer_link
     column :download_link

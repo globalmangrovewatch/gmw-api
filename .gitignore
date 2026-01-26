@@ -38,3 +38,19 @@
 
 .idea
 
+# Internal documentation (deployment guides, setup details)
+DEPLOYMENT_GUIDE.md
+DEPLOYMENT_QUICKSTART.md
+ENV_VARIABLES.md
+FINAL_SUMMARY.md
+HEROKU_DASHBOARD_QUICK_GUIDE.md
+IMPLEMENTATION_SUMMARY.md
+NOTIFICATION_SYSTEM_README.md
+README_DEPLOYMENT_SUMMARY.md
+docker-compose.production.yml
+
+# Internal docs folder (detailed deployment, testing, provider guides)
+/docs/
+
+# Keep public: README_NOTIFICATION.md (basic API usage)
+# Keep public: test_notifications.rb (test script)

@@ -16,6 +16,11 @@ Rails.application.routes.draw do
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
+  # Test notification endpoint (disabled based on ENV variable)
+  unless ENV['DISABLE_TEST_NOTIFICATION'] == 'true'
+    post "/test_notification", to: "test_notifications#send_test"
+  end
+
   scope :api do
     namespace :v2, defaults: {format: :json} do
       resources :locations
@@ -76,6 +81,21 @@ Rails.application.routes.draw do
       get "/report/answers/:site_id", to: "report#answers_by_site"
       get "/report/answers_as_pdf/:site_id", to: "pdf_report#export_pdf_single_site", as: "single_site"
       get "/report/answers_as_xlsx", to: "report#answers_as_xlsx"
+
+      resources :user_locations, only: [:index, :show, :create, :update, :destroy] do
+        collection do
+          patch :reorder
+        end
+      end
+
+      resource :notification_preferences, only: [:show, :update] do
+        post :toggle_location_alerts
+        post :bulk_toggle_location_alerts
+      end
+
+      get "/test_alerts", to: "test_alerts#show"
+      post "/test_alerts", to: "test_alerts#create"
+      delete "/test_alerts", to: "test_alerts#destroy"
     end
 
     namespace :v3, defaults: {format: :json} do
@@ -137,6 +157,17 @@ Rails.application.routes.draw do
       get "/report/answers/:site_id", to: "report#answers_by_site"
       get "/report/answers_as_pdf/:site_id", to: "pdf_report#export_pdf_single_site", as: "v3_single_site"
       get "/report/answers_as_xlsx", to: "report#answers_as_xlsx"
+
+      resources :user_locations, only: [:index, :show, :create, :update, :destroy] do
+        collection do
+          patch :reorder
+        end
+      end
+
+      resource :notification_preferences, only: [:show, :update] do
+        post :toggle_location_alerts
+        post :bulk_toggle_location_alerts
+      end
     end
   end
 end
