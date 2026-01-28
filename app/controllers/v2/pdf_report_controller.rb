@@ -546,11 +546,11 @@ class V2::PdfReportController < MrttApiController
       when "6.2a daterange"
         date_array = []
         if site[:value]["startDate"].present?
-          start_date = DateTime.parse(x["startDate"]).to_date.to_s
+          start_date = DateTime.parse(site[:value]["startDate"]).to_date.to_s
           date_array.push("Start Date: #{start_date}")
         end
         if site[:value]["endDate"].present?
-          end_date = DateTime.parse(x["endDate"]).to_date.to_s
+          end_date = DateTime.parse(site[:value]["endDate"]).to_date.to_s
           date_array.push("End Date: #{end_date}")
         end
         if date_array.empty?
