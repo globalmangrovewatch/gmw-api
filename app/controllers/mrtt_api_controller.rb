@@ -44,7 +44,10 @@ class MrttApiController < ActionController::API
   end
 
   def current_user
-    @current_user ||= User.find(@current_user_id) if @current_user_id
+    return @current_user if defined?(@current_user)
+    @current_user = User.find(@current_user_id) if @current_user_id
+  rescue ActiveRecord::RecordNotFound
+    @current_user = nil
   end
 
   def authenticate_user!

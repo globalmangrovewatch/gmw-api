@@ -10,7 +10,7 @@ class V2::UserLocationsController < MrttApiController
 
   def create
     @user_location = current_user.user_locations.build(user_location_params)
-    @user_location.custom_geometry = params[:custom_geometry] if params[:custom_geometry].present?
+    @user_location.custom_geometry = custom_geometry_param if custom_geometry_param.present?
 
     if @user_location.save
       render :show, status: :created
@@ -21,7 +21,7 @@ class V2::UserLocationsController < MrttApiController
 
   def update
     @user_location.assign_attributes(user_location_params)
-    @user_location.custom_geometry = params[:custom_geometry] if params[:custom_geometry].present?
+    @user_location.custom_geometry = custom_geometry_param if custom_geometry_param.present?
 
     if @user_location.save
       render :show
@@ -56,7 +56,16 @@ class V2::UserLocationsController < MrttApiController
   end
 
   def user_location_params
-    params.permit(:name, :location_id, :position, :alerts_enabled, bounds: {})
+    permitted = [:name, :location_id, :position, :alerts_enabled, {bounds: {}}]
+    if params[:user_location].present?
+      params.require(:user_location).permit(*permitted)
+    else
+      params.permit(*permitted)
+    end
+  end
+
+  def custom_geometry_param
+    params[:custom_geometry] || params.dig(:user_location, :custom_geometry)
   end
 end
 
