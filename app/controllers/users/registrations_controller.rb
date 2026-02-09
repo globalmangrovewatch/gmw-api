@@ -15,17 +15,31 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def respond_with(resource, _opts = {})
     is_new = resource.created_at == resource.updated_at
-    register_success && return if resource.persisted? && is_new
-    update_success && return if resource.persisted? && !is_new
+    register_success(resource) && return if resource.persisted? && is_new
+    update_success(resource) && return if resource.persisted? && !is_new
     process_failed
   end
 
-  def update_success
-    render json: {message: "User profile updated sucessfully."}
+  def update_success(resource)
+    render json: {
+      message: "User profile updated sucessfully.",
+      user: {
+        name: resource.name,
+        email: resource.email,
+        organization: resource.organization
+      }
+    }
   end
 
-  def register_success
-    render json: {message: "Signed up sucessfully."}
+  def register_success(resource)
+    render json: {
+      message: "Signed up sucessfully.",
+      user: {
+        name: resource.name,
+        email: resource.email,
+        organization: resource.organization
+      }
+    }
   end
 
   def process_failed
