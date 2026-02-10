@@ -3,7 +3,11 @@ class Users::CurrentUserController < ApplicationController
 
   def show
     render json: {
-      email: current_user.email
+      user: {
+        name: current_user.name,
+        email: current_user.email,
+        organization: current_user.organization
+      }
     }
   end
 end

@@ -89,6 +89,10 @@ class User < ApplicationRecord
     update(updates) if updates.present?
   end
 
+  def organization
+    organizations.first&.organization_name
+  end
+
   private
 
   def get_one_organization_user(organization_id)

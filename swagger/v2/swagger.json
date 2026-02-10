@@ -54,6 +54,28 @@
                     "message": {
                       "type": "string",
                       "example": "You are logged in."
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiJ9..."
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "john@example.com"
+                        },
+                        "organization": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "Vizzuality"
+                        }
+                      }
                     }
                   }
                 }
@@ -188,6 +210,24 @@
                     "message": {
                       "type": "string",
                       "example": "Signed up sucessfully."
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "john@example.com"
+                        },
+                        "organization": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": null
+                        }
+                      }
                     }
                   }
                 }
@@ -271,6 +311,24 @@
                     "message": {
                       "type": "string",
                       "example": "User profile updated sucessfully."
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "john@example.com"
+                        },
+                        "organization": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "Vizzuality"
+                        }
+                      }
                     }
                   }
                 }
@@ -499,9 +557,23 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "email": {
-                      "type": "string",
-                      "example": "john@example.com"
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "john@example.com"
+                        },
+                        "organization": {
+                          "type": "string",
+                          "nullable": true,
+                          "example": "Vizzuality"
+                        }
+                      }
                     }
                   }
                 }
