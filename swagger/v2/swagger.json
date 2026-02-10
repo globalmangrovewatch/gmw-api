@@ -55,6 +55,10 @@
                       "type": "string",
                       "example": "You are logged in."
                     },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiJ9..."
+                    },
                     "user": {
                       "type": "object",
                       "properties": {

@@ -7,6 +7,7 @@ class Users::SessionsController < Devise::SessionsController
   def respond_with(resource, _opts = {})
     render json: {
       message: "You are logged in.",
+      token: request.env["warden-jwt_auth.token"],
       user: {
         name: resource.name,
         email: resource.email,
