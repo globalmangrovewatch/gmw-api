@@ -76,10 +76,11 @@ class UserLocation < ApplicationRecord
       value.to_json
     end
 
-    parsed = RGeo::GeoJSON.decode(geojson, json_parser: :json)
+    factory = RGeo::Cartesian.factory(srid: 4326)
+    parsed = RGeo::GeoJSON.decode(geojson, json_parser: :json, geo_factory: factory)
     if parsed.nil?
       feature = {type: "Feature", geometry: JSON.parse(geojson), properties: {}}.to_json
-      parsed = RGeo::GeoJSON.decode(feature, json_parser: :json)
+      parsed = RGeo::GeoJSON.decode(feature, json_parser: :json, geo_factory: factory)
     end
     geometry = parsed.respond_to?(:geometry) ? parsed.geometry : parsed
     super(geometry)
