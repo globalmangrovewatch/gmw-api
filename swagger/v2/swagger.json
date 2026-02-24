@@ -3789,6 +3789,465 @@
           }
         }
       }
+    },
+    "/api/v2/sites/{site_id}/monitoring_answers": {
+      "get": {
+        "summary": "List all monitoring forms for a site",
+        "description": "Returns a list of all monitoring forms (unique UUIDs) for a specific site. Each form represents a submission with its type and date. Requires admin or organization membership.",
+        "tags": [
+          "MRTT - Sites"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Site ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique form UUID",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                      },
+                      "form_type": {
+                        "type": "string",
+                        "enum": [
+                          "managementStatusAndEffectiveness",
+                          "socioeconomicGovernanceStatusAndOutcomes",
+                          "ecologicalStatusAndOutcomes"
+                        ],
+                        "example": "managementStatusAndEffectiveness"
+                      },
+                      "monitoring_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-01-15"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient privileges"
+          },
+          "404": {
+            "description": "Site not found"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new monitoring form",
+        "description": "Creates a new monitoring form with answers for a site. A unique UUID is automatically generated. The monitoring date is extracted from specific questions based on form_type. Requires admin or organization membership.",
+        "tags": [
+          "MRTT - Sites"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Site ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "form_type": {
+                    "type": "string",
+                    "enum": [
+                      "managementStatusAndEffectiveness",
+                      "socioeconomicGovernanceStatusAndOutcomes",
+                      "ecologicalStatusAndOutcomes"
+                    ],
+                    "example": "managementStatusAndEffectiveness"
+                  },
+                  "answers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "question_id": {
+                          "type": "string",
+                          "example": "8.1"
+                        },
+                        "answer_value": {
+                          "description": "Can be string, number, array, or object depending on question type"
+                        }
+                      },
+                      "required": [
+                        "question_id",
+                        "answer_value"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "form_type",
+                  "answers"
+                ]
+              },
+              "example": {
+                "form_type": "managementStatusAndEffectiveness",
+                "answers": [
+                  {
+                    "question_id": "8.1",
+                    "answer_value": "2024-01-15"
+                  },
+                  {
+                    "question_id": "8.2",
+                    "answer_value": "Yes"
+                  },
+                  {
+                    "question_id": "8.3",
+                    "answer_value": ["Protection", "Restoration"]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Generated UUID for this form"
+                    },
+                    "form_type": {
+                      "type": "string"
+                    },
+                    "answers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "question_id": {
+                            "type": "string"
+                          },
+                          "monitoring_date": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "answer_value": {}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "8.1 was seen multiple times"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient privileges"
+          },
+          "404": {
+            "description": "Site not found"
+          }
+        }
+      }
+    },
+    "/api/v2/sites/{site_id}/monitoring_answers/{uuid}": {
+      "get": {
+        "summary": "Get a specific monitoring form with all answers",
+        "description": "Returns all answers for a specific monitoring form identified by UUID. Non-admin users may have restricted access to certain sections based on site visibility settings.",
+        "tags": [
+          "MRTT - Sites"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Site ID"
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Form UUID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Form UUID"
+                    },
+                    "form_type": {
+                      "type": "string"
+                    },
+                    "answers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "question_id": {
+                            "type": "string"
+                          },
+                          "monitoring_date": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "answer_value": {}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Site or form not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a monitoring form",
+        "description": "Replaces all answers for an existing monitoring form. Deletes all existing answers and creates new ones. Requires admin or organization membership.",
+        "tags": [
+          "MRTT - Sites"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Site ID"
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Form UUID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "form_type": {
+                    "type": "string",
+                    "enum": [
+                      "managementStatusAndEffectiveness",
+                      "socioeconomicGovernanceStatusAndOutcomes",
+                      "ecologicalStatusAndOutcomes"
+                    ]
+                  },
+                  "answers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "question_id": {
+                          "type": "string"
+                        },
+                        "answer_value": {}
+                      },
+                      "required": [
+                        "question_id",
+                        "answer_value"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "form_type",
+                  "answers"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "form_type": {
+                      "type": "string"
+                    },
+                    "answers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "question_id": {
+                            "type": "string"
+                          },
+                          "monitoring_date": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "answer_value": {}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient privileges"
+          },
+          "404": {
+            "description": "Site or form not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a monitoring form",
+        "description": "Deletes a monitoring form and all its answers. Requires admin or organization membership.",
+        "tags": [
+          "MRTT - Sites"
+        ],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "site_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Site ID"
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Form UUID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully deleted"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden - Insufficient privileges"
+          },
+          "404": {
+            "description": "Site or form not found"
+          }
+        }
+      }
     }
   },
   "servers": [

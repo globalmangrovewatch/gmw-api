@@ -77,7 +77,12 @@ class UserLocation < ApplicationRecord
     end
 
     parsed = RGeo::GeoJSON.decode(geojson, json_parser: :json)
-    super(parsed)
+    if parsed.nil?
+      feature = {type: "Feature", geometry: JSON.parse(geojson), properties: {}}.to_json
+      parsed = RGeo::GeoJSON.decode(feature, json_parser: :json)
+    end
+    geometry = parsed.respond_to?(:geometry) ? parsed.geometry : parsed
+    super(geometry)
   rescue => e
     Rails.logger.error "Failed to parse custom_geometry: #{e.message}"
     super(nil)
