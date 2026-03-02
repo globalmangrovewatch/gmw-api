@@ -4,7 +4,10 @@ module FileDataImport
   module Parser
     class Shp < FileDataImport::Parser::Base
       def convert_to_geojson
-        `ogr2ogr -f GeoJSON #{path_to_geojson_file} #{path_to_file}`
+        output = `ogr2ogr -f GeoJSON #{path_to_geojson_file} #{path_to_file} 2>&1`
+        unless File.exist?(path_to_geojson_file)
+          raise StandardError, "Failed to convert shapefile to GeoJSON: #{output}"
+        end
       end
 
       def path_to_geojson_file
