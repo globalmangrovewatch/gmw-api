@@ -4,6 +4,7 @@ class User < ApplicationRecord
     :registerable,
     :confirmable,
     :recoverable,
+    :trackable,
     jwt_revocation_strategy: JwtDenylist
   has_and_belongs_to_many :organizations
   has_many :user_locations, dependent: :destroy
