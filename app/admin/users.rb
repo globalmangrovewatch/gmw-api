@@ -20,8 +20,8 @@ ActiveAdmin.register User do
   scope :admins
   scope :subscribed_to_alerts
   scope :subscribed_to_newsletter
-  scope :inactive, -> { where("last_sign_in_at < ? OR last_sign_in_at IS NULL", 90.days.ago) }
-  scope :recently_active, -> { where("last_sign_in_at >= ?", 7.days.ago) }
+  scope :inactive
+  scope :recently_active
 
   index do
     selectable_column
