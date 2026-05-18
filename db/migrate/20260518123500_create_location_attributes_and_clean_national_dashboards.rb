@@ -1,14 +1,12 @@
 class CreateLocationAttributesAndCleanNationalDashboards < ActiveRecord::Migration[7.0]
   def up
     create_table :location_attributes do |t|
-      t.references :location, null: false, foreign_key: true
+      t.references :location, null: false, foreign_key: true, index: {unique: true}
       t.string :legal_status
       t.boolean :mangrove_breakthrough_committed, default: false, null: false
 
       t.timestamps
     end
-
-    add_index :location_attributes, :location_id, unique: true
 
     migrate_existing_data
 
