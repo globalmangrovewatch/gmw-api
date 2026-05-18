@@ -353,6 +353,7 @@ class V2::WidgetsController < ApiController
     @location_id = params[:location_id]
     @data = NationalDashboard.where location_id: @location_id
     @location_resources = LocationResource.where location_id: @location_id
+    @location_attribute = LocationAttribute.find_by(location_id: @location_id)
   end
 
   def fisheries

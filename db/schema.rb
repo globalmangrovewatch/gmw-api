@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_12_16_123820) do
+ActiveRecord::Schema[7.0].define(version: 2026_05_18_123500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -265,6 +265,15 @@ ActiveRecord::Schema[7.0].define(version: 2025_12_16_123820) do
     t.index ["site_id"], name: "index_monitoring_answers_on_site_id"
   end
 
+  create_table "location_attributes", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "legal_status"
+    t.boolean "mangrove_breakthrough_committed", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_location_attributes_on_location_id", unique: true
+  end
+
   create_table "national_dashboards", force: :cascade do |t|
     t.bigint "location_id", null: false
     t.string "source"
@@ -278,8 +287,6 @@ ActiveRecord::Schema[7.0].define(version: 2025_12_16_123820) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "source_layer"
-    t.string "legal_status"
-    t.boolean "mangrove_breakthrough_committed"
     t.index ["location_id"], name: "index_national_dashboards_on_location_id"
   end
 
@@ -415,6 +422,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_12_16_123820) do
   add_foreign_key "mangrove_data", "locations"
   add_foreign_key "mitigation_potentials", "locations"
   add_foreign_key "monitoring_answers", "sites"
+  add_foreign_key "location_attributes", "locations"
   add_foreign_key "national_dashboards", "locations"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"

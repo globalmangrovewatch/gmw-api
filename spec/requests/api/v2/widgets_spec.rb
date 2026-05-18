@@ -1191,6 +1191,7 @@ RSpec.describe "API V2 Widgets", type: :request do
       let!(:national_dashboard_1) { create :national_dashboard, location: location }
       let!(:national_dashboard_2) { create :national_dashboard }
       let!(:location_resource) { create :location_resource, location: location }
+      let!(:location_attribute) { create :location_attribute, location: location, legal_status: "forest", mangrove_breakthrough_committed: true }
 
       let(:location_id) { location.id }
 
@@ -1217,10 +1218,20 @@ RSpec.describe "API V2 Widgets", type: :request do
           expect(response_json["data"].first["indicator"]).to eq(national_dashboard_1.indicator)
           expect(response_json["data"].first["sources"].first["source"]).to eq(national_dashboard_1.source)
           expect(response_json["data"].first["sources"].first["data_source"].pluck("value")).to eq([national_dashboard_1.value])
+          expect(response_json["data"].first["legal_status"]).to eq(location_attribute.legal_status)
+          expect(response_json["data"].first["mangrove_breakthrough_committed"]).to eq(location_attribute.mangrove_breakthrough_committed)
         end
 
         it "returns correct metadata" do
           expect(response_json["metadata"]["other_resources"].pluck("name")).to eq([location_resource.name])
+          expect(response_json["metadata"]["legal_status_options"]).to eq(LocationAttribute.legal_status_options)
+        end
+
+        it "returns sensible defaults when no location_attribute exists" do
+          location_attribute.destroy
+          get "/api/v2/widgets/national_dashboard", params: {location_id: location.id}
+          expect(response_json["data"].first["legal_status"]).to be_nil
+          expect(response_json["data"].first["mangrove_breakthrough_committed"]).to eq(false)
         end
       end
     end

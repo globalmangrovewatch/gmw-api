@@ -4,6 +4,7 @@ class Location < ApplicationRecord
   has_many :species, through: :species_locations, source: :specie
   has_many :restoration_potentials, dependent: :destroy
   has_many :habitat_extent, dependent: :destroy
+  has_one :location_attribute, dependent: :destroy
   accepts_nested_attributes_for :species
 
   # validations
