@@ -1,3 +1,5 @@
+STAGING_APP = proc { ENV["APP_ENV"] == "staging" }
+
 ActiveAdmin.register HabitatExtent, as: "habitat_extent" do
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
@@ -15,6 +17,24 @@ ActiveAdmin.register HabitatExtent, as: "habitat_extent" do
   # end
 
   menu parent: "Widgets"
+
+  action_item :delete_all_records, only: :index, if: STAGING_APP do
+    link_to "Delete All Records",
+      delete_all_records_admin_habitat_extents_path,
+      method: :post,
+      data: {confirm: "This will permanently delete all habitat extent records. Continue?"}
+  end
+
+  collection_action :delete_all_records, method: :post do
+    unless STAGING_APP.call
+      redirect_to admin_habitat_extents_path, alert: "This action is only available in staging."
+      return
+    end
+
+    count = HabitatExtent.count
+    HabitatExtent.delete_all
+    redirect_to admin_habitat_extents_path, notice: "Deleted #{count} habitat extent #{"record".pluralize(count)}."
+  end
 
   active_admin_import({
     before_import: ->(importer) {
