@@ -167,19 +167,19 @@ class V2::WidgetsController < ApiController
     if params.has_key?(:location_id) && params[:location_id] != "worldwide"
       @location_id = params[:location_id]
       @year = HabitatExtent.select("year").distinct.pluck(:year).sort
-      @data = HabitatExtent.joins(:location).includes(:location).select("year, value - (COALESCE(LAG(value, 1) OVER (ORDER BY year), value)) as value, location.location_id").where(location: {id: params[:location_id]}, indicator: "habitat_extent_area").order(:indicator, :year)
+      @data = HabitatExtent.joins(:location).includes(:location).select("year, value - (COALESCE(LAG(value, 1) OVER (ORDER BY year), value)) as value, gain, loss, location.location_id").where(location: {id: params[:location_id]}, indicator: "habitat_extent_area").order(:indicator, :year)
       @total_area = @data.first.location.area_m2 * 0.000001 # convert to km2
       @total_lenght = @data.first.location.coast_length_m * 0.001 # convert to km
     else
       subquery = HabitatExtent.joins(:location).select(
-        "indicator, year, sum(value) as value, sum(coast_length_m) as coast_length_m, sum(area_m2) as area_m2"
+        "indicator, year, sum(value) as value, sum(gain) as gain, sum(loss) as loss, sum(coast_length_m) as coast_length_m, sum(area_m2) as area_m2"
       ).where(
         indicator: "habitat_extent_area",
         locations: {location_type: "country"}
       ).group(:indicator, :year).order(:indicator, :year)
 
       @data = HabitatExtent.from(subquery, :a).select(
-        "a.year, a.value - (COALESCE(LAG(a.value, 1) OVER (ORDER BY a.year), a.value)) as value, a.coast_length_m, a.area_m2"
+        "a.year, a.value - (COALESCE(LAG(a.value, 1) OVER (ORDER BY a.year), a.value)) as value, a.gain, a.loss, a.coast_length_m, a.area_m2"
       )
 
       @location_id = "worldwide"

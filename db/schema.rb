@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_05_18_123500) do
+ActiveRecord::Schema[7.0].define(version: 2026_07_02_164442) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -48,6 +48,23 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_123500) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
+  end
+
+  create_table "alert_sync_runs", force: :cascade do |t|
+    t.string "status", default: "pending", null: false
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.integer "system_locations_checked", default: 0
+    t.integer "custom_locations_checked", default: 0
+    t.integer "notifications_sent", default: 0
+    t.integer "errors_count", default: 0
+    t.text "error_messages"
+    t.bigint "triggered_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_alert_sync_runs_on_created_at"
+    t.index ["status"], name: "index_alert_sync_runs_on_status"
+    t.index ["triggered_by_id"], name: "index_alert_sync_runs_on_triggered_by_id"
   end
 
   create_table "blue_carbon_investments", force: :cascade do |t|
@@ -156,6 +173,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_123500) do
     t.float "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "gain"
+    t.float "loss"
     t.index ["location_id"], name: "index_habitat_extents_on_location_id"
   end
 
@@ -189,6 +208,28 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_123500) do
     t.index ["landscape_id", "organization_id"], name: "idx_u_landscapes_organizations", unique: true
     t.index ["landscape_id"], name: "index_landscapes_organizations_on_landscape_id"
     t.index ["organization_id"], name: "index_landscapes_organizations_on_organization_id"
+  end
+
+  create_table "location_alert_snapshots", force: :cascade do |t|
+    t.string "location_id"
+    t.date "latest_date"
+    t.integer "date_count"
+    t.json "last_response"
+    t.datetime "last_checked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_location_id"
+    t.index ["location_id"], name: "idx_location_alert_snapshots_location_id", unique: true, where: "(location_id IS NOT NULL)"
+    t.index ["user_location_id"], name: "idx_location_alert_snapshots_user_location_id", unique: true, where: "(user_location_id IS NOT NULL)"
+  end
+
+  create_table "location_attributes", force: :cascade do |t|
+    t.bigint "location_id", null: false
+    t.string "legal_status"
+    t.boolean "mangrove_breakthrough_committed", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_location_attributes_on_location_id", unique: true
   end
 
   create_table "location_resources", force: :cascade do |t|
@@ -265,15 +306,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_123500) do
     t.index ["site_id"], name: "index_monitoring_answers_on_site_id"
   end
 
-  create_table "location_attributes", force: :cascade do |t|
-    t.bigint "location_id", null: false
-    t.string "legal_status"
-    t.boolean "mangrove_breakthrough_committed", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["location_id"], name: "index_location_attributes_on_location_id", unique: true
-  end
-
   create_table "national_dashboards", force: :cascade do |t|
     t.bigint "location_id", null: false
     t.string "source"
@@ -306,6 +338,20 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_123500) do
     t.index ["organization_id", "user_id"], name: "index_organizations_users_on_organization_id_and_user_id", unique: true
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
     t.index ["user_id"], name: "index_organizations_users_on_user_id"
+  end
+
+  create_table "platform_notifications", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "content", null: false
+    t.string "notification_type", default: "platform_update", null: false
+    t.datetime "published_at"
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "sent_at"
+    t.index ["created_by_id"], name: "index_platform_notifications_on_created_by_id"
+    t.index ["notification_type"], name: "index_platform_notifications_on_notification_type"
+    t.index ["published_at"], name: "index_platform_notifications_on_published_at"
   end
 
   create_table "registration_intervention_answers", force: :cascade do |t|
@@ -358,6 +404,14 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_123500) do
     t.index ["specie_id"], name: "index_species_locations_on_specie_id"
   end
 
+  create_table "test_alert_data", force: :cascade do |t|
+    t.string "location_id"
+    t.json "dates"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_test_alert_data_on_location_id", unique: true
+  end
+
   create_table "tree_heights", force: :cascade do |t|
     t.bigint "location_id", null: false
     t.enum "indicator", default: "avg", null: false, enum_type: "tree_heights_indicators"
@@ -378,6 +432,22 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_123500) do
     t.index ["location_id"], name: "index_typologies_on_location_id"
   end
 
+  create_table "user_locations", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "location_id"
+    t.string "name", null: false
+    t.geometry "custom_geometry", limit: {:srid=>4326, :type=>"geometry"}
+    t.json "bounds"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "alerts_enabled", default: true, null: false
+    t.index ["custom_geometry"], name: "index_user_locations_on_custom_geometry", using: :gist
+    t.index ["location_id"], name: "index_user_locations_on_location_id"
+    t.index ["user_id", "location_id"], name: "idx_user_locations_system", unique: true, where: "(location_id IS NOT NULL)"
+    t.index ["user_id"], name: "index_user_locations_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -391,6 +461,14 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_123500) do
     t.string "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
+    t.boolean "subscribed_to_location_alerts", default: false, null: false
+    t.boolean "subscribed_to_newsletter", default: false, null: false
+    t.boolean "subscribed_to_platform_updates", default: false, null: false
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -406,6 +484,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_123500) do
   end
 
   add_foreign_key "aboveground_biomasses", "locations"
+  add_foreign_key "alert_sync_runs", "admin_users", column: "triggered_by_id"
   add_foreign_key "blue_carbon_investments", "locations"
   add_foreign_key "blue_carbons", "locations"
   add_foreign_key "degradation_treemaps", "locations"
@@ -418,18 +497,22 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_18_123500) do
   add_foreign_key "international_statuses", "locations"
   add_foreign_key "landscapes_organizations", "landscapes"
   add_foreign_key "landscapes_organizations", "organizations"
+  add_foreign_key "location_alert_snapshots", "user_locations"
+  add_foreign_key "location_attributes", "locations"
   add_foreign_key "location_resources", "locations"
   add_foreign_key "mangrove_data", "locations"
   add_foreign_key "mitigation_potentials", "locations"
   add_foreign_key "monitoring_answers", "sites"
-  add_foreign_key "location_attributes", "locations"
   add_foreign_key "national_dashboards", "locations"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
+  add_foreign_key "platform_notifications", "admin_users", column: "created_by_id"
   add_foreign_key "registration_intervention_answers", "sites"
   add_foreign_key "restoration_potentials", "locations"
   add_foreign_key "sites", "landscapes"
   add_foreign_key "tree_heights", "locations"
   add_foreign_key "typologies", "locations"
+  add_foreign_key "user_locations", "locations"
+  add_foreign_key "user_locations", "users"
   add_foreign_key "widget_protected_areas", "locations", primary_key: "location_id", on_delete: :cascade
 end

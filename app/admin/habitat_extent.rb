@@ -42,7 +42,7 @@ ActiveAdmin.register HabitatExtent, as: "habitat_extent" do
     }
   })
 
-  permit_params :indicator, :value, :year, :location_id
+  permit_params :indicator, :value, :year, :location_id, :gain, :loss
 
   form do |f|
     f.inputs "Details" do
@@ -52,6 +52,8 @@ ActiveAdmin.register HabitatExtent, as: "habitat_extent" do
         include_blank: false,
         required: true
       f.input :value, required: true
+      f.input :gain
+      f.input :loss
       f.input :year, required: true
     end
 
@@ -65,6 +67,8 @@ ActiveAdmin.register HabitatExtent, as: "habitat_extent" do
   csv do
     column :indicator
     column :value
+    column :gain
+    column :loss
     column :year
     column(:location_id) { |habitat_extent| habitat_extent.location.id }
   end

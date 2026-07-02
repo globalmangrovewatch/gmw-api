@@ -3,20 +3,22 @@
     {
       "year": 2010,
       "net_change": 0.0,
-      "gain": null,
-      "loss": null
+      "gain": 200.0,
+      "loss": 30.0
     },
     {
       "year": 2020,
-      "net_change": 29678.709999999992,
-      "gain": null,
-      "loss": null
+      "net_change": 29678.71,
+      "gain": 500.0,
+      "loss": 150.0
     }
   ],
   "metadata": {
     "location_id": "worldwide",
     "units": {
-      "net_change": "km2"
+      "net_change": "km2",
+      "gain": "km2",
+      "loss": "km2"
     },
     "year": [
       1996,
