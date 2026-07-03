@@ -555,10 +555,10 @@ RSpec.describe "API V2 Widgets", type: :request do
       let!(:worldwide) { create :location, :worldwide }
       let(:country_location) { create :location, location_type: "country" }
       let(:location) { create :location }
-      let!(:habitat_extent_1) { create :habitat_extent, location: country_location, indicator: "habitat_extent_area", year: 2010 }
-      let!(:habitat_extent_2) { create :habitat_extent, location: country_location, indicator: "habitat_extent_area", year: 2020 }
+      let!(:habitat_extent_1) { create :habitat_extent, location: country_location, indicator: "habitat_extent_area", year: 2010, gain: 200.0, loss: 30.0 }
+      let!(:habitat_extent_2) { create :habitat_extent, location: country_location, indicator: "habitat_extent_area", year: 2020, gain: 500.0, loss: 150.0 }
       let!(:habitat_extent_3) { create :habitat_extent, location: location, indicator: "habitat_extent_area", year: 2012 }
-      let!(:habitat_extent_4) { create :habitat_extent, location: location, indicator: "habitat_extent_area", year: 2013 }
+      let!(:habitat_extent_4) { create :habitat_extent, location: location, indicator: "habitat_extent_area", year: 2013, gain: 120.5, loss: 80.25 }
       let!(:ignored_habitat_extent) { create :habitat_extent, location: location, indicator: "linear_coverage" }
 
       response 200, "Success" do
@@ -584,7 +584,11 @@ RSpec.describe "API V2 Widgets", type: :request do
           end
 
           it "returns correct data" do
-            expect(response_json["data"].pluck("net_change")).to eq([0, habitat_extent_4.value - habitat_extent_3.value])
+            data = response_json["data"]
+            expect(data[0]["net_change"]).to eq(0.0)
+            expect(data[1]["net_change"]).to be_within(0.01).of(habitat_extent_4.value - habitat_extent_3.value)
+            expect(data.pluck("gain")).to eq([nil, 120.5])
+            expect(data.pluck("loss")).to eq([nil, 80.25])
           end
         end
 
@@ -596,7 +600,11 @@ RSpec.describe "API V2 Widgets", type: :request do
           end
 
           it "returns correct data" do
-            expect(response_json["data"].pluck("net_change")).to eq([0, habitat_extent_2.value - habitat_extent_1.value])
+            data = response_json["data"]
+            expect(data[0]["net_change"]).to eq(0.0)
+            expect(data[1]["net_change"]).to be_within(0.01).of(habitat_extent_2.value - habitat_extent_1.value)
+            expect(data.pluck("gain")).to eq([200.0, 500.0])
+            expect(data.pluck("loss")).to eq([30.0, 150.0])
           end
         end
       end
@@ -1191,6 +1199,7 @@ RSpec.describe "API V2 Widgets", type: :request do
       let!(:national_dashboard_1) { create :national_dashboard, location: location }
       let!(:national_dashboard_2) { create :national_dashboard }
       let!(:location_resource) { create :location_resource, location: location }
+      let!(:location_attribute) { create :location_attribute, location: location, legal_status: "forest", mangrove_breakthrough_committed: true }
 
       let(:location_id) { location.id }
 
@@ -1217,10 +1226,20 @@ RSpec.describe "API V2 Widgets", type: :request do
           expect(response_json["data"].first["indicator"]).to eq(national_dashboard_1.indicator)
           expect(response_json["data"].first["sources"].first["source"]).to eq(national_dashboard_1.source)
           expect(response_json["data"].first["sources"].first["data_source"].pluck("value")).to eq([national_dashboard_1.value])
+          expect(response_json["data"].first["legal_status"]).to eq(location_attribute.legal_status)
+          expect(response_json["data"].first["mangrove_breakthrough_committed"]).to eq(location_attribute.mangrove_breakthrough_committed)
         end
 
         it "returns correct metadata" do
           expect(response_json["metadata"]["other_resources"].pluck("name")).to eq([location_resource.name])
+          expect(response_json["metadata"]["legal_status_options"]).to eq(LocationAttribute.legal_status_options)
+        end
+
+        it "returns sensible defaults when no location_attribute exists" do
+          location_attribute.destroy
+          get "/api/v2/widgets/national_dashboard", params: {location_id: location.id}
+          expect(response_json["data"].first["legal_status"]).to be_nil
+          expect(response_json["data"].first["mangrove_breakthrough_committed"]).to eq(false)
         end
       end
     end

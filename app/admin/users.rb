@@ -12,12 +12,16 @@ ActiveAdmin.register User do
   filter :subscribed_to_newsletter
   filter :subscribed_to_platform_updates
   filter :confirmed_at
+  filter :last_sign_in_at
+  filter :sign_in_count
   filter :created_at
 
   scope :all, default: true
   scope :admins
   scope :subscribed_to_alerts
   scope :subscribed_to_newsletter
+  scope :inactive
+  scope :recently_active
 
   index do
     selectable_column
@@ -37,6 +41,8 @@ ActiveAdmin.register User do
       status_tag user.subscribed_to_platform_updates ? "Yes" : "No",
                  class: user.subscribed_to_platform_updates ? "green" : "red"
     end
+    column :last_sign_in_at, sortable: true
+    column :sign_in_count, sortable: true
     column :confirmed_at
     column :created_at
     actions
@@ -51,6 +57,9 @@ ActiveAdmin.register User do
         status_tag user.admin ? "Yes" : "No", class: user.admin ? "green" : "red"
       end
       row :confirmed_at
+      row :last_sign_in_at
+      row :current_sign_in_at
+      row :sign_in_count
       row :created_at
       row :updated_at
     end
@@ -76,6 +85,10 @@ ActiveAdmin.register User do
       table_for user.organizations do
         column :id
         column :organization_name
+        column "Role" do |org|
+          org_user = OrganizationsUsers.find_by(user_id: user.id, organization_id: org.id)
+          status_tag org_user&.role || "member", class: org_user&.role == "org-admin" ? "primary" : "default"
+        end
       end
     end
 
@@ -157,6 +170,8 @@ ActiveAdmin.register User do
     column :subscribed_to_newsletter
     column :subscribed_to_platform_updates
     column :confirmed_at
+    column :last_sign_in_at
+    column :sign_in_count
     column :created_at
     column :updated_at
   end
@@ -201,6 +216,22 @@ ActiveAdmin.register User do
       user.update(subscribed_to_platform_updates: false)
     end
     redirect_to collection_path, notice: "Users unsubscribed from platform updates."
+  end
+
+  member_action :reset_password, method: :post do
+    resource.send_reset_password_instructions
+    redirect_to admin_user_path(resource), notice: "Password reset instructions sent to #{resource.email}."
+  end
+
+  action_item :reset_password, only: :show do
+    link_to "Send Password Reset Email", reset_password_admin_user_path(user), method: :post
+  end
+
+  batch_action :send_password_reset do |ids|
+    batch_action_collection.find(ids).each do |user|
+      user.send_reset_password_instructions
+    end
+    redirect_to collection_path, notice: "Password reset instructions sent to #{ids.count} users."
   end
 end
 

@@ -5,6 +5,7 @@ class Users::SessionsController < Devise::SessionsController
   private
 
   def respond_with(resource, _opts = {})
+    resource.update_tracked_fields!(request)
     render json: {
       message: "You are logged in.",
       token: request.env["warden-jwt_auth.token"],

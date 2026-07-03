@@ -2,8 +2,8 @@ json.data do
   json.array! @data do |datum|
     json.year datum.year
     json.net_change datum.value
-    json.gain nil
-    json.loss nil
+    json.gain datum.gain
+    json.loss datum.loss
   end
 end
 
@@ -11,6 +11,8 @@ json.metadata do
   json.location_id @location_id
   json.units do
     json.net_change "km2"
+    json.gain "km2"
+    json.loss "km2"
   end
   json.year [1996,
     2007,

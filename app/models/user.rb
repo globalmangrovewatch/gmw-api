@@ -4,6 +4,7 @@ class User < ApplicationRecord
     :registerable,
     :confirmable,
     :recoverable,
+    :trackable,
     jwt_revocation_strategy: JwtDenylist
   has_and_belongs_to_many :organizations
   has_many :user_locations, dependent: :destroy
@@ -19,6 +20,8 @@ class User < ApplicationRecord
   scope :admins, -> { where(admin: true) }
   scope :subscribed_to_alerts, -> { where(subscribed_to_location_alerts: true) }
   scope :subscribed_to_newsletter, -> { where(subscribed_to_newsletter: true) }
+  scope :inactive, -> { where("last_sign_in_at < ? OR last_sign_in_at IS NULL", 90.days.ago) }
+  scope :recently_active, -> { where("last_sign_in_at >= ?", 7.days.ago) }
 
   def jwt_payload
     {

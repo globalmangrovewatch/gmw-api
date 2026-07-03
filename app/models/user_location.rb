@@ -76,11 +76,28 @@ class UserLocation < ApplicationRecord
       value.to_json
     end
 
-    parsed = RGeo::GeoJSON.decode(geojson, json_parser: :json)
-    super(parsed)
+    parsed_json = JSON.parse(geojson)
+    clean_geojson = parsed_json.slice("type", "coordinates").to_json
+
+    factory = RGeo::Cartesian.factory(srid: 4326)
+    parsed = RGeo::GeoJSON.decode(clean_geojson, json_parser: :json, geo_factory: factory)
+    if parsed.nil?
+      feature = {type: "Feature", geometry: parsed_json.slice("type", "coordinates"), properties: {}}.to_json
+      parsed = RGeo::GeoJSON.decode(feature, json_parser: :json, geo_factory: factory)
+    end
+    geometry = parsed.respond_to?(:geometry) ? parsed.geometry : parsed
+    super(geometry)
   rescue => e
-    Rails.logger.error "Failed to parse custom_geometry: #{e.message}"
-    super(nil)
+    Rails.logger.error "RGeo parsing failed (#{e.message}), falling back to PostGIS ST_MakeValid"
+    begin
+      wkt = self.class.connection.select_value(
+        "SELECT ST_AsText(ST_MakeValid(ST_SetSRID(ST_GeomFromGeoJSON(#{self.class.connection.quote(clean_geojson)}), 4326)))"
+      )
+      super(factory.parse_wkt(wkt)) if wkt
+    rescue => fallback_error
+      Rails.logger.error "Failed to parse custom_geometry: #{fallback_error.message}"
+      super(nil)
+    end
   end
 
   private
