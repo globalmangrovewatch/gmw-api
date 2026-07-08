@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe User, type: :model do
   describe "user_roles validations" do
     it "accepts valid roles" do
-      user = build(:user, user_roles: ["researcher", "ngo"])
+      user = build(:user, user_roles: ["scientist", "ngo"])
 
       expect(user).to be_valid
     end
@@ -23,13 +23,13 @@ RSpec.describe User, type: :model do
     end
 
     it "persists user_role_other when other is selected" do
-      user = build(:user, user_roles: ["researcher", "other"], user_role_other: "Marine consultant")
+      user = build(:user, user_roles: ["scientist", "other"], user_role_other: "Marine consultant")
 
       expect(user).to be_valid
     end
 
     it "clears user_role_other when other is not selected" do
-      user = build(:user, user_roles: ["researcher"], user_role_other: "Should be cleared")
+      user = build(:user, user_roles: ["scientist"], user_role_other: "Should be cleared")
 
       user.valid?
 
@@ -45,11 +45,11 @@ RSpec.describe User, type: :model do
     end
 
     it "deduplicates roles" do
-      user = build(:user, user_roles: ["researcher", "researcher"])
+      user = build(:user, user_roles: ["scientist", "scientist"])
 
       user.valid?
 
-      expect(user.user_roles).to eq(["researcher"])
+      expect(user.user_roles).to eq(["scientist"])
     end
   end
 

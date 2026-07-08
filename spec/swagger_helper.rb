@@ -421,6 +421,50 @@ RSpec.configure do |config|
               description: {type: :string, nullable: true},
               link: {type: :string, nullable: true}
             }
+          },
+          user_profile_role: {
+            type: :string,
+            enum: UserProfileRole::OPTIONS,
+            description: "Accepted profile role value"
+          },
+          user_profile: {
+            type: :object,
+            properties: {
+              name: {type: :string, nullable: true},
+              email: {type: :string},
+              organization: {type: :string, nullable: true},
+              user_roles: {
+                type: :array,
+                items: {"$ref" => "#/components/schemas/user_profile_role"},
+                description: "One or more profile roles. Multiple selections allowed."
+              },
+              user_role_other: {
+                type: :string,
+                nullable: true,
+                description: 'Required when "other" is included in user_roles.'
+              }
+            },
+            required: [:email, :user_roles]
+          },
+          user_profile_input: {
+            type: :object,
+            properties: {
+              name: {type: :string},
+              email: {type: :string},
+              password: {type: :string},
+              password_confirmation: {type: :string},
+              current_password: {type: :string},
+              user_roles: {
+                type: :array,
+                items: {"$ref" => "#/components/schemas/user_profile_role"},
+                description: "One or more profile roles. Multiple selections allowed."
+              },
+              user_role_other: {
+                type: :string,
+                nullable: true,
+                description: 'Required when "other" is included in user_roles.'
+              }
+            }
           }
         }
       }

@@ -9,7 +9,7 @@ RSpec.describe "User profile roles", type: :request do
     it "returns saved user roles" do
       user = create(
         :user,
-        user_roles: ["government", "other"],
+        user_roles: ["government_policy", "other"],
         user_role_other: "Policy advisor"
       )
 
@@ -19,7 +19,7 @@ RSpec.describe "User profile roles", type: :request do
       expect(response_json["user"]).to include(
         "name" => user.name,
         "email" => user.email,
-        "user_roles" => ["government", "other"],
+        "user_roles" => ["government_policy", "other"],
         "user_role_other" => "Policy advisor"
       )
     end
@@ -42,7 +42,7 @@ RSpec.describe "User profile roles", type: :request do
           email: "newuser@example.com",
           password: "password123",
           name: "New User",
-          user_roles: ["researcher", "other"],
+          user_roles: ["scientist", "other"],
           user_role_other: "Field technician"
         }
       }, as: :json
@@ -51,12 +51,12 @@ RSpec.describe "User profile roles", type: :request do
       expect(response_json["user"]).to include(
         "email" => "newuser@example.com",
         "name" => "New User",
-        "user_roles" => ["researcher", "other"],
+        "user_roles" => ["scientist", "other"],
         "user_role_other" => "Field technician"
       )
 
       created_user = User.find_by(email: "newuser@example.com")
-      expect(created_user.user_roles).to eq(["researcher", "other"])
+      expect(created_user.user_roles).to eq(["scientist", "other"])
       expect(created_user.user_role_other).to eq("Field technician")
     end
 
@@ -83,19 +83,19 @@ RSpec.describe "User profile roles", type: :request do
         user: {
           name: user.name,
           email: user.email,
-          user_roles: ["private_sector", "other"],
+          user_roles: ["industry", "other"],
           user_role_other: "Consultant"
         }
       }, headers: auth_headers(user), as: :json
 
       expect(response).to have_http_status(:ok)
       expect(response_json["user"]).to include(
-        "user_roles" => ["private_sector", "other"],
+        "user_roles" => ["industry", "other"],
         "user_role_other" => "Consultant"
       )
 
       user.reload
-      expect(user.user_roles).to eq(["private_sector", "other"])
+      expect(user.user_roles).to eq(["industry", "other"])
       expect(user.user_role_other).to eq("Consultant")
     end
 
@@ -110,13 +110,13 @@ RSpec.describe "User profile roles", type: :request do
         user: {
           name: user.name,
           email: user.email,
-          user_roles: ["community"]
+          user_roles: ["education"]
         }
       }, headers: auth_headers(user), as: :json
 
       expect(response).to have_http_status(:ok)
       expect(response_json["user"]).to include(
-        "user_roles" => ["community"],
+        "user_roles" => ["education"],
         "user_role_other" => nil
       )
     end
