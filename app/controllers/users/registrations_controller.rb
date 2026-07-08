@@ -23,22 +23,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def update_success(resource)
     render json: {
       message: "User profile updated sucessfully.",
-      user: {
-        name: resource.name,
-        email: resource.email,
-        organization: resource.organization
-      }
+      user: resource.profile_attributes
     }
   end
 
   def register_success(resource)
     render json: {
       message: "Signed up sucessfully.",
-      user: {
-        name: resource.name,
-        email: resource.email,
-        organization: resource.organization
-      }
+      user: resource.profile_attributes
     }
   end
 
@@ -49,8 +41,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up) { |u| u.permit(:name, :email, :password) }
-    devise_parameter_sanitizer.permit(:account_update) { |u| u.permit(:name, :email, :password, :current_password) }
+    profile_params = [:name, :email, :password, :user_role_other, user_roles: []]
+    devise_parameter_sanitizer.permit(:sign_up) { |u| u.permit(*profile_params) }
+    devise_parameter_sanitizer.permit(:account_update) { |u| u.permit(*profile_params, :current_password) }
   end
 
   def update_resource(resource, params)

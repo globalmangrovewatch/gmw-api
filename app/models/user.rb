@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include UserProfileAttributes
+
   devise :database_authenticatable,
     :jwt_authenticatable,
     :registerable,
