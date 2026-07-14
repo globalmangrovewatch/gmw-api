@@ -1,6 +1,12 @@
 ActiveAdmin.register LocationAttribute do
   menu parent: "Widgets"
 
+  active_admin_import({
+    before_import: ->(importer) {
+      LocationAttribute.delete_all
+    }
+  })
+
   permit_params :location_id, :legal_status, :mangrove_breakthrough_committed
 
   filter :location
@@ -31,5 +37,11 @@ ActiveAdmin.register LocationAttribute do
     column :location_id
     column :legal_status
     column :mangrove_breakthrough_committed
+  end
+
+  controller do
+    def csv_filename
+      "location_attributes.csv"
+    end
   end
 end
