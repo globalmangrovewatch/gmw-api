@@ -2,6 +2,9 @@ ActiveAdmin.register LocationAttribute do
   menu parent: "Widgets"
 
   active_admin_import({
+    template_object: ActiveAdminImport::Model.new(
+      hint: "CSV columns: location_id, legal_status, mangrove_breakthrough_committed. Uploading a file replaces all existing location attribute records."
+    ),
     before_import: ->(importer) {
       LocationAttribute.delete_all
     }
