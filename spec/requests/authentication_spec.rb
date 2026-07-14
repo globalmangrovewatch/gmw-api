@@ -1,6 +1,11 @@
 require "swagger_helper"
 
 RSpec.describe "Authentication", type: :request do
+  before do
+    ActionMailer::Base.default_url_options[:host] = "example.com"
+    ENV["MRTT_UI_BASE_URL"] ||= "http://example.com"
+  end
+
   path "/users/sign_in" do
     post "Login user" do
       tags "Authentication"
@@ -31,7 +36,7 @@ RSpec.describe "Authentication", type: :request do
           },
           required: [:message, :token]
 
-        let!(:user) { create :user, email: "test@example.com", password: "password123", confirmed_at: Time.now }
+        let!(:existing_user) { create :user, email: "test@example.com", password: "password123", confirmed_at: Time.now }
         let(:user) do
           {
             user: {
@@ -72,7 +77,7 @@ RSpec.describe "Authentication", type: :request do
       description "Logs out the current user and invalidates the JWT token."
       security [bearerAuth: []]
 
-      parameter name: :Authorization, in: :header, type: :string, required: true, 
+      parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: "Bearer token", example: "Bearer eyJhbGciOiJIUzI1NiJ9..."
 
       response 200, "Successful logout" do
@@ -81,19 +86,8 @@ RSpec.describe "Authentication", type: :request do
             message: {type: :string, example: "You are logged out."}
           }
 
-        let!(:user) { create :user, confirmed_at: Time.now }
-        let(:Authorization) { "Bearer #{generate_jwt_token(user)}" }
-
-        run_test!
-      end
-
-      response 401, "Unauthorized" do
-        schema type: :object,
-          properties: {
-            message: {type: :string, example: "Something went wrong"}
-          }
-
-        let(:Authorization) { "Bearer invalid_token" }
+        let!(:authenticated_user) { create :user, confirmed_at: Time.now }
+        let(:Authorization) { auth_header(authenticated_user) }
 
         run_test!
       end
@@ -111,14 +105,13 @@ RSpec.describe "Authentication", type: :request do
         type: :object,
         properties: {
           user: {
-            type: :object,
-            properties: {
-              email: {type: :string, example: "newuser@example.com"},
-              password: {type: :string, example: "password123"},
-              password_confirmation: {type: :string, example: "password123"},
-              name: {type: :string, example: "John Doe"}
-            },
-            required: [:email, :password, :password_confirmation]
+            allOf: [
+              {"$ref" => "#/components/schemas/user_profile_input"},
+              {
+                type: :object,
+                required: [:email, :password]
+              }
+            ]
           }
         },
         required: [:user]
@@ -127,24 +120,18 @@ RSpec.describe "Authentication", type: :request do
       response 200, "User created successfully" do
         schema type: :object,
           properties: {
-            message: {type: :string, example: "Signed up successfully."},
-            user: {
-              type: :object,
-              properties: {
-                id: {type: :integer},
-                email: {type: :string},
-                name: {type: :string}
-              }
-            }
-          }
+            message: {type: :string, example: "Signed up sucessfully."},
+            user: {"$ref" => "#/components/schemas/user_profile"}
+          },
+          required: [:message, :user]
 
         let(:user) do
           {
             user: {
               email: "newuser@example.com",
               password: "password123",
-              password_confirmation: "password123",
-              name: "John Doe"
+              name: "John Doe",
+              user_roles: ["scientist", "ngo"]
             }
           }
         end
@@ -155,7 +142,7 @@ RSpec.describe "Authentication", type: :request do
       response 422, "Validation errors" do
         schema type: :object,
           properties: {
-            error: {type: :string, example: "Email has already been taken"}
+            message: {type: :string, example: "Email has already been taken"}
           }
 
         let!(:existing_user) { create :user, email: "existing@example.com" }
@@ -165,6 +152,65 @@ RSpec.describe "Authentication", type: :request do
               email: "existing@example.com",
               password: "password123",
               password_confirmation: "password123"
+            }
+          }
+        end
+
+        run_test!
+      end
+    end
+
+    patch "Update user profile" do
+      tags "Authentication"
+      consumes "application/json"
+      produces "application/json"
+      description "Updates the authenticated user's profile, including profile roles."
+      security [bearerAuth: []]
+
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: "Bearer token", example: "Bearer eyJhbGciOiJIUzI1NiJ9..."
+      parameter name: :user, in: :body, schema: {
+        type: :object,
+        properties: {
+          user: {"$ref" => "#/components/schemas/user_profile_input"}
+        },
+        required: [:user]
+      }
+
+      response 200, "Profile updated successfully" do
+        schema type: :object,
+          properties: {
+            message: {type: :string, example: "User profile updated sucessfully."},
+            user: {"$ref" => "#/components/schemas/user_profile"}
+          },
+          required: [:message, :user]
+
+        let!(:authenticated_user) do
+          create :user, email: "profile@example.com", confirmed_at: Time.now, user_roles: ["ngo"]
+        end
+        let(:Authorization) { auth_header(authenticated_user) }
+        let(:user) do
+          {
+            user: {
+              name: authenticated_user.name,
+              email: authenticated_user.email,
+              user_roles: ["scientist", "other"],
+              user_role_other: "Independent consultant"
+            }
+          }
+        end
+
+        run_test!
+      end
+
+      response 401, "Unauthorized" do
+        let(:Authorization) { "Bearer invalid_token" }
+        let(:user) do
+          {
+            user: {
+              name: "Jane Doe",
+              email: "jane@example.com",
+              user_roles: ["scientist"]
             }
           }
         end
@@ -201,7 +247,7 @@ RSpec.describe "Authentication", type: :request do
             message: {type: :string, example: "You will receive an email with instructions on how to reset your password in a few minutes."}
           }
 
-        let!(:user) { create :user, email: "user@example.com", confirmed_at: Time.now }
+        let!(:existing_user) { create :user, email: "user@example.com", confirmed_at: Time.now }
         let(:user) do
           {
             user: {
@@ -228,11 +274,17 @@ RSpec.describe "Authentication", type: :request do
       response 200, "User retrieved successfully" do
         schema type: :object,
           properties: {
-            email: {type: :string}
-          }
+            user: {"$ref" => "#/components/schemas/user_profile"}
+          },
+          required: [:user]
 
-        let!(:user) { create :user, confirmed_at: Time.now }
-        let(:Authorization) { "Bearer #{generate_jwt_token(user)}" }
+        let!(:authenticated_user) do
+          create :user,
+            confirmed_at: Time.now,
+            user_roles: ["government_policy", "other"],
+            user_role_other: "Policy advisor"
+        end
+        let(:Authorization) { auth_header(authenticated_user) }
 
         run_test!
       end
@@ -245,20 +297,8 @@ RSpec.describe "Authentication", type: :request do
     end
   end
 
-  def generate_jwt_token(user)
-    secret = Rails.application.secret_key_base
-    payload = {
-      sub: user.id.to_s,
-      scp: 'user',
-      exp: 30.days.from_now.to_i,
-      meta: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        roles: {}
-      }
-    }
-    JWT.encode(payload, secret, 'HS256')
+  def auth_header(user)
+    token = Warden::JWTAuth::UserEncoder.new.call(user, :user, nil).first
+    "Bearer #{token}"
   end
 end
-
