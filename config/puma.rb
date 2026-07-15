@@ -30,14 +30,21 @@ pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 # Workers do not work on JRuby or Windows (both of which do not support
 # processes).
 #
-# workers ENV.fetch("WEB_CONCURRENCY") { 2 }
+# For Heroku standard-1x (512MB), use 0 workers (single process) to save memory.
+# For standard-2x (1GB), can use 2 workers.
+workers ENV.fetch("WEB_CONCURRENCY") { 0 }
 
 # Use the `preload_app!` method when specifying a `workers` number.
 # This directive tells Puma to first boot the application and load code
 # before forking the application. This takes advantage of Copy On Write
 # process behavior so workers use less memory.
 #
-# preload_app!
+preload_app!
+
+# Reconnect to database after forking (required when using preload_app!)
+on_worker_boot do
+  ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+end
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
