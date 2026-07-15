@@ -121,7 +121,7 @@ class UserLocation < ApplicationRecord
 
   def seed_alert_snapshot
     SeedLocationSnapshotJob.perform_later(id)
-  rescue Redis::CannotConnectError, Errno::ECONNREFUSED => e
+  rescue Redis::CannotConnectError, Errno::ECONNREFUSED, SocketError, RedisClient::CannotConnectError => e
     Rails.logger.warn "[UserLocation] Could not enqueue SeedLocationSnapshotJob (Redis unavailable): #{e.message}. Snapshot will be seeded on next alert sync."
   end
 end
