@@ -9,7 +9,7 @@ class UserLocation < ApplicationRecord
   validate :location_or_geometry_present
   validate :max_locations_per_user, on: :create
 
-  after_create :seed_alert_snapshot
+  after_commit :seed_alert_snapshot, on: :create
 
   scope :system_locations, -> { where.not(location_id: nil) }
   scope :custom_locations, -> { where(location_id: nil) }
@@ -121,5 +121,7 @@ class UserLocation < ApplicationRecord
 
   def seed_alert_snapshot
     SeedLocationSnapshotJob.perform_later(id)
+  rescue Redis::CannotConnectError, Errno::ECONNREFUSED => e
+    Rails.logger.warn "[UserLocation] Could not enqueue SeedLocationSnapshotJob (Redis unavailable): #{e.message}. Snapshot will be seeded on next alert sync."
   end
 end
