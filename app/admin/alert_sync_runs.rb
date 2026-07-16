@@ -32,10 +32,15 @@ ActiveAdmin.register AlertSyncRun do
       triggered_by: current_admin_user
     )
 
-    ProcessAlertSyncJob.perform_later(sync_run.id)
-
-    redirect_to admin_alert_sync_run_path(sync_run),
-      notice: "Alert sync started. Refresh this page to see progress."
+    begin
+      ProcessAlertSyncJob.perform_later(sync_run.id)
+      redirect_to admin_alert_sync_run_path(sync_run),
+        notice: "Alert sync started. Refresh this page to see progress."
+    rescue Redis::CannotConnectError, Errno::ECONNREFUSED, SocketError, RedisClient::CannotConnectError => e
+      sync_run.update!(status: :failed, error_messages: "Redis unavailable: #{e.message}")
+      redirect_to admin_alert_sync_runs_path,
+        alert: "Cannot start sync: Redis is not available. Background job processing requires Redis."
+    end
   end
 
   index do

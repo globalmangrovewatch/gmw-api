@@ -9,11 +9,7 @@ class Users::SessionsController < Devise::SessionsController
     render json: {
       message: "You are logged in.",
       token: request.env["warden-jwt_auth.token"],
-      user: {
-        name: resource.name,
-        email: resource.email,
-        organization: resource.organization
-      }
+      user: resource.profile_attributes
     }, status: :ok
   end
 

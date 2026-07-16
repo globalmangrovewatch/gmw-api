@@ -48,6 +48,9 @@ class PlatformNotification < ApplicationRecord
     SendPlatformNotificationJob.perform_later(id)
     update_column(:sent_at, Time.current)
     true
+  rescue Redis::CannotConnectError, Errno::ECONNREFUSED, SocketError, RedisClient::CannotConnectError => e
+    Rails.logger.warn "[PlatformNotification] Could not enqueue SendPlatformNotificationJob (Redis unavailable): #{e.message}"
+    false
   end
 
   private
@@ -59,5 +62,7 @@ class PlatformNotification < ApplicationRecord
   def queue_notification_delivery
     SendPlatformNotificationJob.perform_later(id)
     update_column(:sent_at, Time.current)
+  rescue Redis::CannotConnectError, Errno::ECONNREFUSED, SocketError, RedisClient::CannotConnectError => e
+    Rails.logger.warn "[PlatformNotification] Could not enqueue SendPlatformNotificationJob (Redis unavailable): #{e.message}. Notification saved but not sent."
   end
 end
