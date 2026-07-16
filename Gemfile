@@ -14,7 +14,6 @@ gem "pg", "~> 1.1"
 
 # Use Puma as the app server
 gem "puma", "~> 5.0"
-gem "puma_worker_killer"
 
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
