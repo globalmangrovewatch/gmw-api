@@ -1,7 +1,9 @@
 # Automatically restart Puma when memory exceeds threshold
 # This helps prevent R14 (Memory quota exceeded) errors on Heroku
+#
+# Enable by setting PUMA_WORKER_KILLER_ENABLED=true in your environment
 
-if defined?(PumaWorkerKiller) && ENV["RAILS_ENV"] == "production"
+if defined?(PumaWorkerKiller) && ENV["PUMA_WORKER_KILLER_ENABLED"] == "true"
   PumaWorkerKiller.config do |config|
     # Heroku standard-1x has 512MB, restart at 480MB
     config.ram = ENV.fetch("PUMA_WORKER_KILLER_RAM", 480).to_i
