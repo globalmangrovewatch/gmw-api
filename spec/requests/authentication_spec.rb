@@ -32,11 +32,19 @@ RSpec.describe "Authentication", type: :request do
         schema type: :object,
           properties: {
             message: {type: :string, example: "You are logged in."},
-            token: {type: :string, example: "eyJhbGciOiJIUzI1NiJ9..."}
+            token: {type: :string, example: "eyJhbGciOiJIUzI1NiJ9..."},
+            user: {"$ref" => "#/components/schemas/user_profile"}
           },
-          required: [:message, :token]
+          required: [:message, :token, :user]
 
-        let!(:existing_user) { create :user, email: "test@example.com", password: "password123", confirmed_at: Time.now }
+        let!(:existing_user) do
+          create :user,
+            email: "test@example.com",
+            password: "password123",
+            confirmed_at: Time.now,
+            user_roles: ["scientist", "other"],
+            user_role_other: "Field technician"
+        end
         let(:user) do
           {
             user: {

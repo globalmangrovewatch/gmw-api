@@ -1424,11 +1424,15 @@
                     "token": {
                       "type": "string",
                       "example": "eyJhbGciOiJIUzI1NiJ9..."
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/user_profile"
                     }
                   },
                   "required": [
                     "message",
-                    "token"
+                    "token",
+                    "user"
                   ]
                 }
               }
