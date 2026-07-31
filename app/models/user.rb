@@ -95,7 +95,11 @@ class User < ApplicationRecord
   end
 
   def organization
-    organizations.first&.organization_name
+    organization_name.presence || organizations.first&.organization_name
+  end
+
+  def organization=(value)
+    self.organization_name = value.presence
   end
 
   private

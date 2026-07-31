@@ -36,6 +36,23 @@ RSpec.describe "User profile roles", type: :request do
   end
 
   describe "POST /users" do
+    it "persists organization on signup" do
+      post "/users", params: {
+        user: {
+          email: "orguser@example.com",
+          password: "password123",
+          name: "Org User",
+          organization: "Coastal Conservation Alliance"
+        }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json["user"]["organization"]).to eq("Coastal Conservation Alliance")
+
+      created_user = User.find_by(email: "orguser@example.com")
+      expect(created_user.organization_name).to eq("Coastal Conservation Alliance")
+    end
+
     it "creates a user with multiple roles and other value" do
       post "/users", params: {
         user: {
@@ -76,6 +93,24 @@ RSpec.describe "User profile roles", type: :request do
   end
 
   describe "PATCH /users" do
+    it "updates organization on profile update" do
+      user = create(:user, organization_name: "Old Org")
+
+      patch "/users", params: {
+        user: {
+          name: user.name,
+          email: user.email,
+          organization: "New Org"
+        }
+      }, headers: auth_headers(user), as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json["user"]["organization"]).to eq("New Org")
+
+      user.reload
+      expect(user.organization_name).to eq("New Org")
+    end
+
     it "updates user roles on profile update" do
       user = create(:user, user_roles: ["ngo"])
 

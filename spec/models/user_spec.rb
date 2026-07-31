@@ -59,6 +59,7 @@ RSpec.describe User, type: :model do
         :user,
         name: "Jane Doe",
         email: "jane@example.com",
+        organization_name: "Example Org",
         user_roles: ["other"],
         user_role_other: "Independent consultant"
       )
@@ -66,10 +67,27 @@ RSpec.describe User, type: :model do
       expect(user.profile_attributes).to eq(
         name: "Jane Doe",
         email: "jane@example.com",
-        organization: nil,
+        organization: "Example Org",
         user_roles: ["other"],
         user_role_other: "Independent consultant"
       )
+    end
+  end
+
+  describe "organization" do
+    it "stores organization via organization=" do
+      user = build(:user, organization: "Profile Org")
+
+      expect(user.organization_name).to eq("Profile Org")
+      expect(user.organization).to eq("Profile Org")
+    end
+
+    it "falls back to linked organization when profile organization is blank" do
+      user = create(:user, organization_name: nil)
+      org = create(:organization, organization_name: "Linked Org")
+      OrganizationsUsers.create!(user: user, organization: org, role: "org-user")
+
+      expect(user.organization).to eq("Linked Org")
     end
   end
 end

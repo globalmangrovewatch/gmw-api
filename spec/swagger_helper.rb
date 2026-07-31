@@ -451,6 +451,11 @@ RSpec.configure do |config|
             properties: {
               name: {type: :string},
               email: {type: :string},
+              organization: {
+                type: :string,
+                nullable: true,
+                description: "Free-text organization or affiliation for the user profile."
+              },
               password: {type: :string},
               password_confirmation: {type: :string},
               current_password: {type: :string},
