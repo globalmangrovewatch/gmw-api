@@ -2687,6 +2687,11 @@
           "email": {
             "type": "string"
           },
+          "organization": {
+            "type": "string",
+            "nullable": true,
+            "description": "Free-text organization or affiliation for the user profile."
+          },
           "password": {
             "type": "string"
           },

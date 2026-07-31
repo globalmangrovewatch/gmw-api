@@ -139,6 +139,7 @@ RSpec.describe "Authentication", type: :request do
               email: "newuser@example.com",
               password: "password123",
               name: "John Doe",
+              organization: "Mangrove Research Institute",
               user_roles: ["scientist", "ngo"]
             }
           }
@@ -202,6 +203,7 @@ RSpec.describe "Authentication", type: :request do
             user: {
               name: authenticated_user.name,
               email: authenticated_user.email,
+              organization: "Updated Organization",
               user_roles: ["scientist", "other"],
               user_role_other: "Independent consultant"
             }
