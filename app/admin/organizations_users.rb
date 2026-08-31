@@ -18,7 +18,7 @@ ActiveAdmin.register OrganizationsUsers do
       link_to ou.organization.organization_name, admin_organization_path(ou.organization) if ou.organization
     end
     column :role do |ou|
-      status_tag ou.role || "member", class: ou.role == "org-admin" ? "primary" : "default"
+      status_tag ou.role || "member", class: (ou.role == "org-admin") ? "primary" : "default"
     end
     column :created_at
     actions
@@ -43,7 +43,7 @@ ActiveAdmin.register OrganizationsUsers do
     f.inputs "Membership Details" do
       f.input :user, as: :select, collection: User.all.map { |u| ["#{u.name} (#{u.email})", u.id] }, include_blank: false
       f.input :organization, as: :select, collection: Organization.all.map { |o| [o.organization_name, o.id] }, include_blank: false
-      f.input :role, as: :select, collection: ["org-user", "org-admin"], include_blank: "member"
+      f.input :role, as: :select, collection: [["Member", "org-user"], ["Organization admin", "org-admin"]], include_blank: false
     end
 
     f.actions
