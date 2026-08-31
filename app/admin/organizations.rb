@@ -32,11 +32,18 @@ ActiveAdmin.register Organization do
         column :name
         column "Role" do |user|
           org_user = OrganizationsUsers.find_by(user_id: user.id, organization_id: organization.id)
-          status_tag org_user&.role || "member", class: org_user&.role == "org-admin" ? "primary" : "default"
+          status_tag org_user&.role || "member", class: (org_user&.role == "org-admin") ? "primary" : "default"
         end
         column :last_sign_in_at
         column "Actions" do |user|
-          link_to "View", admin_user_path(user), class: "member_link"
+          membership = OrganizationsUsers.find_by(user_id: user.id, organization_id: organization.id)
+          role_action = if membership&.role == "org-admin"
+            link_to "Remove admin", demote_member_admin_organization_path(organization, user_id: user.id), method: :post, class: "member_link"
+          else
+            link_to "Make admin", promote_member_admin_organization_path(organization, user_id: user.id), method: :post, class: "member_link"
+          end
+
+          safe_join([link_to("View", admin_user_path(user), class: "member_link"), role_action], " ")
         end
       end
     end
@@ -65,6 +72,18 @@ ActiveAdmin.register Organization do
     def csv_filename
       "Organizations.csv"
     end
+  end
+
+  member_action :promote_member, method: :post do
+    membership = OrganizationsUsers.find_by!(organization_id: resource.id, user_id: params[:user_id])
+    membership.update!(role: "org-admin")
+    redirect_to admin_organization_path(resource), notice: "Member promoted to organization admin."
+  end
+
+  member_action :demote_member, method: :post do
+    membership = OrganizationsUsers.find_by!(organization_id: resource.id, user_id: params[:user_id])
+    membership.update!(role: "org-user")
+    redirect_to admin_organization_path(resource), notice: "Organization admin changed to member."
   end
 
   csv do
