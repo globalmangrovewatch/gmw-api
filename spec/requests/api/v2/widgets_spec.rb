@@ -1235,6 +1235,15 @@ RSpec.describe "API V2 Widgets", type: :request do
           expect(response_json["metadata"]["legal_status_options"]).to eq(LocationAttribute.legal_status_options)
         end
 
+        it "returns location attributes on data items with empty sources when no national dashboard data exists" do
+          national_dashboard_1.destroy
+          get "/api/v2/widgets/national_dashboard", params: {location_id: location.id}
+          expect(response_json["data"].length).to eq(NationalDashboard.indicators.keys.length)
+          expect(response_json["data"].pluck("sources")).to all(eq([]))
+          expect(response_json["data"].pluck("legal_status").uniq).to eq([location_attribute.legal_status])
+          expect(response_json["data"].pluck("mangrove_breakthrough_committed").uniq).to eq([location_attribute.mangrove_breakthrough_committed])
+        end
+
         it "returns sensible defaults when no location_attribute exists" do
           location_attribute.destroy
           get "/api/v2/widgets/national_dashboard", params: {location_id: location.id}

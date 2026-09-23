@@ -1,5 +1,15 @@
+indicators_data = @data.group_by(&:indicator)
+indicator_keys = if indicators_data.any?
+  indicators_data.keys
+elsif @location_attribute
+  NationalDashboard.indicators.keys
+else
+  []
+end
+
 json.data do
-  json.array! @data.group_by(&:indicator) do |indicator, data|
+  json.array! indicator_keys do |indicator|
+    data = indicators_data[indicator] || []
     json.indicator indicator
     json.legal_status @location_attribute&.legal_status
     json.mangrove_breakthrough_committed @location_attribute&.mangrove_breakthrough_committed || false
