@@ -96,6 +96,9 @@ class RegistrationInterventionAnswer < ApplicationRecord
 
   belongs_to :site
 
+  after_commit :sync_site_area, on: [:create, :update], if: -> { site_area_answer? && saved_change_to_answer_value? }
+  after_commit :clear_site_area, on: :destroy, if: :site_area_answer?
+
   scope :answer_for_site, ->(question_id, site_id) do
     where(question_id: question_id, site_id: site_id)
       .pluck(Arel.sql("ARRAY(SELECT TRIM(REPLACE(jsonb_array_elements(answer_value -> 'selectedValues')::text, '\"', '')))"))
@@ -125,5 +128,27 @@ class RegistrationInterventionAnswer < ApplicationRecord
       .from("registration_intervention_answers, jsonb_array_elements(answer_value) as answer")
       .where("ARRAY[(answer ->> 'mainCauseLabel')]::text[] && ARRAY[:values]", values: Array.wrap(selected_categories))
       .distinct
+  end
+
+  private
+
+  def site_area_answer?
+    question_id == Site::SITE_AREA_QUESTION_ID
+  end
+
+  def sync_site_area
+    site&.sync_area_from_geojson_answer!(answer_value)
+  rescue StandardError => e
+    Rails.logger.error(
+      "Failed to sync site area for answer #{id} (site #{site_id}): #{e.class} - #{e.message}"
+    )
+  end
+
+  def clear_site_area
+    site&.update(area: nil)
+  rescue StandardError => e
+    Rails.logger.error(
+      "Failed to clear site area for answer #{id} (site #{site_id}): #{e.class} - #{e.message}"
+    )
   end
 end

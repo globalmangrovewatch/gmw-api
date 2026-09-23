@@ -15,6 +15,32 @@ RSpec.describe Site, type: :model do
     end
   end
 
+  describe ".area_geometry_from_geojson_answer" do
+    let(:geojson_answer) do
+      {
+        "type" => "FeatureCollection",
+        "features" => [
+          {
+            "type" => "Feature",
+            "geometry" => {
+              "type" => "Polygon",
+              "coordinates" => [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]]
+            },
+            "properties" => {}
+          }
+        ]
+      }
+    end
+
+    it "returns geometry for a valid FeatureCollection" do
+      expect(described_class.area_geometry_from_geojson_answer(geojson_answer)).to be_present
+    end
+
+    it "returns nil when features are missing" do
+      expect(described_class.area_geometry_from_geojson_answer({"type" => "FeatureCollection"})).to be_nil
+    end
+  end
+
   describe ".with_registration_intervention_answer" do
     let(:answer) do
       create :registration_intervention_answer,
