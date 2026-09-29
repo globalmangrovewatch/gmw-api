@@ -1384,7 +1384,7 @@ RSpec.describe "API V2 Widgets", type: :request do
       consumes "application/json"
       produces "application/json"
 
-      let!(:ecoregion_1) { create :ecoregion, category: "ce" }
+      let!(:ecoregion_1) { create :ecoregion, category: "cr" }
       let!(:ecoregion_2) { create :ecoregion, category: "en" }
       let!(:ecoregion_3) { create :ecoregion, category: "dd" }
       let!(:ecoregion_report) { create :ecoregion_report }

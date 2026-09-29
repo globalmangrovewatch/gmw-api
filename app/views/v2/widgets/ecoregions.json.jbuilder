@@ -7,7 +7,7 @@ json.data do
 end
 
 json.metadata do
-  json.ecoregion_total Ecoregion.where(category: %w[vu en ce]).sum(:value)
+  json.ecoregion_total Ecoregion.where(category: %w[vu en cr]).sum(:value)
   json.reports do
     json.array! @reports do |report|
       json.name report.name
