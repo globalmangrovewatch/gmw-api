@@ -3,12 +3,13 @@ class Ecoregion < ApplicationRecord
     ecoregion_asssessment: "ecoregion_asssessment"
   }, prefix: true
   enum :category, {
-    ce: "ce",
+    cr: "cr",
     en: "en",
     vu: "vu",
     nt: "nt",
     lc: "lc",
-    dd: "dd"
+    dd: "dd",
+    ne: "ne"
   }, prefix: true
 
   validates_presence_of :indicator, :value, :category

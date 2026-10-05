@@ -2,6 +2,8 @@
   "data": [
     {
       "indicator": "floods",
+      "legal_status": "forest",
+      "mangrove_breakthrough_committed": true,
       "sources": [
         {
           "source": "voluptatem",
@@ -25,6 +27,10 @@
   ],
   "metadata": {
     "location_id": "226",
+    "legal_status_options": [
+      "mangrove",
+      "forest"
+    ],
     "other_resources": [
       {
         "name": "voluptatem",
