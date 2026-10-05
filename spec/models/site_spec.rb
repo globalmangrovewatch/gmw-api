@@ -39,6 +39,13 @@ RSpec.describe Site, type: :model do
     it "returns nil when features are missing" do
       expect(described_class.area_geometry_from_geojson_answer({"type" => "FeatureCollection"})).to be_nil
     end
+
+    it "returns geometry for 3D coordinates" do
+      answer = geojson_answer.deep_dup
+      answer["features"][0]["geometry"]["coordinates"] = [[[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], [0, 0, 0]]]
+
+      expect(described_class.area_geometry_from_geojson_answer(answer)).to be_present
+    end
   end
 
   describe ".with_registration_intervention_answer" do

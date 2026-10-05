@@ -50,7 +50,7 @@ class Site < ApplicationRecord
       SELECT ST_AsText(
         ST_Union(
           ST_SetSRID(
-            ST_MakeValid(ST_GeomFromGeoJSON(feat->'geometry')),
+            ST_MakeValid(ST_Force2D(ST_GeomFromGeoJSON(feat->'geometry'))),
             4326
           )
         )
