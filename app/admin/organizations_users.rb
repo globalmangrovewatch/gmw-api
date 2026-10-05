@@ -67,14 +67,16 @@ ActiveAdmin.register OrganizationsUsers do
     column :created_at
   end
 
-  batch_action :promote_to_admin do |ids|
+  batch_action :promote_to_admin, if: proc { authorized?(:update, OrganizationsUsers) } do |ids|
+    authorize! :update, OrganizationsUsers
     batch_action_collection.find(ids).each do |ou|
       ou.update(role: "org-admin")
     end
     redirect_to collection_path, notice: "Users promoted to organization admins."
   end
 
-  batch_action :demote_to_user do |ids|
+  batch_action :demote_to_user, if: proc { authorized?(:update, OrganizationsUsers) } do |ids|
+    authorize! :update, OrganizationsUsers
     batch_action_collection.find(ids).each do |ou|
       ou.update(role: "org-user")
     end

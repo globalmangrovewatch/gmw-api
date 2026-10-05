@@ -36,14 +36,19 @@ ActiveAdmin.register Organization do
         end
         column :last_sign_in_at
         column "Actions" do |user|
-          membership = OrganizationsUsers.find_by(user_id: user.id, organization_id: organization.id)
-          role_action = if membership&.role == "org-admin"
-            link_to "Remove admin", demote_member_admin_organization_path(organization, user_id: user.id), method: :post, class: "member_link"
-          else
-            link_to "Make admin", promote_member_admin_organization_path(organization, user_id: user.id), method: :post, class: "member_link"
+          actions = [link_to("View", admin_user_path(user), class: "member_link")]
+
+          if authorized?(:promote_member, organization)
+            membership = OrganizationsUsers.find_by(user_id: user.id, organization_id: organization.id)
+            role_action = if membership&.role == "org-admin"
+              link_to "Remove admin", demote_member_admin_organization_path(organization, user_id: user.id), method: :post, class: "member_link"
+            else
+              link_to "Make admin", promote_member_admin_organization_path(organization, user_id: user.id), method: :post, class: "member_link"
+            end
+            actions << role_action
           end
 
-          safe_join([link_to("View", admin_user_path(user), class: "member_link"), role_action], " ")
+          safe_join(actions, " ")
         end
       end
     end

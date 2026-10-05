@@ -1,9 +1,20 @@
 ActiveAdmin.register User do
   menu priority: 2, label: "Users"
 
-  permit_params :email, :password, :password_confirmation, :name, :admin,
-    :subscribed_to_location_alerts, :subscribed_to_newsletter, :subscribed_to_platform_updates,
-    organization_ids: []
+  permit_params do
+    permitted = [
+      :email,
+      :password,
+      :password_confirmation,
+      :name,
+      :subscribed_to_location_alerts,
+      :subscribed_to_newsletter,
+      :subscribed_to_platform_updates
+    ]
+    permitted << :admin if current_admin_user.super_admin?
+    permitted << {organization_ids: []}
+    permitted
+  end
 
   filter :email
   filter :name
@@ -31,15 +42,15 @@ ActiveAdmin.register User do
     column :admin
     column :subscribed_to_location_alerts, sortable: true do |user|
       status_tag user.subscribed_to_location_alerts ? "Yes" : "No",
-                 class: user.subscribed_to_location_alerts ? "green" : "red"
+        class: user.subscribed_to_location_alerts ? "green" : "red"
     end
     column :subscribed_to_newsletter, sortable: true do |user|
       status_tag user.subscribed_to_newsletter ? "Yes" : "No",
-                 class: user.subscribed_to_newsletter ? "green" : "red"
+        class: user.subscribed_to_newsletter ? "green" : "red"
     end
     column :subscribed_to_platform_updates, sortable: true do |user|
       status_tag user.subscribed_to_platform_updates ? "Yes" : "No",
-                 class: user.subscribed_to_platform_updates ? "green" : "red"
+        class: user.subscribed_to_platform_updates ? "green" : "red"
     end
     column :last_sign_in_at, sortable: true
     column :sign_in_count, sortable: true
@@ -68,15 +79,15 @@ ActiveAdmin.register User do
       attributes_table_for user do
         row :subscribed_to_location_alerts do |u|
           status_tag u.subscribed_to_location_alerts ? "Subscribed" : "Unsubscribed",
-                     class: u.subscribed_to_location_alerts ? "green" : "red"
+            class: u.subscribed_to_location_alerts ? "green" : "red"
         end
         row :subscribed_to_newsletter do |u|
           status_tag u.subscribed_to_newsletter ? "Subscribed" : "Unsubscribed",
-                     class: u.subscribed_to_newsletter ? "green" : "red"
+            class: u.subscribed_to_newsletter ? "green" : "red"
         end
         row :subscribed_to_platform_updates do |u|
           status_tag u.subscribed_to_platform_updates ? "Subscribed" : "Unsubscribed",
-                     class: u.subscribed_to_platform_updates ? "green" : "red"
+            class: u.subscribed_to_platform_updates ? "green" : "red"
         end
       end
     end
@@ -87,7 +98,7 @@ ActiveAdmin.register User do
         column :organization_name
         column "Role" do |org|
           org_user = OrganizationsUsers.find_by(user_id: user.id, organization_id: org.id)
-          status_tag org_user&.role || "member", class: org_user&.role == "org-admin" ? "primary" : "default"
+          status_tag org_user&.role || "member", class: (org_user&.role == "org-admin") ? "primary" : "default"
         end
       end
     end
@@ -98,7 +109,7 @@ ActiveAdmin.register User do
         column :name
         column :alerts_enabled do |loc|
           status_tag loc.alerts_enabled ? "Enabled" : "Disabled",
-                     class: loc.alerts_enabled ? "green" : "red"
+            class: loc.alerts_enabled ? "green" : "red"
         end
         column :created_at
       end
@@ -111,7 +122,7 @@ ActiveAdmin.register User do
       f.input :name
       f.input :password, hint: f.object.new_record? ? "Required" : "Leave blank to keep current password"
       f.input :password_confirmation
-      f.input :admin, as: :boolean
+      f.input :admin, as: :boolean if current_admin_user.super_admin?
     end
 
     f.inputs "Notification Preferences" do
@@ -234,4 +245,3 @@ ActiveAdmin.register User do
     redirect_to collection_path, notice: "Password reset instructions sent to #{ids.count} users."
   end
 end
-
