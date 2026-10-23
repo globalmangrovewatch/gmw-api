@@ -32,6 +32,22 @@ RSpec.describe "User profile roles", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response_json["user"]["user_roles"]).to eq([])
       expect(response_json["user"]["user_role_other"]).to be_nil
+      expect(response_json["user"]["settings"]).to be_nil
+    end
+
+    it "returns saved map settings" do
+      settings = {
+        "basemap" => "satellite",
+        "bounds" => [[-10, -5], [10, 5]],
+        "widgets" => ["mangrove_net_change"],
+        "layers" => [{"id" => "mangrove_net_change", "opacity" => 1}]
+      }
+      user = create(:user, settings: settings)
+
+      get "/users/current_user", headers: auth_headers(user)
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json["user"]["settings"]).to eq(settings)
     end
   end
 
@@ -154,6 +170,60 @@ RSpec.describe "User profile roles", type: :request do
         "user_roles" => ["education"],
         "user_role_other" => nil
       )
+    end
+
+    it "saves map settings" do
+      user = create(:user)
+      settings = {
+        "basemap" => "dark",
+        "bounds" => [[-180, -60], [180, 60]],
+        "widgets" => ["mangrove_habitat_extent"],
+        "layers" => [{"id" => "mangrove_habitat_extent", "opacity" => 0.8}]
+      }
+
+      patch "/users", params: {
+        user: {
+          name: user.name,
+          email: user.email,
+          settings: settings
+        }
+      }, headers: auth_headers(user), as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json["user"]["settings"]).to eq(settings)
+      expect(user.reload.settings).to eq(settings)
+    end
+
+    it "clears map settings when null is sent" do
+      user = create(:user, settings: {"basemap" => "light"})
+
+      patch "/users", params: {
+        user: {
+          name: user.name,
+          email: user.email,
+          settings: nil
+        }
+      }, headers: auth_headers(user), as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json["user"]["settings"]).to be_nil
+      expect(user.reload.settings).to be_nil
+    end
+
+    it "rejects invalid map settings" do
+      user = create(:user)
+
+      patch "/users", params: {
+        user: {
+          name: user.name,
+          email: user.email,
+          settings: {"basemap" => "terrain", "layers" => [{"id" => "mangrove_habitat_extent", "opacity" => 2}]}
+        }
+      }, headers: auth_headers(user), as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response_json["message"]).to include("basemap must be one of: light, dark, satellite")
+      expect(response_json["message"]).to include("layers opacity must be a number between 0 and 1")
     end
   end
 

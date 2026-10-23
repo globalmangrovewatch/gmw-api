@@ -442,9 +442,50 @@ RSpec.configure do |config|
                 type: :string,
                 nullable: true,
                 description: 'Required when "other" is included in user_roles.'
-              }
+              },
+              settings: {"$ref" => "#/components/schemas/user_map_settings"}
             },
             required: [:email, :user_roles]
+          },
+          user_map_settings: {
+            type: :object,
+            nullable: true,
+            description: "Saved default map configuration. Null when the user has not saved one.",
+            properties: {
+              basemap: {
+                type: :string,
+                enum: UserProfileAttributes::BASEMAPS,
+                description: "Basemap style."
+              },
+              bounds: {
+                type: :array,
+                minItems: 2,
+                maxItems: 2,
+                description: "Map extent as [[west, south], [east, north]]. Longitude -180..180, latitude -90..90.",
+                items: {
+                  type: :array,
+                  minItems: 2,
+                  maxItems: 2,
+                  items: {type: :number}
+                }
+              },
+              widgets: {
+                type: :array,
+                items: {type: :string},
+                description: "Enabled widget ids."
+              },
+              layers: {
+                type: :array,
+                items: {
+                  type: :object,
+                  properties: {
+                    id: {type: :string},
+                    opacity: {type: :number, minimum: 0, maximum: 1}
+                  },
+                  required: [:id, :opacity]
+                }
+              }
+            }
           },
           user_profile_input: {
             type: :object,
@@ -468,7 +509,8 @@ RSpec.configure do |config|
                 type: :string,
                 nullable: true,
                 description: 'Required when "other" is included in user_roles.'
-              }
+              },
+              settings: {"$ref" => "#/components/schemas/user_map_settings"}
             }
           }
         }

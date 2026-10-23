@@ -103,6 +103,14 @@ ActiveAdmin.register User do
       end
     end
 
+    panel "Map settings" do
+      if user.settings.present?
+        pre JSON.pretty_generate(user.settings)
+      else
+        para "No saved map configuration."
+      end
+    end
+
     panel "Saved Locations" do
       table_for user.user_locations do
         column :id
@@ -131,6 +139,12 @@ ActiveAdmin.register User do
       f.input :subscribed_to_platform_updates, as: :boolean, label: "Platform Updates"
     end
 
+    f.inputs "Map settings" do
+      f.input :settings, as: :text, label: "Settings (JSON)",
+        input_html: {rows: 10, value: f.object.settings.present? ? JSON.pretty_generate(f.object.settings) : ""},
+        hint: "Nullable JSON. basemap: light, dark, or satellite. bounds: [[west, south], [east, north]]. layers[].opacity: 0–1. Leave blank to clear."
+    end
+
     f.inputs "Organizations" do
       f.input :organizations, as: :check_boxes, collection: Organization.all.map { |o| [o.organization_name, o.id] }
     end
@@ -140,13 +154,16 @@ ActiveAdmin.register User do
 
   controller do
     def create
-      @user = User.new(permitted_params[:user])
+      @user = User.new(user_attributes)
       @user.subscribed_to_location_alerts = false
       @user.subscribed_to_newsletter = false
       @user.subscribed_to_platform_updates = false
       @user.skip_confirmation!
 
-      if @user.save
+      if invalid_settings_json?
+        @user.errors.add(:settings, "must be valid JSON")
+        render :new
+      elsif @user.save
         redirect_to admin_user_path(@user), notice: "User was successfully created."
       else
         render :new
@@ -160,7 +177,11 @@ ActiveAdmin.register User do
         params[:user].delete(:password_confirmation)
       end
 
-      if @user.update(permitted_params[:user])
+      if invalid_settings_json?
+        @user.assign_attributes(user_attributes.except("settings", :settings))
+        @user.errors.add(:settings, "must be valid JSON")
+        render :edit
+      elsif @user.update(user_attributes)
         redirect_to admin_user_path(@user), notice: "User was successfully updated."
       else
         render :edit
@@ -169,6 +190,29 @@ ActiveAdmin.register User do
 
     def csv_filename
       "Users.csv"
+    end
+
+    private
+
+    def user_attributes
+      attrs = permitted_params[:user].except(:settings, "settings")
+      return attrs unless params[:user]&.key?(:settings)
+
+      raw = params[:user][:settings]
+      attrs[:settings] = if raw.is_a?(String)
+        raw.blank? ? nil : JSON.parse(raw)
+      else
+        raw
+      end
+      attrs
+    rescue JSON::ParserError
+      @invalid_settings_json = true
+      attrs
+    end
+
+    def invalid_settings_json?
+      user_attributes if @invalid_settings_json.nil? && params[:user]&.key?(:settings)
+      @invalid_settings_json
     end
   end
 

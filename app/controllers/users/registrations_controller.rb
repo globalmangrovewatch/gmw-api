@@ -14,6 +14,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def respond_with(resource, _opts = {})
+    return process_failed if resource.errors.any?
+
     is_new = resource.created_at == resource.updated_at
     register_success(resource) && return if resource.persisted? && is_new
     update_success(resource) && return if resource.persisted? && !is_new
@@ -43,7 +45,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def configure_permitted_parameters
     profile_params = [:name, :email, :password, :organization, :user_role_other, user_roles: []]
     devise_parameter_sanitizer.permit(:sign_up) { |u| u.permit(*profile_params) }
-    devise_parameter_sanitizer.permit(:account_update) { |u| u.permit(*profile_params, :current_password) }
+    devise_parameter_sanitizer.permit(:account_update) do |u|
+      permitted = u.permit(*profile_params, :current_password)
+      if u.key?(:settings)
+        settings = u[:settings]
+        permitted[:settings] = settings.respond_to?(:to_unsafe_h) ? settings.to_unsafe_h : settings
+      end
+      permitted
+    end
   end
 
   def update_resource(resource, params)
