@@ -47,7 +47,8 @@ RSpec.describe "User profile roles", type: :request do
       get "/users/current_user", headers: auth_headers(user)
 
       expect(response).to have_http_status(:ok)
-      expect(response_json["user"]["settings"]).to eq(settings)
+      expect(response_json["user"]["settings"]).to include(settings)
+      expect(response_json["user"]["settings"]["saved_at"]).to match(/\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\z/)
     end
   end
 
@@ -190,8 +191,9 @@ RSpec.describe "User profile roles", type: :request do
       }, headers: auth_headers(user), as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(response_json["user"]["settings"]).to eq(settings)
-      expect(user.reload.settings).to eq(settings)
+      expect(response_json["user"]["settings"]).to include(settings)
+      expect(response_json["user"]["settings"]["saved_at"]).to match(/\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\z/)
+      expect(user.reload.settings["saved_at"]).to eq(response_json["user"]["settings"]["saved_at"])
     end
 
     it "clears map settings when null is sent" do

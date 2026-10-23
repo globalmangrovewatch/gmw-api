@@ -9,6 +9,7 @@ module UserProfileAttributes
     validate :validate_settings
     before_validation :normalize_user_roles
     before_validation :clear_user_role_other_unless_other_selected
+    before_validation :stamp_settings_saved_at
   end
 
   def profile_attributes
@@ -36,7 +37,7 @@ module UserProfileAttributes
     invalid_roles = user_roles - UserProfileRole::OPTIONS
     return if invalid_roles.empty?
 
-    errors.add(:user_roles, "contains invalid values: #{invalid_roles.join(', ')}")
+    errors.add(:user_roles, "contains invalid values: #{invalid_roles.join(", ")}")
   end
 
   def validate_user_role_other
@@ -44,6 +45,16 @@ module UserProfileAttributes
     return if user_role_other.present?
 
     errors.add(:user_role_other, "can't be blank when other is selected")
+  end
+
+  def stamp_settings_saved_at
+    return unless will_save_change_to_settings?
+    return if settings.nil?
+    return unless settings.is_a?(Hash)
+
+    stamped = settings.deep_dup.deep_stringify_keys
+    stamped["saved_at"] = Time.current.utc.iso8601
+    self.settings = stamped
   end
 
   def validate_settings

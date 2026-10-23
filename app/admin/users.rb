@@ -142,7 +142,7 @@ ActiveAdmin.register User do
     f.inputs "Map settings" do
       f.input :settings, as: :text, label: "Settings (JSON)",
         input_html: {rows: 10, value: f.object.settings.present? ? JSON.pretty_generate(f.object.settings) : ""},
-        hint: "Nullable JSON. basemap: light, dark, or satellite. bounds: [[west, south], [east, north]]. layers[].opacity: 0–1. Leave blank to clear."
+        hint: "Nullable JSON. basemap: light, dark, or satellite. bounds: [[west, south], [east, north]]. layers[].opacity: 0–1. saved_at is set by the server. Leave blank to clear."
     end
 
     f.inputs "Organizations" do

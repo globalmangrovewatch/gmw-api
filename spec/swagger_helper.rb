@@ -450,8 +450,13 @@ RSpec.configure do |config|
           user_map_settings: {
             type: :object,
             nullable: true,
-            description: "Saved default map configuration. Null when the user has not saved one.",
+            description: "Saved default map configuration. Null when the user has not saved one, including after a reset.",
             properties: {
+              saved_at: {
+                type: :string,
+                format: "date-time",
+                description: "Server-set ISO 8601 timestamp written whenever settings are saved. Clients should not send this."
+              },
               basemap: {
                 type: :string,
                 enum: UserProfileAttributes::BASEMAPS,

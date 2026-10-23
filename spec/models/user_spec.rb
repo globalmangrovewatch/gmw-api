@@ -97,6 +97,23 @@ RSpec.describe User, type: :model do
       expect(user).to be_valid
     end
 
+    it "sets saved_at when settings are written and ignores a client value" do
+      user = create(:user, settings: valid_settings.merge("saved_at" => "2000-01-01T00:00:00Z"))
+
+      expect(user.settings["saved_at"]).to match(/\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\z/)
+      expect(user.settings["saved_at"]).not_to eq("2000-01-01T00:00:00Z")
+      expect(user.settings["basemap"]).to eq("light")
+    end
+
+    it "leaves saved_at unchanged when settings are not updated" do
+      user = create(:user, settings: valid_settings)
+      saved_at = user.settings["saved_at"]
+
+      user.update!(name: "Updated name")
+
+      expect(user.reload.settings["saved_at"]).to eq(saved_at)
+    end
+
     it "rejects an unknown basemap" do
       user = build(:user, settings: valid_settings.merge("basemap" => "terrain"))
 
