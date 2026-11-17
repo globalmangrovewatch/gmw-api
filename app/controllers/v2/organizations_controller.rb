@@ -1,13 +1,19 @@
 class V2::OrganizationsController < MrttApiController
+  DEFAULT_PER_PAGE = 25
+
   def index
-    @own_organizations = Organization.joins(:organizations_users)
-      .select("organizations.*, organizations_users.role")
-      .where("organizations_users.user_id=%s" % current_user.id)
-    where_clause = "organizations.id not in (select organization_id " \
-                   "from organizations_users where user_id=%s)" % current_user.id
-    @other_organizations = Organization
-      .select("organizations.*, null as role")
-      .where(where_clause)
+    return assign_organizations_by_membership if controller_path.start_with?("v3/")
+
+    organizations = Organization.with_role_for(current_user).alphabetical
+    organizations = organizations.name_contains(search_query) if search_query
+    organizations = organizations.in_region(region_param) if region_param
+    organizations = organizations.in_country(country_param) if country_param
+
+    @page = page_param
+    @per_page = per_page_param
+    @total = organizations.unscope(:select, :order).count
+    @organizations = organizations.offset((@page - 1) * @per_page).limit(@per_page)
+    render :filtered_index
   end
 
   def show
@@ -126,5 +132,38 @@ class V2::OrganizationsController < MrttApiController
 
   def organization_params
     params.except(:format, :organization).permit(:organization_name, :id, country_location_ids: [])
+  end
+
+  def assign_organizations_by_membership
+    @own_organizations = Organization.joins(:organizations_users)
+      .select("organizations.*, organizations_users.role")
+      .where("organizations_users.user_id=%s" % current_user.id)
+    where_clause = "organizations.id not in (select organization_id " \
+                   "from organizations_users where user_id=%s)" % current_user.id
+    @other_organizations = Organization
+      .select("organizations.*, null as role")
+      .where(where_clause)
+  end
+
+  def search_query
+    params[:q].to_s.strip.presence
+  end
+
+  def region_param
+    params[:region].to_s.strip.presence
+  end
+
+  def country_param
+    params[:country].to_s.strip.presence
+  end
+
+  def page_param
+    value = params[:page].to_i
+    value.positive? ? value : 1
+  end
+
+  def per_page_param
+    value = params[:per_page].to_i
+    value.positive? ? value : DEFAULT_PER_PAGE
   end
 end

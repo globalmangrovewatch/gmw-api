@@ -69,7 +69,7 @@ RSpec.describe "Organization countries", type: :request do
 
     get "/api/v2/organizations", headers: auth_headers(user)
 
-    listed = response_json.find { |organization| organization["organization_name"] == "Mangrove Partnership" }
+    listed = response_json["data"].find { |organization| organization["organization_name"] == "Mangrove Partnership" }
     expect(listed["regions"]).to eq(["Africa", "Europe"])
     expect(listed["countries"].pluck("iso")).to eq(["KEN", "ESP"])
   end
@@ -187,6 +187,117 @@ RSpec.describe "Organization countries", type: :request do
       ])
       expect(response_json["regions"]).to eq(["Africa", "Europe"])
     end
+  end
+
+  describe "GET /api/v2/organizations" do
+    it "searches by name, orders A to Z, and keeps the current user's role" do
+      user = create(:user)
+      kenya = country("Kenya", "KEN", "kenya")
+      spain = country("Spain", "ESP", "spain")
+      create_organization("zeta trust", [spain])
+      create_organization("Mangrove Alliance", [kenya], user: user, role: "org-user")
+      create_organization("Coastal Mangroves", [spain])
+      create_organization("beta forest", [spain], user: user, role: "org-admin")
+
+      get "/api/v2/organizations", params: {q: "mang"}, headers: auth_headers(user)
+
+      expect(response).to have_http_status(:ok)
+      expect(organization_names).to eq(["Coastal Mangroves", "Mangrove Alliance"])
+      expect(response_json["meta"]).to eq("page" => 1, "per_page" => 25, "total" => 2)
+      mangrove = response_json["data"].find { |organization| organization["organization_name"] == "Mangrove Alliance" }
+      coastal = response_json["data"].find { |organization| organization["organization_name"] == "Coastal Mangroves" }
+      expect(mangrove["role"]).to eq("org-user")
+      expect(coastal["role"]).to be_nil
+
+      get "/api/v2/organizations", params: {q: "MANG"}, headers: auth_headers(user)
+
+      expect(organization_names).to eq(["Coastal Mangroves", "Mangrove Alliance"])
+
+      get "/api/v2/organizations", headers: auth_headers(user)
+
+      expect(organization_names).to eq(["beta forest", "Coastal Mangroves", "Mangrove Alliance", "zeta trust"])
+      expect(response_json["data"].find { |organization| organization["organization_name"] == "beta forest" }["role"]).to eq("org-admin")
+    end
+
+    it "filters by region once per organization and by country iso" do
+      user = create(:user)
+      kenya = country("Kenya", "KEN", "kenya")
+      tanzania = country("Tanzania", "TZA", "tanzania")
+      spain = country("Spain", "ESP", "spain")
+      australia = country("Australia", "AUS", "australia")
+      create_organization("East Africa Partnership", [kenya, tanzania])
+      create_organization("Kenya Spain Group", [kenya, spain])
+      create_organization("Iberian Coast", [spain])
+      create_organization("Pacific Mangroves", [australia])
+
+      get "/api/v2/organizations", params: {region: "Africa"}, headers: auth_headers(user)
+
+      expect(response).to have_http_status(:ok)
+      expect(organization_names).to eq(["East Africa Partnership", "Kenya Spain Group"])
+      expect(response_json["meta"]["total"]).to eq(2)
+      expect(response_json["data"].size).to eq(2)
+
+      get "/api/v2/organizations", params: {region: "africa", q: "kenya"}, headers: auth_headers(user)
+
+      expect(organization_names).to eq(["Kenya Spain Group"])
+
+      get "/api/v2/organizations", params: {country: "esp"}, headers: auth_headers(user)
+
+      expect(organization_names).to eq(["Iberian Coast", "Kenya Spain Group"])
+    end
+
+    it "paginates with page, per_page, and total" do
+      user = create(:user)
+      spain = country("Spain", "ESP", "spain")
+      create_organization("c org", [spain])
+      create_organization("a org", [spain])
+      create_organization("b org", [spain])
+
+      get "/api/v2/organizations", params: {page: 1, per_page: 2}, headers: auth_headers(user)
+
+      expect(response).to have_http_status(:ok)
+      expect(organization_names).to eq(["a org", "b org"])
+      expect(response_json["meta"]).to eq("page" => 1, "per_page" => 2, "total" => 3)
+
+      get "/api/v2/organizations", params: {page: 2, per_page: 2}, headers: auth_headers(user)
+
+      expect(organization_names).to eq(["c org"])
+      expect(response_json["meta"]).to eq("page" => 2, "per_page" => 2, "total" => 3)
+
+      get "/api/v2/organizations", params: {page: 3, per_page: 2}, headers: auth_headers(user)
+
+      expect(organization_names).to eq([])
+      expect(response_json["meta"]["total"]).to eq(3)
+    end
+
+    it "keeps the v3 index as a flat list" do
+      user = create(:user)
+      spain = country("Spain", "ESP", "spain")
+      create_organization("Member Org", [spain], user: user, role: "org-admin")
+      create_organization("Other Org", [spain])
+
+      get "/api/v3/organizations", headers: auth_headers(user)
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json).to be_an(Array)
+      member = response_json.find { |organization| organization["organization_name"] == "Member Org" }
+      other = response_json.find { |organization| organization["organization_name"] == "Other Org" }
+      expect(member["role"]).to eq("org-admin")
+      expect(other["role"]).to be_nil
+    end
+  end
+
+  def create_organization(name, countries, user: nil, role: nil)
+    organization = Organization.create!(
+      organization_name: name,
+      country_location_ids: countries.map(&:location_id)
+    )
+    OrganizationsUsers.create!(organization: organization, user: user, role: role) if user
+    organization
+  end
+
+  def organization_names
+    response_json["data"].pluck("organization_name")
   end
 
   def country(name, iso, location_id)
