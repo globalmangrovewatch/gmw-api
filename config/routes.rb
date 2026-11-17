@@ -58,6 +58,8 @@ Rails.application.routes.draw do
       resources :sites, only: [:index, :show, :create, :update, :destroy]
       resources :landscapes, only: [:index, :show, :create, :update, :destroy]
       resources :organizations, only: [:index, :show, :create, :update, :destroy]
+      resources :countries, only: [:index]
+      resources :regions, only: [:index]
 
       get "/sites/:site_id/registration_intervention_answers", to: "registration_intervention_answers#index"
       put "/sites/:site_id/registration_intervention_answers", to: "registration_intervention_answers#update"

@@ -15,13 +15,17 @@ class V2::OrganizationsController < MrttApiController
   end
 
   def create
-    @organization = Organization.create(organization_params)
-    params = {
+    @organization = Organization.new(organization_params)
+    unless @organization.save
+      render json: {errors: @organization.errors.to_hash}, status: :unprocessable_entity
+      return
+    end
+
+    add_or_update_user_helper({
       organization_id: @organization.id,
       email: current_user.email,
       role: "org-admin"
-    }
-    add_or_update_user_helper(params)
+    })
   end
 
   def update
@@ -29,7 +33,9 @@ class V2::OrganizationsController < MrttApiController
     if !(current_user.is_admin || current_user.is_org_admin(@organization.id))
       insufficient_privilege && return
     end
-    @organization.update(organization_params)
+    unless @organization.update(organization_params)
+      render json: {errors: @organization.errors.to_hash}, status: :unprocessable_entity
+    end
   end
 
   def destroy
@@ -119,6 +125,6 @@ class V2::OrganizationsController < MrttApiController
   end
 
   def organization_params
-    params.except(:format, :organization).permit(:organization_name, :id)
+    params.except(:format, :organization).permit(:organization_name, :id, country_location_ids: [])
   end
 end

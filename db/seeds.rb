@@ -13,4 +13,5 @@
 #   when "production"
 # end
 
+CountryRegion.import_reference_data!
 AdminUser.create!(email: "admin@example.com", password: "password", password_confirmation: "password", role: :super_admin) if Rails.env.development?

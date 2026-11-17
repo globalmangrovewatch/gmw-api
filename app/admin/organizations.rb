@@ -1,7 +1,7 @@
 ActiveAdmin.register Organization do
   menu priority: 3, label: "Organizations"
 
-  permit_params :organization_name, user_ids: []
+  permit_params :organization_name, user_ids: [], country_location_ids: []
 
   filter :organization_name
   filter :created_at
@@ -21,8 +21,19 @@ ActiveAdmin.register Organization do
     attributes_table do
       row :id
       row :organization_name
+      row :regions do |org|
+        org.regions.join(", ")
+      end
       row :created_at
       row :updated_at
+    end
+
+    panel "Countries" do
+      table_for organization.countries do
+        column :location_id
+        column :name
+        column :iso
+      end
     end
 
     panel "Members" do
@@ -64,6 +75,10 @@ ActiveAdmin.register Organization do
   form do |f|
     f.inputs "Organization Details" do
       f.input :organization_name
+      f.input :country_location_ids,
+        as: :select,
+        multiple: true,
+        collection: Location.unscoped.where(location_type: "country").order(:name).pluck(:name, :location_id)
     end
 
     f.inputs "Members" do

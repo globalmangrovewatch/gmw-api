@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_10_23_120000) do
+ActiveRecord::Schema[7.0].define(version: 2026_11_17_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -86,6 +86,15 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_23_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_blue_carbons_on_location_id"
+  end
+
+  create_table "country_regions", force: :cascade do |t|
+    t.string "iso3", null: false
+    t.string "region", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["iso3"], name: "index_country_regions_on_iso3", unique: true
+    t.index ["region"], name: "index_country_regions_on_region"
   end
 
   create_table "degradation_treemaps", force: :cascade do |t|
@@ -330,6 +339,16 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_23_120000) do
     t.index ["organization_name"], name: "index_organizations_on_organization_name", unique: true
   end
 
+  create_table "organizations_countries", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "location_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["location_id"], name: "index_organizations_countries_on_location_id"
+    t.index ["organization_id", "location_id"], name: "index_organizations_countries_on_org_and_location", unique: true
+    t.index ["organization_id"], name: "index_organizations_countries_on_organization_id"
+  end
+
   create_table "organizations_users", force: :cascade do |t|
     t.bigint "organization_id", null: false
     t.bigint "user_id", null: false
@@ -509,6 +528,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_23_120000) do
   add_foreign_key "mitigation_potentials", "locations"
   add_foreign_key "monitoring_answers", "sites"
   add_foreign_key "national_dashboards", "locations"
+  add_foreign_key "organizations_countries", "organizations"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "platform_notifications", "admin_users", column: "created_by_id"
