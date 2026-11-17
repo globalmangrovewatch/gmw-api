@@ -57,7 +57,11 @@ Rails.application.routes.draw do
       # MRTT
       resources :sites, only: [:index, :show, :create, :update, :destroy]
       resources :landscapes, only: [:index, :show, :create, :update, :destroy]
-      resources :organizations, only: [:index, :show, :create, :update, :destroy]
+      resources :organizations, only: [:index, :show, :create, :update, :destroy] do
+        collection do
+          get :suggested
+        end
+      end
       resources :countries, only: [:index]
       resources :regions, only: [:index]
 

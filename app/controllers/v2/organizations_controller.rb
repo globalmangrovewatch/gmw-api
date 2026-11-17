@@ -16,6 +16,10 @@ class V2::OrganizationsController < MrttApiController
     render :filtered_index
   end
 
+  def suggested
+    @organizations = Organization.suggested_for(current_user)
+  end
+
   def show
     @organization = Organization.find(params[:id])
   end

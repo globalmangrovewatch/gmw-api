@@ -33,6 +33,26 @@ class Organization < ApplicationRecord
     with_countries.joins("INNER JOIN country_regions ON country_regions.iso3 = UPPER(locations.iso)")
   }
 
+  SUGGESTED_LIMIT = 5
+
+  def self.suggested_for(user)
+    domain = PublicEmailDomains.domain_from(user&.email)
+    return none if domain.blank? || PublicEmailDomains.public?(domain)
+
+    scope = all
+    member_ids = user.organization_ids
+    scope = scope.where.not(id: member_ids) if member_ids.any?
+
+    scope
+      .joins(:users)
+      .where("LOWER(SPLIT_PART(users.email, '@', 2)) = ?", domain)
+      .group("organizations.id")
+      .select("organizations.*, COUNT(DISTINCT users.id) AS matching_members_count")
+      .order(Arel.sql("matching_members_count DESC, LOWER(organizations.organization_name) ASC, organizations.id ASC"))
+      .limit(SUGGESTED_LIMIT)
+      .preload(:countries)
+  end
+
   def country_location_ids
     organizations_countries.reject(&:marked_for_destruction?).map(&:location_id)
   end

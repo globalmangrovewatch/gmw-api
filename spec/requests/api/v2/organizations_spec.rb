@@ -287,6 +287,112 @@ RSpec.describe "Organization countries", type: :request do
     end
   end
 
+  describe "GET /api/v2/organizations/suggested" do
+    it "suggests organizations whose members share the user's email domain" do
+      user = create(:user, email: "ana@wetlands.org", name: "Ana Wetlands")
+      spain = country("Spain", "ESP", "spain")
+      kenya = country("Kenya", "KEN", "kenya")
+      own = create_organization("Own Wetlands", [spain], user: user, role: "org-admin")
+      add_member(own, "colleague@wetlands.org", name: "Colleague Name")
+      match = create_organization("Mangrove Watch", [kenya])
+      bob = add_member(match, "bob@wetlands.org", name: "Bob Watcher")
+      bob.update_column(:email, "bob@Wetlands.ORG")
+      add_member(match, "cara@wetlands.org", name: "Cara Watcher")
+      add_member(match, "stray@gmail.com", name: "Stray Gmail")
+      other = create_organization("Other Coast", [spain])
+      add_member(other, "sam@other.org", name: "Sam Other")
+
+      get "/api/v2/organizations/suggested", headers: auth_headers(user)
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json).to eq([
+        {
+          "id" => match.id,
+          "organization_name" => "Mangrove Watch",
+          "countries" => [{"location_id" => "kenya", "iso" => "KEN", "name" => "Kenya"}],
+          "regions" => ["Africa"]
+        }
+      ])
+      expect(response.body).not_to include("bob@")
+      expect(response.body).not_to include("cara@")
+      expect(response.body).not_to include("colleague@")
+      expect(response.body).not_to include("stray@gmail.com")
+      expect(response.body).not_to include("sam@other.org")
+      expect(response.body).not_to include("Bob Watcher")
+      expect(response.body).not_to include("Cara Watcher")
+      expect(response.body).not_to include("Colleague Name")
+      expect(response.body).not_to include("Stray Gmail")
+      expect(response.body).not_to include("Sam Other")
+    end
+
+    it "returns an empty list for public email providers" do
+      spain = country("Spain", "ESP", "spain")
+      organization = create_organization("Public Inbox Collective", [spain])
+      add_member(organization, "someone@gmail.com", name: "Gmail Person")
+
+      %w[gmail.com outlook.com hotmail.com yahoo.com].each do |domain|
+        user = create(:user, email: "person@#{domain}", name: "Public User")
+        add_member(organization, "member@#{domain}", name: "Public Member") unless domain == "gmail.com"
+
+        get "/api/v2/organizations/suggested", headers: auth_headers(user)
+
+        expect(response).to have_http_status(:ok)
+        expect(response_json).to eq([])
+      end
+
+      cased = create(:user, email: "cased.person@gmail.com", name: "Cased Public")
+      cased.update_column(:email, "cased.person@Gmail.COM")
+
+      get "/api/v2/organizations/suggested", headers: auth_headers(cased)
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json).to eq([])
+    end
+
+    it "caps results at five, ordered by matching members then name" do
+      user = create(:user, email: "ana@wetlands.org", name: "Ana Wetlands")
+      spain = country("Spain", "ESP", "spain")
+      own = create_organization("Own Org", [spain], user: user, role: "org-user")
+      4.times { |index| add_member(own, "own#{index}@wetlands.org") }
+
+      zeta = create_organization("zeta trust", [spain])
+      3.times { |index| add_member(zeta, "zeta#{index}@wetlands.org") }
+      delta = create_organization("Delta Coast", [spain])
+      2.times { |index| add_member(delta, "delta#{index}@wetlands.org") }
+      %w[alpha Beta Epsilon Eta Gamma].each do |name|
+        organization = create_organization(name, [spain])
+        add_member(organization, "#{name.downcase}@wetlands.org")
+      end
+      mixed = create_organization("Mixed", [spain])
+      add_member(mixed, "one@wetlands.org")
+      5.times { |index| add_member(mixed, "mixed#{index}@gmail.com") }
+
+      get "/api/v2/organizations/suggested", headers: auth_headers(user)
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json.pluck("organization_name")).to eq([
+        "zeta trust",
+        "Delta Coast",
+        "alpha",
+        "Beta",
+        "Epsilon"
+      ])
+      expect(response.body).not_to include("@wetlands.org")
+      expect(response.body).not_to include("@gmail.com")
+    end
+
+    it "is not available on v3" do
+      user = create(:user, email: "ana@wetlands.org")
+      spain = country("Spain", "ESP", "spain")
+      organization = create_organization("Mangrove Watch", [spain])
+      add_member(organization, "bob@wetlands.org")
+
+      get "/api/v3/organizations/suggested", headers: auth_headers(user)
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   def create_organization(name, countries, user: nil, role: nil)
     organization = Organization.create!(
       organization_name: name,
@@ -294,6 +400,12 @@ RSpec.describe "Organization countries", type: :request do
     )
     OrganizationsUsers.create!(organization: organization, user: user, role: role) if user
     organization
+  end
+
+  def add_member(organization, email, name: "Member")
+    member = create(:user, email: email, name: name)
+    OrganizationsUsers.create!(organization: organization, user: member, role: "org-user")
+    member
   end
 
   def organization_names
