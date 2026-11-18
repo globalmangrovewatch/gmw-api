@@ -93,5 +93,62 @@ RSpec.describe NotificationMailer, type: :mailer do
       expect(mail.subject).to eq(subject)
     end
   end
-end
 
+  describe "organization join requests" do
+    let(:organization_name) { "Mangrove Partnership" }
+    let(:requester_name) { "Ana Requester" }
+    let(:requester_email) { "ana.requester@wetlands.org" }
+    let(:admin_email) { "ada.admin@wetlands.org" }
+    let(:other_admin_email) { "bao.admin@wetlands.org" }
+
+    def rendered_content(mail)
+      [mail.subject, mail.text_part.body.to_s, mail.html_part.body.to_s].join("\n")
+    end
+
+    it "tells one admin about a request without any contact details" do
+      mail = described_class.organization_join_request_received(
+        recipient_email: admin_email,
+        organization_name: organization_name,
+        requester_name: requester_name,
+        message: "I work on restoration"
+      )
+
+      expect(mail.to).to eq([admin_email])
+      content = rendered_content(mail)
+      expect(content).to include(organization_name)
+      expect(content).to include(requester_name)
+      expect(content).to include("I work on restoration")
+      expect(content).not_to include(requester_email)
+      expect(content).not_to include(admin_email)
+      expect(content).not_to include(other_admin_email)
+    end
+
+    it "uses a name that is not an email address when the requester name is blank" do
+      mail = described_class.organization_join_request_received(
+        recipient_email: admin_email,
+        organization_name: organization_name,
+        requester_name: nil,
+        message: nil
+      )
+
+      content = rendered_content(mail)
+      expect(content).to include("A platform user")
+      expect(content).not_to include("@")
+    end
+
+    it "tells the requester the decision without admin contact details" do
+      mail = described_class.organization_join_request_decided(
+        recipient_email: requester_email,
+        organization_name: organization_name,
+        status: "approved"
+      )
+
+      expect(mail.to).to eq([requester_email])
+      content = rendered_content(mail)
+      expect(content).to include("Your request to join #{organization_name} was approved")
+      expect(content).not_to include(admin_email)
+      expect(content).not_to include(other_admin_email)
+      expect(content).not_to include(requester_email)
+    end
+  end
+end

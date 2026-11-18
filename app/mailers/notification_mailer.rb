@@ -46,6 +46,27 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
+  def organization_join_request_received(recipient_email:, organization_name:, requester_name:, message:)
+    @organization_name = organization_name
+    @requester_name = requester_name.presence || "A platform user"
+    @message = message.presence
+
+    mail(
+      to: recipient_email,
+      subject: "New request to join #{organization_name}"
+    )
+  end
+
+  def organization_join_request_decided(recipient_email:, organization_name:, status:)
+    @organization_name = organization_name
+    @status = status
+
+    mail(
+      to: recipient_email,
+      subject: "Your request to join #{organization_name} was #{status}"
+    )
+  end
+
   def location_alert_email(user:, location_name:, new_dates:)
     @user = user
     @location_name = location_name

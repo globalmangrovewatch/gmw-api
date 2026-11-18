@@ -9,6 +9,7 @@ class User < ApplicationRecord
     :trackable,
     jwt_revocation_strategy: JwtDenylist
   has_and_belongs_to_many :organizations
+  has_many :organization_join_requests, dependent: :destroy
   has_many :user_locations, dependent: :destroy
   has_many :saved_locations, through: :user_locations, source: :location
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_11_18_100000) do
+ActiveRecord::Schema[7.0].define(version: 2026_11_18_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -332,6 +332,22 @@ ActiveRecord::Schema[7.0].define(version: 2026_11_18_100000) do
     t.index ["location_id"], name: "index_national_dashboards_on_location_id"
   end
 
+  create_table "organization_join_requests", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "user_id", null: false
+    t.string "status", default: "pending", null: false
+    t.text "message"
+    t.bigint "reviewed_by_id"
+    t.datetime "reviewed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "status"], name: "index_organization_join_requests_on_organization_id_and_status"
+    t.index ["organization_id", "user_id"], name: "index_org_join_requests_one_pending", unique: true, where: "((status)::text = 'pending'::text)"
+    t.index ["organization_id"], name: "index_organization_join_requests_on_organization_id"
+    t.index ["reviewed_by_id"], name: "index_organization_join_requests_on_reviewed_by_id"
+    t.index ["user_id"], name: "index_organization_join_requests_on_user_id"
+  end
+
   create_table "organizations", force: :cascade do |t|
     t.string "organization_name"
     t.datetime "created_at", null: false
@@ -529,6 +545,9 @@ ActiveRecord::Schema[7.0].define(version: 2026_11_18_100000) do
   add_foreign_key "mitigation_potentials", "locations"
   add_foreign_key "monitoring_answers", "sites"
   add_foreign_key "national_dashboards", "locations"
+  add_foreign_key "organization_join_requests", "organizations"
+  add_foreign_key "organization_join_requests", "users"
+  add_foreign_key "organization_join_requests", "users", column: "reviewed_by_id", on_delete: :nullify
   add_foreign_key "organizations_countries", "organizations"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
