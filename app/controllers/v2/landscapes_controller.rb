@@ -56,9 +56,10 @@ class V2::LandscapesController < MrttApiController
     organization_ids = @landscape.organization_ids
 
     # only admin and org-admin can delete landscape record
-    if !(current_user.is_admin || current_user.is_org_admin_of_all(organization_ids))
+    if !(current_user.is_admin || current_user.is_org_admin_of_all(organization_ids.dup))
       insufficient_privilege && return
     end
+    return if block_unacknowledged_org_admin!(organization_ids)
 
     @landscape.destroy
   end

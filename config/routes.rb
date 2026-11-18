@@ -65,6 +65,8 @@ Rails.application.routes.draw do
       resources :countries, only: [:index]
       resources :regions, only: [:index]
 
+      post "/organizations/:organization_id/admin_name_acknowledgement", to: "organizations#acknowledge_admin_name"
+
       get "/sites/:site_id/registration_intervention_answers", to: "registration_intervention_answers#index"
       put "/sites/:site_id/registration_intervention_answers", to: "registration_intervention_answers#update"
       patch "/sites/:site_id/registration_intervention_answers", to: "registration_intervention_answers#partial_update"

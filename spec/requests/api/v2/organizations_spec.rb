@@ -12,7 +12,7 @@ RSpec.describe "Organization countries", type: :request do
       user = create(:user)
 
       post "/api/v2/organizations",
-        params: {organization_name: "", country_location_ids: []},
+        params: {organization_name: "", country_location_ids: [], admin_name_acknowledged: true},
         headers: auth_headers(user),
         as: :json
 
@@ -22,7 +22,7 @@ RSpec.describe "Organization countries", type: :request do
       expect(Organization.count).to eq(0)
 
       post "/api/v2/organizations",
-        params: {organization_name: "Coastal Alliance"},
+        params: {organization_name: "Coastal Alliance", admin_name_acknowledged: true},
         headers: auth_headers(user),
         as: :json
 
@@ -36,7 +36,7 @@ RSpec.describe "Organization countries", type: :request do
       area = Location.create!(name: "Study area", location_type: "aoi", iso: "KEN", location_id: "aoi-1", bounds: {}, geometry: {})
 
       post "/api/v2/organizations",
-        params: {organization_name: "Coastal Alliance", country_location_ids: [area.location_id]},
+        params: {organization_name: "Coastal Alliance", country_location_ids: [area.location_id], admin_name_acknowledged: true},
         headers: auth_headers(user),
         as: :json
 
@@ -53,7 +53,8 @@ RSpec.describe "Organization countries", type: :request do
     post "/api/v2/organizations",
       params: {
         organization_name: "Mangrove Partnership",
-        country_location_ids: [kenya.location_id, spain.location_id]
+        country_location_ids: [kenya.location_id, spain.location_id],
+        admin_name_acknowledged: true
       },
       headers: auth_headers(user),
       as: :json
@@ -102,7 +103,12 @@ RSpec.describe "Organization countries", type: :request do
       user = create(:user)
       organization = Organization.new(organization_name: "Legacy Org")
       organization.save(validate: false)
-      OrganizationsUsers.create!(organization: organization, user: user, role: "org-admin")
+      OrganizationsUsers.create!(
+        organization: organization,
+        user: user,
+        role: "org-admin",
+        admin_name_acknowledged_at: Time.current
+      )
 
       get "/api/v2/organizations/#{organization.id}", headers: auth_headers(user)
 
@@ -154,7 +160,8 @@ RSpec.describe "Organization countries", type: :request do
       post "/api/v2/organizations",
         params: {
           organization_name: "Mangrove Partnership",
-          country_location_ids: [kenya.location_id, spain.location_id]
+          country_location_ids: [kenya.location_id, spain.location_id],
+          admin_name_acknowledged: true
         },
         headers: auth_headers(user),
         as: :json
@@ -393,12 +400,297 @@ RSpec.describe "Organization countries", type: :request do
     end
   end
 
-  def create_organization(name, countries, user: nil, role: nil)
+  describe "admin name acknowledgement" do
+    it "returns 422 and creates nothing without the creator's acknowledgement" do
+      user = create(:user, name: "Ada Admin", email: "ada@wetlands.org")
+      spain = country("Spain", "ESP", "spain")
+
+      expect {
+        post "/api/v2/organizations",
+          params: {organization_name: "Unacknowledged Coast", country_location_ids: [spain.location_id]},
+          headers: auth_headers(user),
+          as: :json
+      }.not_to change { [Organization.count, OrganizationsUsers.count] }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response_json["errors"]["admin_name_acknowledged"]).to include("must be accepted")
+
+      expect {
+        post "/api/v2/organizations",
+          params: {
+            organization_name: "Unacknowledged Coast",
+            country_location_ids: [spain.location_id],
+            admin_name_acknowledged: false
+          },
+          headers: auth_headers(user),
+          as: :json
+      }.not_to change { [Organization.count, OrganizationsUsers.count] }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(Organization.find_by(organization_name: "Unacknowledged Coast")).to be_nil
+    end
+
+    it "lists acknowledged admin names to non-members and omits contact details" do
+      creator = create(:user, name: "Ada Admin", email: "ada.admin@wetlands.org")
+      spain = country("Spain", "ESP", "spain")
+
+      post "/api/v2/organizations",
+        params: {
+          organization_name: "Named Admins",
+          country_location_ids: [spain.location_id],
+          admin_name_acknowledged: true
+        },
+        headers: auth_headers(creator),
+        as: :json
+
+      organization = Organization.find(response_json["id"])
+      expect(OrganizationsUsers.find_by!(organization: organization, user: creator).admin_name_acknowledged_at).to be_present
+
+      second = create(:user, name: "Bea Admin", email: "bea.admin@wetlands.org")
+      OrganizationsUsers.create!(organization: organization, user: second, role: "org-user")
+      hidden = create(:user, name: "Zed Hidden", email: "zed.hidden@wetlands.org")
+      OrganizationsUsers.create!(organization: organization, user: hidden, role: "org-admin")
+
+      patch "/api/v2/organizations/#{organization.id}/users/#{second.email}",
+        params: {role: "org-admin", admin_name_acknowledged: true},
+        headers: auth_headers(creator),
+        as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(OrganizationsUsers.find_by!(organization: organization, user: second).role).to eq("org-admin")
+
+      outsider = create(:user, name: "Outsider", email: "outsider@example.com")
+
+      get "/api/v2/organizations/#{organization.id}", headers: auth_headers(outsider)
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json["admins"]).to eq([{"name" => "Ada Admin"}, {"name" => "Bea Admin"}])
+      expect(response_json["admins"].flat_map(&:keys).uniq).to eq(["name"])
+      expect(response.body).not_to include("ada.admin@wetlands.org")
+      expect(response.body).not_to include("bea.admin@wetlands.org")
+      expect(response.body).not_to include("zed.hidden@wetlands.org")
+      expect(response.body).not_to include("Zed Hidden")
+
+      get "/api/v2/organizations", headers: auth_headers(outsider)
+
+      expect(response.body).not_to include("ada.admin@wetlands.org")
+      expect(response.body).not_to include("bea.admin@wetlands.org")
+      expect(response.body).not_to include("zed.hidden@wetlands.org")
+    end
+
+    it "rejects promotion to admin without acknowledgement and leaves the member as org-user" do
+      spain = country("Spain", "ESP", "spain")
+      admin = create(:user, name: "Ada Admin", email: "ada.admin@wetlands.org")
+      member = create(:user, name: "Mia Member", email: "mia.member@wetlands.org")
+      organization = create_organization("Promotion Org", [spain], user: admin, role: "org-admin", admin_name_acknowledged_at: Time.current)
+      membership = OrganizationsUsers.create!(organization: organization, user: member, role: "org-user")
+
+      patch "/api/v2/organizations/#{organization.id}/users/#{member.email}",
+        params: {role: "org-admin"},
+        headers: auth_headers(admin),
+        as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response_json["errors"]["admin_name_acknowledged"]).to include("must be accepted")
+      expect(membership.reload.role).to eq("org-user")
+      expect(membership.admin_name_acknowledged_at).to be_nil
+
+      patch "/api/v2/organizations/#{organization.id}/users/#{member.email}",
+        params: {role: "org-admin", admin_name_acknowledged: false},
+        headers: auth_headers(admin),
+        as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(membership.reload.role).to eq("org-user")
+
+      post "/api/v2/organizations/#{organization.id}/users",
+        params: {email: member.email, role: "org-admin"},
+        headers: auth_headers(admin),
+        as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(membership.reload.role).to eq("org-user")
+    end
+
+    it "asks an existing admin to acknowledge, blocks admin actions until they do, and demotes them if they decline" do
+      spain = country("Spain", "ESP", "spain")
+      legacy = create(:user, name: "Pat Manager", email: "legacy.admin@wetlands.org")
+      organization = create_organization("Legacy Admins", [spain], user: legacy, role: "org-admin")
+      landscape = Landscape.create!(landscape_name: "Legacy Delta")
+      LandscapesOrganizations.create!(landscape_id: landscape.id, organization_id: organization.id)
+      outsider = create(:user, email: "outsider.legacy@example.com")
+
+      get "/users/current_user", headers: auth_headers(legacy)
+
+      expect(response_json["user"]["pending_admin_name_acknowledgements"]).to eq([
+        {"organization_id" => organization.id, "organization_name" => "Legacy Admins"}
+      ])
+
+      get "/api/v2/organizations/#{organization.id}", headers: auth_headers(outsider)
+
+      expect(response_json["admins"]).to eq([])
+      expect(response.body).not_to include("legacy.admin@wetlands.org")
+      expect(response.body).not_to include("Pat Manager")
+
+      patch "/api/v2/organizations/#{organization.id}",
+        params: {organization_name: "Renamed Without Acknowledgement", country_location_ids: [spain.location_id]},
+        headers: auth_headers(legacy),
+        as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response_json["errors"]["admin_name_acknowledged"]).to include("must be accepted")
+      expect(organization.reload.organization_name).to eq("Legacy Admins")
+
+      delete "/api/v2/landscapes/#{landscape.id}", headers: auth_headers(legacy)
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(Landscape.exists?(landscape.id)).to be(true)
+
+      post "/api/v2/organizations/#{organization.id}/admin_name_acknowledgement",
+        params: {admin_name_acknowledged: false},
+        headers: auth_headers(legacy),
+        as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json["admins"]).to eq([])
+      membership = OrganizationsUsers.find_by!(organization: organization, user: legacy)
+      expect(membership.role).to eq("org-user")
+      expect(membership.admin_name_acknowledged_at).to be_nil
+
+      get "/users/current_user", headers: auth_headers(legacy)
+
+      expect(response_json["user"]["pending_admin_name_acknowledgements"]).to eq([])
+
+      patch "/api/v2/organizations/#{organization.id}",
+        params: {organization_name: "Still Not Admin", country_location_ids: [spain.location_id]},
+        headers: auth_headers(legacy),
+        as: :json
+
+      expect(response).to have_http_status(:forbidden)
+      expect(organization.reload.organization_name).to eq("Legacy Admins")
+    end
+
+    it "shows an existing admin's name after they acknowledge and then allows admin actions" do
+      spain = country("Spain", "ESP", "spain")
+      legacy = create(:user, name: "Pat Manager", email: "legacy.admin@wetlands.org")
+      organization = create_organization("Legacy Admins", [spain], user: legacy, role: "org-admin")
+      outsider = create(:user, email: "outsider.ack@example.com")
+
+      post "/api/v2/organizations/#{organization.id}/admin_name_acknowledgement",
+        headers: auth_headers(legacy),
+        as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(OrganizationsUsers.find_by!(organization: organization, user: legacy).admin_name_acknowledged_at).to be_nil
+
+      post "/api/v2/organizations/#{organization.id}/admin_name_acknowledgement",
+        params: {admin_name_acknowledged: true},
+        headers: auth_headers(legacy),
+        as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json["admins"]).to eq([{"name" => "Pat Manager"}])
+      expect(response.body).not_to include("legacy.admin@wetlands.org")
+      expect(OrganizationsUsers.find_by!(organization: organization, user: legacy).admin_name_acknowledged_at).to be_present
+
+      get "/api/v2/organizations/#{organization.id}", headers: auth_headers(outsider)
+
+      expect(response_json["admins"]).to eq([{"name" => "Pat Manager"}])
+      expect(response.body).not_to include("legacy.admin@wetlands.org")
+
+      get "/users/current_user", headers: auth_headers(legacy)
+
+      expect(response_json["user"]["pending_admin_name_acknowledgements"]).to eq([])
+
+      patch "/api/v2/organizations/#{organization.id}",
+        params: {organization_name: "Acknowledged Coast", country_location_ids: [spain.location_id]},
+        headers: auth_headers(legacy),
+        as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(organization.reload.organization_name).to eq("Acknowledged Coast")
+    end
+
+    it "lets a platform admin manage an organization without an acknowledgement" do
+      spain = country("Spain", "ESP", "spain")
+      staff = create(:user, admin: true, name: "Platform Admin", email: "platform.admin@wetlands.org")
+      organization = create_organization("Staff Managed", [spain])
+
+      patch "/api/v2/organizations/#{organization.id}",
+        params: {organization_name: "Staff Renamed", country_location_ids: [spain.location_id]},
+        headers: auth_headers(staff),
+        as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(organization.reload.organization_name).to eq("Staff Renamed")
+    end
+
+    it "does not change v3 organization create, promotion, admin actions, or the show payload" do
+      user = create(:user, name: "V3 Admin", email: "v3.admin@wetlands.org")
+      member = create(:user, name: "V3 Member", email: "v3.member@wetlands.org")
+      spain = country("Spain", "ESP", "spain-v3")
+
+      post "/api/v3/organizations",
+        params: {organization_name: "V3 Coast", country_location_ids: [spain.location_id]},
+        headers: auth_headers(user),
+        as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json).not_to have_key("admins")
+      organization = Organization.find(response_json["id"])
+      membership = OrganizationsUsers.find_by!(organization: organization, user: user)
+      expect(membership.role).to eq("org-admin")
+      expect(membership.admin_name_acknowledged_at).to be_nil
+
+      get "/api/v3/organizations/#{organization.id}", headers: auth_headers(member)
+
+      expect(response).to have_http_status(:ok)
+      expect(response_json).not_to have_key("admins")
+      expect(response.body).not_to include("v3.admin@wetlands.org")
+      expect(response.body).not_to include("V3 Admin")
+
+      OrganizationsUsers.create!(organization: organization, user: member, role: "org-user")
+
+      patch "/api/v3/organizations/#{organization.id}/users/#{member.email}",
+        params: {role: "org-admin"},
+        headers: auth_headers(user),
+        as: :json
+
+      expect(response).to have_http_status(:ok)
+      promoted = OrganizationsUsers.find_by!(organization: organization, user: member)
+      expect(promoted.role).to eq("org-admin")
+      expect(promoted.admin_name_acknowledged_at).to be_nil
+
+      patch "/api/v3/organizations/#{organization.id}",
+        params: {organization_name: "V3 Coast renamed", country_location_ids: [spain.location_id]},
+        headers: auth_headers(user),
+        as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(organization.reload.organization_name).to eq("V3 Coast renamed")
+
+      expect {
+        post "/api/v3/organizations/#{organization.id}/admin_name_acknowledgement",
+          params: {admin_name_acknowledged: true},
+          headers: auth_headers(user),
+          as: :json
+      }.to raise_error(ActionController::RoutingError)
+    end
+  end
+
+  def create_organization(name, countries, user: nil, role: nil, admin_name_acknowledged_at: nil)
     organization = Organization.create!(
       organization_name: name,
       country_location_ids: countries.map(&:location_id)
     )
-    OrganizationsUsers.create!(organization: organization, user: user, role: role) if user
+    if user
+      OrganizationsUsers.create!(
+        organization: organization,
+        user: user,
+        role: role,
+        admin_name_acknowledged_at: admin_name_acknowledged_at
+      )
+    end
     organization
   end
 

@@ -30,6 +30,29 @@ class MrttApiController < ActionController::API
     render json: {message: "Changing your own role is not allowed"}, status: :forbidden
   end
 
+  def enforce_admin_name_acknowledgement?
+    !controller_path.start_with?("v3/")
+  end
+
+  def admin_name_acknowledged?
+    ActiveModel::Type::Boolean.new.cast(params[:admin_name_acknowledged]) == true
+  end
+
+  def admin_name_acknowledgement
+    return :missing unless params.key?(:admin_name_acknowledged)
+
+    admin_name_acknowledged? ? :accepted : :declined
+  end
+
+  def block_unacknowledged_org_admin!(organization_ids)
+    return false unless enforce_admin_name_acknowledgement?
+    return false if current_user.is_admin
+    return false if current_user.acknowledged_org_admin_of_all?(organization_ids)
+
+    render json: {errors: {admin_name_acknowledged: ["must be accepted"]}}, status: :unprocessable_entity
+    true
+  end
+
   private
 
   def authenticate_user_from_token!

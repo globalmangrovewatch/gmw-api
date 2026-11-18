@@ -70,7 +70,8 @@ RSpec.describe User, type: :model do
         organization: "Example Org",
         user_roles: ["other"],
         user_role_other: "Independent consultant",
-        settings: nil
+        settings: nil,
+        pending_admin_name_acknowledgements: []
       )
     end
   end

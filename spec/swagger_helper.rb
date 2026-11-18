@@ -443,7 +443,19 @@ RSpec.configure do |config|
                 nullable: true,
                 description: 'Required when "other" is included in user_roles.'
               },
-              settings: {"$ref" => "#/components/schemas/user_map_settings"}
+              settings: {"$ref" => "#/components/schemas/user_map_settings"},
+              pending_admin_name_acknowledgements: {
+                type: :array,
+                description: "Organizations where this user is an admin and has not acknowledged that their name will be shown.",
+                items: {
+                  type: :object,
+                  properties: {
+                    organization_id: {type: :integer},
+                    organization_name: {type: :string}
+                  },
+                  required: [:organization_id, :organization_name]
+                }
+              }
             },
             required: [:email, :user_roles]
           },

@@ -65,6 +65,31 @@ class User < ApplicationRecord
     result.present?
   end
 
+  def acknowledged_org_admin_of_all?(organization_ids)
+    ids = Array(organization_ids).map(&:to_i).uniq.reject(&:zero?)
+    return false if ids.empty?
+
+    acknowledged = OrganizationsUsers.where(
+      user_id: id,
+      organization_id: ids,
+      role: "org-admin"
+    ).where.not(admin_name_acknowledged_at: nil).distinct.count(:organization_id)
+    acknowledged == ids.size
+  end
+
+  def pending_admin_name_acknowledgements
+    OrganizationsUsers.includes(:organization)
+      .joins(:organization)
+      .where(user_id: id, role: "org-admin", admin_name_acknowledged_at: nil)
+      .order(Arel.sql("LOWER(organizations.organization_name) ASC, organizations.id ASC"))
+      .map do |membership|
+        {
+          organization_id: membership.organization_id,
+          organization_name: membership.organization.organization_name
+        }
+      end
+  end
+
   def is_admin
     admin
   end

@@ -72,6 +72,14 @@ class Organization < ApplicationRecord
     joins(join_sql).select("organizations.*, organizations_users.role")
   end
 
+  def acknowledged_admins
+    OrganizationsUsers.joins(:user)
+      .includes(:user)
+      .where(organization_id: id, role: "org-admin")
+      .where.not(admin_name_acknowledged_at: nil)
+      .order(Arel.sql("LOWER(users.name) ASC, users.id ASC"))
+  end
+
   def regions
     isos = countries.filter_map { |country| country.iso&.upcase }
     return [] if isos.empty?
