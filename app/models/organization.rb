@@ -8,8 +8,17 @@ class Organization < ApplicationRecord
     through: :organizations_countries,
     source: :country
 
+  GMA_MEMBERSHIPS = %w[none member national_chapter].freeze
+  GMA_STATUSES = %w[unverified pending verified rejected].freeze
+  GMA_CLAIMS = %w[member national_chapter].freeze
+  PUBLIC_GMA_LABEL = "GMA member"
+
   validates :organization_name, presence: true
+  validates :gma_membership, inclusion: {in: GMA_MEMBERSHIPS}
+  validates :gma_status, inclusion: {in: GMA_STATUSES}
   validate :country_location_ids_must_reference_countries
+
+  before_validation :apply_gma_claim
 
   scope :alphabetical, -> {
     order(Arel.sql("LOWER(organizations.organization_name) ASC, organizations.id ASC"))
@@ -88,7 +97,44 @@ class Organization < ApplicationRecord
     CountryRegion.where(iso3: isos).distinct.order(:region).pluck(:region)
   end
 
+  def gma_representation_for(user)
+    if gma_claim_visible_to?(user)
+      {
+        gma_membership: gma_membership,
+        gma_status: gma_status,
+        gma_chapter_name: gma_chapter_name
+      }
+    elsif gma_status == "verified" && GMA_CLAIMS.include?(gma_membership)
+      {gma_member: PUBLIC_GMA_LABEL}
+    else
+      {}
+    end
+  end
+
   private
+
+  def apply_gma_claim
+    self.gma_chapter_name = if gma_membership == "national_chapter"
+      gma_chapter_name.to_s.strip.presence
+    end
+
+    if gma_membership == "none"
+      self.gma_status = "unverified"
+    elsif GMA_CLAIMS.include?(gma_membership) && gma_claim_changed?
+      self.gma_status = "pending"
+    end
+  end
+
+  def gma_claim_changed?
+    gma_membership_changed? || gma_chapter_name_changed?
+  end
+
+  def gma_claim_visible_to?(user)
+    return false if user.nil?
+    return self[:role].present? if has_attribute?(:role)
+
+    users.exists?(user.id)
+  end
 
   def country_location_ids_must_reference_countries
     ids = country_location_ids

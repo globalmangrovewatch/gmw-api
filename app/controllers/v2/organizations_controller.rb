@@ -1,6 +1,8 @@
 class V2::OrganizationsController < MrttApiController
   DEFAULT_PER_PAGE = 25
 
+  helper_method :gma_fields_for
+
   def index
     return assign_organizations_by_membership if controller_path.start_with?("v3/")
 
@@ -184,7 +186,15 @@ class V2::OrganizationsController < MrttApiController
   end
 
   def organization_params
-    params.except(:format, :organization).permit(:organization_name, :id, country_location_ids: [])
+    permitted = [:organization_name, :id]
+    permitted.push(:gma_membership, :gma_chapter_name) unless controller_path.start_with?("v3/")
+    params.except(:format, :organization).permit(*permitted, country_location_ids: [])
+  end
+
+  def gma_fields_for(organization)
+    return {} if controller_path.start_with?("v3/")
+
+    organization.gma_representation_for(current_user)
   end
 
   def assign_organizations_by_membership

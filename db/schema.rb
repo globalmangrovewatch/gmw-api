@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_11_18_120000) do
+ActiveRecord::Schema[7.0].define(version: 2026_11_19_160000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -352,7 +352,12 @@ ActiveRecord::Schema[7.0].define(version: 2026_11_18_120000) do
     t.string "organization_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "gma_membership", default: "none", null: false
+    t.string "gma_status", default: "unverified", null: false
+    t.string "gma_chapter_name"
     t.index ["organization_name"], name: "index_organizations_on_organization_name", unique: true
+    t.check_constraint "gma_membership::text = ANY (ARRAY['none'::character varying, 'member'::character varying, 'national_chapter'::character varying]::text[])", name: "organizations_gma_membership_check"
+    t.check_constraint "gma_status::text = ANY (ARRAY['unverified'::character varying, 'pending'::character varying, 'verified'::character varying, 'rejected'::character varying]::text[])", name: "organizations_gma_status_check"
   end
 
   create_table "organizations_countries", force: :cascade do |t|
