@@ -21,6 +21,7 @@ class User < ApplicationRecord
   end
 
   scope :admins, -> { where(admin: true) }
+  scope :gma_validators, -> { where(gma_validator: true) }
   scope :subscribed_to_alerts, -> { where(subscribed_to_location_alerts: true) }
   scope :subscribed_to_newsletter, -> { where(subscribed_to_newsletter: true) }
   scope :inactive, -> { where("last_sign_in_at < ? OR last_sign_in_at IS NULL", 90.days.ago) }

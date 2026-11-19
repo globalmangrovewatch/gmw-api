@@ -20,7 +20,8 @@ module UserProfileAttributes
       user_roles: user_roles,
       user_role_other: user_role_other,
       settings: settings,
-      pending_admin_name_acknowledgements: pending_admin_name_acknowledgements
+      pending_admin_name_acknowledgements: pending_admin_name_acknowledgements,
+      gma_validator: gma_validator
     }
   end
 

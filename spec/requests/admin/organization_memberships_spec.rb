@@ -33,6 +33,16 @@ RSpec.describe "Admin organization memberships", type: :request do
     expect(membership.reload.role).to eq("org-admin")
   end
 
+  it "lets a super admin grant GMA validation without granting platform admin" do
+    patch admin_user_path(user), params: {
+      user: {gma_validator: "1", admin: "0", password: "", password_confirmation: ""}
+    }
+
+    expect(response).to redirect_to(admin_user_path(user))
+    expect(user.reload.gma_validator).to be(true)
+    expect(user.admin).to be(false)
+  end
+
   it "removes organization admin access without removing membership" do
     membership = OrganizationsUsers.create!(organization: organization, user: user, role: "org-admin")
 
@@ -94,6 +104,15 @@ RSpec.describe "Admin organization memberships", type: :request do
 
       expect(response).to redirect_to(admin_user_path(user))
       expect(user.reload.admin).to be(false)
+    end
+
+    it "does not allow the GMA validator flag to be granted" do
+      patch admin_user_path(user), params: {
+        user: {gma_validator: "1", password: "", password_confirmation: ""}
+      }
+
+      expect(response).to redirect_to(admin_user_path(user))
+      expect(user.reload.gma_validator).to be(false)
     end
   end
 end

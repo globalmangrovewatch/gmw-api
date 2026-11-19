@@ -72,6 +72,9 @@ Rails.application.routes.draw do
       patch "/organizations/:organization_id/join_requests/:request_id", to: "organization_join_requests#update"
       get "/users/current_user/join_requests", to: "organization_join_requests#mine"
 
+      get "/gma/organizations", to: "gma_organizations#index"
+      patch "/gma/organizations/:id", to: "gma_organizations#update"
+
       get "/sites/:site_id/registration_intervention_answers", to: "registration_intervention_answers#index"
       put "/sites/:site_id/registration_intervention_answers", to: "registration_intervention_answers#update"
       patch "/sites/:site_id/registration_intervention_answers", to: "registration_intervention_answers#partial_update"

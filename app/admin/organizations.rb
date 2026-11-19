@@ -4,12 +4,16 @@ ActiveAdmin.register Organization do
   permit_params :organization_name, user_ids: [], country_location_ids: []
 
   filter :organization_name
+  filter :gma_membership, as: :select, collection: Organization::GMA_MEMBERSHIPS
+  filter :gma_status, as: :select, collection: Organization::GMA_STATUSES
   filter :created_at
 
   index do
     selectable_column
     id_column
     column :organization_name
+    column :gma_membership
+    column :gma_status
     column "Members" do |org|
       org.users.count
     end
@@ -24,6 +28,12 @@ ActiveAdmin.register Organization do
       row :regions do |org|
         org.regions.join(", ")
       end
+      row :gma_membership
+      row :gma_status
+      row :gma_chapter_name
+      row :gma_reviewed_at
+      row :gma_review_reason
+      row :gma_reviewed_by
       row :created_at
       row :updated_at
     end

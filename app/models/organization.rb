@@ -7,10 +7,16 @@ class Organization < ApplicationRecord
     -> { where(location_type: "country").order(:name) },
     through: :organizations_countries,
     source: :country
+  belongs_to :gma_reviewed_by, class_name: "User", optional: true
 
   GMA_MEMBERSHIPS = %w[none member national_chapter].freeze
   GMA_STATUSES = %w[unverified pending verified rejected].freeze
   GMA_CLAIMS = %w[member national_chapter].freeze
+  GMA_REVIEW_DECISIONS = {
+    "verify" => "verified",
+    "reject" => "rejected"
+  }.freeze
+  GMA_QUEUE_STATUSES = %w[pending verified rejected].freeze
   PUBLIC_GMA_LABEL = "GMA member"
 
   validates :organization_name, presence: true
@@ -42,6 +48,7 @@ class Organization < ApplicationRecord
   scope :with_country_regions, -> {
     with_countries.joins("INNER JOIN country_regions ON country_regions.iso3 = UPPER(locations.iso)")
   }
+  scope :gma_queue, ->(status) { where(gma_status: status, gma_membership: GMA_CLAIMS) }
 
   SUGGESTED_LIMIT = 5
 
@@ -97,6 +104,26 @@ class Organization < ApplicationRecord
     CountryRegion.where(iso3: isos).distinct.order(:region).pluck(:region)
   end
 
+  def review_gma_membership!(decision, reviewer:, reason: nil)
+    status = GMA_REVIEW_DECISIONS[decision]
+    return false unless status
+
+    with_lock(requires_new: true) do
+      next false unless gma_status == "pending" && GMA_CLAIMS.include?(gma_membership)
+
+      @reviewing_gma_membership = true
+      update!(
+        gma_status: status,
+        gma_reviewed_by: reviewer,
+        gma_reviewed_at: Time.current,
+        gma_review_reason: reason.to_s.strip.presence
+      )
+      true
+    end
+  ensure
+    @reviewing_gma_membership = false
+  end
+
   def gma_representation_for(user)
     if gma_claim_visible_to?(user)
       {
@@ -117,12 +144,21 @@ class Organization < ApplicationRecord
     self.gma_chapter_name = if gma_membership == "national_chapter"
       gma_chapter_name.to_s.strip.presence
     end
+    return if @reviewing_gma_membership
 
     if gma_membership == "none"
       self.gma_status = "unverified"
+      clear_gma_review
     elsif GMA_CLAIMS.include?(gma_membership) && gma_claim_changed?
       self.gma_status = "pending"
+      clear_gma_review
     end
+  end
+
+  def clear_gma_review
+    self.gma_reviewed_by = nil
+    self.gma_reviewed_at = nil
+    self.gma_review_reason = nil
   end
 
   def gma_claim_changed?

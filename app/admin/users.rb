@@ -11,7 +11,10 @@ ActiveAdmin.register User do
       :subscribed_to_newsletter,
       :subscribed_to_platform_updates
     ]
-    permitted << :admin if current_admin_user.super_admin?
+    if current_admin_user.super_admin?
+      permitted << :admin
+      permitted << :gma_validator
+    end
     permitted << {organization_ids: []}
     permitted
   end
@@ -19,6 +22,7 @@ ActiveAdmin.register User do
   filter :email
   filter :name
   filter :admin
+  filter :gma_validator
   filter :subscribed_to_location_alerts
   filter :subscribed_to_newsletter
   filter :subscribed_to_platform_updates
@@ -29,6 +33,7 @@ ActiveAdmin.register User do
 
   scope :all, default: true
   scope :admins
+  scope :gma_validators, label: "GMA validators"
   scope :subscribed_to_alerts
   scope :subscribed_to_newsletter
   scope :inactive
@@ -40,6 +45,7 @@ ActiveAdmin.register User do
     column :email
     column :name
     column :admin
+    column :gma_validator
     column :subscribed_to_location_alerts, sortable: true do |user|
       status_tag user.subscribed_to_location_alerts ? "Yes" : "No",
         class: user.subscribed_to_location_alerts ? "green" : "red"
@@ -66,6 +72,9 @@ ActiveAdmin.register User do
       row :name
       row :admin do |user|
         status_tag user.admin ? "Yes" : "No", class: user.admin ? "green" : "red"
+      end
+      row :gma_validator do |user|
+        status_tag user.gma_validator ? "Yes" : "No", class: user.gma_validator ? "green" : "red"
       end
       row :confirmed_at
       row :last_sign_in_at
@@ -130,7 +139,10 @@ ActiveAdmin.register User do
       f.input :name
       f.input :password, hint: f.object.new_record? ? "Required" : "Leave blank to keep current password"
       f.input :password_confirmation
-      f.input :admin, as: :boolean if current_admin_user.super_admin?
+      if current_admin_user.super_admin?
+        f.input :admin, as: :boolean
+        f.input :gma_validator, as: :boolean, label: "GMA validator"
+      end
     end
 
     f.inputs "Notification Preferences" do
@@ -221,6 +233,7 @@ ActiveAdmin.register User do
     column :email
     column :name
     column :admin
+    column :gma_validator
     column :subscribed_to_location_alerts
     column :subscribed_to_newsletter
     column :subscribed_to_platform_updates

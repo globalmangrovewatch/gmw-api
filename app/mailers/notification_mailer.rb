@@ -67,6 +67,17 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
+  def gma_membership_reviewed(recipient_email:, organization_name:, status:, reason:)
+    @organization_name = organization_name
+    @status = status
+    @reason = reason.presence
+
+    mail(
+      to: recipient_email,
+      subject: "GMA membership for #{organization_name} was #{status}"
+    )
+  end
+
   def location_alert_email(user:, location_name:, new_dates:)
     @user = user
     @location_name = location_name

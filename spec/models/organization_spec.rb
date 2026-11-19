@@ -60,6 +60,59 @@ RSpec.describe Organization, type: :model do
       expect(organization.gma_chapter_name).to be_nil
     end
 
+    it "reviews only a pending claim and records who reviewed it" do
+      reviewer = create(:user, gma_validator: true)
+      organization = create(:organization, gma_membership: "member")
+      untouched = create(:organization)
+
+      expect(organization.review_gma_membership!("hold", reviewer: reviewer)).to be(false)
+      expect(untouched.review_gma_membership!("verify", reviewer: reviewer)).to be(false)
+      expect(untouched.reload.gma_status).to eq("unverified")
+      expect(untouched.gma_reviewed_by).to be_nil
+
+      reviewed = organization.review_gma_membership!("verify", reviewer: reviewer, reason: "  Confirmed  ")
+
+      expect(reviewed).to be(true)
+      expect(organization.gma_status).to eq("verified")
+      expect(organization.gma_reviewed_by).to eq(reviewer)
+      expect(organization.gma_reviewed_at).to be_within(2.seconds).of(Time.current)
+      expect(organization.gma_review_reason).to eq("Confirmed")
+
+      expect(organization.review_gma_membership!("reject", reviewer: reviewer, reason: "Changed mind")).to be(false)
+      organization.reload
+      expect(organization.gma_status).to eq("verified")
+      expect(organization.gma_review_reason).to eq("Confirmed")
+    end
+
+    it "clears the previous review when the claim changes or is withdrawn" do
+      reviewer = create(:user)
+      organization = create(:organization, gma_membership: "national_chapter", gma_chapter_name: "Kenya Chapter")
+      organization.review_gma_membership!("reject", reviewer: reviewer, reason: "Not listed")
+
+      organization.update!(organization_name: "Same Claim")
+
+      expect(organization.gma_status).to eq("rejected")
+      expect(organization.gma_reviewed_by).to eq(reviewer)
+      expect(organization.gma_review_reason).to eq("Not listed")
+
+      organization.update!(gma_chapter_name: "Tanzania Chapter")
+
+      expect(organization.gma_status).to eq("pending")
+      expect(organization.gma_reviewed_by).to be_nil
+      expect(organization.gma_reviewed_at).to be_nil
+      expect(organization.gma_review_reason).to be_nil
+
+      organization.review_gma_membership!("verify", reviewer: reviewer, reason: "Now listed")
+      organization.update!(gma_membership: "none")
+
+      expect(organization.gma_membership).to eq("none")
+      expect(organization.gma_status).to eq("unverified")
+      expect(organization.gma_chapter_name).to be_nil
+      expect(organization.gma_reviewed_by_id).to be_nil
+      expect(organization.gma_reviewed_at).to be_nil
+      expect(organization.gma_review_reason).to be_nil
+    end
+
     it "rejects a membership value outside the allowed list" do
       organization = create(:organization)
 

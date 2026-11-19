@@ -71,7 +71,8 @@ RSpec.describe User, type: :model do
         user_roles: ["other"],
         user_role_other: "Independent consultant",
         settings: nil,
-        pending_admin_name_acknowledgements: []
+        pending_admin_name_acknowledgements: [],
+        gma_validator: false
       )
     end
   end

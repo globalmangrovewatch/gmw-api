@@ -151,4 +151,40 @@ RSpec.describe NotificationMailer, type: :mailer do
       expect(content).not_to include(requester_email)
     end
   end
+
+  describe "GMA membership review" do
+    def rendered_content(mail)
+      [mail.subject, mail.text_part.body.to_s, mail.html_part.body.to_s].join("\n")
+    end
+
+    it "tells an org admin the decision and the reason without contact details" do
+      mail = described_class.gma_membership_reviewed(
+        recipient_email: "ada.admin@wetlands.org",
+        organization_name: "Pending Chapter",
+        status: "verified",
+        reason: "Membership confirmed"
+      )
+
+      expect(mail.to).to eq(["ada.admin@wetlands.org"])
+      content = rendered_content(mail)
+      expect(content).to include("GMA membership for Pending Chapter was verified")
+      expect(content).to include("Membership confirmed")
+      expect(content).not_to include("ada.admin@wetlands.org")
+      expect(content).not_to include("@")
+    end
+
+    it "omits the reason when the review did not include one" do
+      mail = described_class.gma_membership_reviewed(
+        recipient_email: "ada.admin@wetlands.org",
+        organization_name: "Pending Chapter",
+        status: "rejected",
+        reason: nil
+      )
+
+      content = rendered_content(mail)
+      expect(content).to include("was rejected")
+      expect(content).not_to include("Reason:")
+      expect(content).not_to include("@")
+    end
+  end
 end

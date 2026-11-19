@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_11_19_160000) do
+ActiveRecord::Schema[7.0].define(version: 2026_11_19_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -355,6 +355,11 @@ ActiveRecord::Schema[7.0].define(version: 2026_11_19_160000) do
     t.string "gma_membership", default: "none", null: false
     t.string "gma_status", default: "unverified", null: false
     t.string "gma_chapter_name"
+    t.bigint "gma_reviewed_by_id"
+    t.datetime "gma_reviewed_at"
+    t.text "gma_review_reason"
+    t.index ["gma_reviewed_by_id"], name: "index_organizations_on_gma_reviewed_by_id"
+    t.index ["gma_status", "gma_membership"], name: "index_organizations_on_gma_status_and_membership"
     t.index ["organization_name"], name: "index_organizations_on_organization_name", unique: true
     t.check_constraint "gma_membership::text = ANY (ARRAY['none'::character varying, 'member'::character varying, 'national_chapter'::character varying]::text[])", name: "organizations_gma_membership_check"
     t.check_constraint "gma_status::text = ANY (ARRAY['unverified'::character varying, 'pending'::character varying, 'verified'::character varying, 'rejected'::character varying]::text[])", name: "organizations_gma_status_check"
@@ -515,6 +520,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_11_19_160000) do
     t.string "user_role_other"
     t.string "organization_name"
     t.jsonb "settings"
+    t.boolean "gma_validator", default: false, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -553,6 +559,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_11_19_160000) do
   add_foreign_key "organization_join_requests", "organizations"
   add_foreign_key "organization_join_requests", "users"
   add_foreign_key "organization_join_requests", "users", column: "reviewed_by_id", on_delete: :nullify
+  add_foreign_key "organizations", "users", column: "gma_reviewed_by_id", on_delete: :nullify
   add_foreign_key "organizations_countries", "organizations"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"

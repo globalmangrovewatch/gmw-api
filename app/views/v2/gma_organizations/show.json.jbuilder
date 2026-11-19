@@ -1,0 +1,10 @@
+json.id @organization.id
+json.organization_name @organization.organization_name
+json.regions @organization.regions
+json.gma_membership @organization.gma_membership
+json.gma_chapter_name @organization.gma_chapter_name
+json.gma_status @organization.gma_status
+json.gma_reviewed_by_id @organization.gma_reviewed_by_id
+json.gma_reviewed_at @organization.gma_reviewed_at
+json.gma_review_reason @organization.gma_review_reason
+json.created_at @organization.created_at
