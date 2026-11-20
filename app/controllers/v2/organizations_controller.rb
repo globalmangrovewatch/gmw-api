@@ -14,7 +14,10 @@ class V2::OrganizationsController < MrttApiController
     @page = page_param
     @per_page = per_page_param
     @total = organizations.unscope(:select, :order).count
-    @organizations = organizations.offset((@page - 1) * @per_page).limit(@per_page)
+    @organizations = organizations
+      .preload(:countries, logo_attachment: :blob)
+      .offset((@page - 1) * @per_page)
+      .limit(@per_page)
     render :filtered_index
   end
 
@@ -28,6 +31,7 @@ class V2::OrganizationsController < MrttApiController
 
   def create
     @organization = Organization.new(organization_params)
+    assign_create_logo
     @organization.validate
     if enforce_admin_name_acknowledgement? && !admin_name_acknowledged?
       @organization.errors.add(:admin_name_acknowledged, "must be accepted")
@@ -121,6 +125,26 @@ class V2::OrganizationsController < MrttApiController
     add_or_update_user_helper(params)
   end
 
+  def update_logo
+    @organization = Organization.find(params[:id])
+    return unless logo_admin?(@organization)
+
+    unless @organization.attach_logo(params[:logo])
+      render json: {errors: @organization.errors.to_hash}, status: :unprocessable_entity
+      return
+    end
+
+    render :show
+  end
+
+  def destroy_logo
+    @organization = Organization.find(params[:id])
+    return unless logo_admin?(@organization)
+
+    @organization.logo.purge if @organization.logo.attached?
+    render :show
+  end
+
   def acknowledge_admin_name
     @organization = Organization.find(params[:organization_id])
     membership = OrganizationsUsers.find_by(organization_id: @organization.id, user_id: current_user.id)
@@ -179,6 +203,22 @@ class V2::OrganizationsController < MrttApiController
 
     render json: {errors: {admin_name_acknowledged: ["must be accepted"]}}, status: :unprocessable_entity
     true
+  end
+
+  def assign_create_logo
+    return if controller_path.start_with?("v3/")
+    return if params[:logo].blank?
+
+    @organization.attach_logo(params[:logo])
+  end
+
+  def logo_admin?(organization)
+    unless current_user.is_admin || current_user.is_org_admin(organization.id)
+      insufficient_privilege
+      return false
+    end
+
+    !block_unacknowledged_org_admin!(organization.id)
   end
 
   def organization_user_params

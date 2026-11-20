@@ -1,5 +1,8 @@
 json.id organization.id
 json.organization_name organization.organization_name
+unless controller.controller_path.start_with?("v3/")
+  json.logo_url organization.logo.attached? ? rails_blob_url(organization.logo, disposition: "inline") : nil
+end
 json.countries organization.countries do |country|
   json.location_id country.location_id
   json.iso country.iso

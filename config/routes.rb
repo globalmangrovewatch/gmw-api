@@ -61,6 +61,10 @@ Rails.application.routes.draw do
         collection do
           get :suggested
         end
+        member do
+          put :logo, action: :update_logo
+          delete :logo, action: :destroy_logo
+        end
       end
       resources :countries, only: [:index]
       resources :regions, only: [:index]

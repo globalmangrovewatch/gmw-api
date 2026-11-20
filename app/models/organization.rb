@@ -8,6 +8,7 @@ class Organization < ApplicationRecord
     through: :organizations_countries,
     source: :country
   belongs_to :gma_reviewed_by, class_name: "User", optional: true
+  has_one_attached :logo
 
   GMA_MEMBERSHIPS = %w[none member national_chapter].freeze
   GMA_STATUSES = %w[unverified pending verified rejected].freeze
@@ -23,6 +24,7 @@ class Organization < ApplicationRecord
   validates :gma_membership, inclusion: {in: GMA_MEMBERSHIPS}
   validates :gma_status, inclusion: {in: GMA_STATUSES}
   validate :country_location_ids_must_reference_countries
+  validate :logo_upload_must_be_valid
 
   before_validation :apply_gma_claim
 
@@ -67,7 +69,7 @@ class Organization < ApplicationRecord
       .select("organizations.*, COUNT(DISTINCT users.id) AS matching_members_count")
       .order(Arel.sql("matching_members_count DESC, LOWER(organizations.organization_name) ASC, organizations.id ASC"))
       .limit(SUGGESTED_LIMIT)
-      .preload(:countries)
+      .preload(:countries, logo_attachment: :blob)
   end
 
   def country_location_ids
@@ -124,6 +126,21 @@ class Organization < ApplicationRecord
     @reviewing_gma_membership = false
   end
 
+  def attach_logo(upload)
+    prepared = OrganizationLogo.prepare(upload)
+    unless prepared.ok?
+      @logo_upload_error = prepared.error
+      errors.add(:logo, prepared.error)
+      return false
+    end
+
+    @logo_upload_error = nil
+    self.logo = prepared.attachable
+    return true if new_record?
+
+    save(validate: false)
+  end
+
   def gma_representation_for(user)
     if gma_claim_visible_to?(user)
       {
@@ -170,6 +187,10 @@ class Organization < ApplicationRecord
     return self[:role].present? if has_attribute?(:role)
 
     users.exists?(user.id)
+  end
+
+  def logo_upload_must_be_valid
+    errors.add(:logo, @logo_upload_error) if @logo_upload_error.present?
   end
 
   def country_location_ids_must_reference_countries

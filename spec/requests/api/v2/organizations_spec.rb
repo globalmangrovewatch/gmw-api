@@ -316,6 +316,7 @@ RSpec.describe "Organization countries", type: :request do
         {
           "id" => match.id,
           "organization_name" => "Mangrove Watch",
+          "logo_url" => nil,
           "countries" => [{"location_id" => "kenya", "iso" => "KEN", "name" => "Kenya"}],
           "regions" => ["Africa"]
         }
