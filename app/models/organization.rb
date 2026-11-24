@@ -2,6 +2,16 @@ class Organization < ApplicationRecord
   has_and_belongs_to_many :landscapes
   has_and_belongs_to_many :users
   has_many :organization_join_requests, dependent: :destroy
+  has_many :sent_landscape_organization_invitations,
+    class_name: "LandscapeOrganizationInvitation",
+    foreign_key: :inviting_organization_id,
+    dependent: :destroy,
+    inverse_of: :inviting_organization
+  has_many :landscape_organization_invitations,
+    class_name: "LandscapeOrganizationInvitation",
+    foreign_key: :invited_organization_id,
+    dependent: :destroy,
+    inverse_of: :invited_organization
   has_many :organizations_countries, dependent: :destroy, autosave: true, validate: false
   has_many :countries,
     -> { where(location_type: "country").order(:name) },

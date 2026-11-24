@@ -67,6 +67,31 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
+  def landscape_organization_invitation_received(recipient_email:, landscape_name:, inviting_organization_name:, invited_organization_name:, inviter_name:)
+    @landscape_name = landscape_name
+    @inviting_organization_name = inviting_organization_name
+    @invited_organization_name = invited_organization_name
+    @inviter_name = inviter_name.presence || "An organization admin"
+    @site_data_notice = LandscapeOrganizationInvitation::SITE_DATA_NOTICE
+
+    mail(
+      to: recipient_email,
+      subject: "Invitation to #{landscape_name}"
+    )
+  end
+
+  def landscape_organization_invitation_decided(recipient_email:, landscape_name:, inviting_organization_name:, invited_organization_name:, status:)
+    @landscape_name = landscape_name
+    @inviting_organization_name = inviting_organization_name
+    @invited_organization_name = invited_organization_name
+    @status = status
+
+    mail(
+      to: recipient_email,
+      subject: "Invitation to #{landscape_name} was #{status}"
+    )
+  end
+
   def gma_membership_reviewed(recipient_email:, organization_name:, status:, reason:)
     @organization_name = organization_name
     @status = status

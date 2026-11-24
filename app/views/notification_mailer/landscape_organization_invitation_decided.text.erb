@@ -1,0 +1,5 @@
+<%= @invited_organization_name %> <%= @status %> the invitation to the <%= @landscape_name %> landscape from <%= @inviting_organization_name %>.
+<% if @status == "accepted" %>
+
+Every member of <%= @invited_organization_name %> can now see this landscape's site data.
+<% end %>

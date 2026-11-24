@@ -28,9 +28,13 @@ class V2::LandscapesController < MrttApiController
     organization_ids = params[:organizations]
     organizations_exists(organization_ids)
 
-    # only admin and any org member can create landscape record
-    if !(current_user.is_admin || current_user.is_member_of_all(organization_ids))
-      insufficient_privilege && return
+    if replace_all_landscape_organizations?
+      # only admin and any org member can create landscape record
+      if !(current_user.is_admin || current_user.is_member_of_all(organization_ids))
+        insufficient_privilege && return
+      end
+    else
+      return unless organizations_belong_to_current_user!(organization_ids)
     end
 
     @landscape = Landscape.create(landscape_params)
@@ -42,13 +46,20 @@ class V2::LandscapesController < MrttApiController
     organization_ids = params[:organizations]
     organizations_exists(organization_ids)
 
-    # only admin and any org member can update landscape record
-    if !(current_user.is_admin || current_user.is_member_of_all(organization_ids))
-      insufficient_privilege && return
-    end
+    if replace_all_landscape_organizations?
+      # only admin and any org member can update landscape record
+      if !(current_user.is_admin || current_user.is_member_of_all(organization_ids))
+        insufficient_privilege && return
+      end
 
-    @landscape.update(landscape_params)
-    associate_organizations(@landscape, organization_ids)
+      @landscape.update(landscape_params)
+      associate_organizations(@landscape, organization_ids)
+    else
+      return unless organizations_can_be_linked_directly!(organization_ids)
+
+      @landscape.update(landscape_params)
+      sync_member_organizations(@landscape, organization_ids)
+    end
   end
 
   def destroy
@@ -65,6 +76,39 @@ class V2::LandscapesController < MrttApiController
   end
 
   private
+
+  def replace_all_landscape_organizations?
+    controller_path.start_with?("v3/") || current_user.is_admin
+  end
+
+  def organizations_belong_to_current_user!(organization_ids)
+    foreign_ids = normalized_organization_ids(organization_ids) - current_user.organization_ids
+    return true if foreign_ids.empty?
+
+    render json: {errors: {organizations: ["must be invited"]}}, status: :unprocessable_entity
+    false
+  end
+
+  def organizations_can_be_linked_directly!(organization_ids)
+    ids = normalized_organization_ids(organization_ids)
+    new_foreign_ids = (ids - current_user.organization_ids) - @landscape.organization_ids
+    return true if new_foreign_ids.empty?
+
+    render json: {errors: {organizations: ["must be invited"]}}, status: :unprocessable_entity
+    false
+  end
+
+  def normalized_organization_ids(organization_ids)
+    Array(organization_ids).map(&:to_i)
+  end
+
+  def sync_member_organizations(landscape, organization_ids)
+    own_ids = normalized_organization_ids(organization_ids) & current_user.organization_ids
+    LandscapesOrganizations.where(landscape_id: landscape.id, organization_id: current_user.organization_ids).delete_all
+    own_ids.each do |org_id|
+      LandscapesOrganizations.create!(landscape_id: landscape.id, organization_id: org_id)
+    end
+  end
 
   def organizations_exists(organizations)
     organizations.each do |org|

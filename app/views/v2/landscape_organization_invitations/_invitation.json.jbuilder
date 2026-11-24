@@ -1,0 +1,13 @@
+json.id invitation.id
+json.landscape_id invitation.landscape_id
+json.landscape_name invitation.landscape.landscape_name
+json.inviting_organization_id invitation.inviting_organization_id
+json.inviting_organization_name invitation.inviting_organization.organization_name
+json.invited_organization_id invitation.invited_organization_id
+json.invited_organization_name invitation.invited_organization.organization_name
+json.status invitation.status
+json.inviter_name invitation.inviter_name
+json.site_data_notice LandscapeOrganizationInvitation::SITE_DATA_NOTICE
+json.site_data_acknowledged_at invitation.site_data_acknowledged_at
+json.created_at invitation.created_at
+json.responded_at invitation.responded_at

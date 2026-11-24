@@ -57,6 +57,9 @@ Rails.application.routes.draw do
       # MRTT
       resources :sites, only: [:index, :show, :create, :update, :destroy]
       resources :landscapes, only: [:index, :show, :create, :update, :destroy]
+      post "/landscapes/:landscape_id/invitations", to: "landscape_organization_invitations#create"
+      get "/organizations/:organization_id/landscape_invitations", to: "landscape_organization_invitations#index"
+      patch "/organizations/:organization_id/landscape_invitations/:invitation_id", to: "landscape_organization_invitations#update"
       resources :organizations, only: [:index, :show, :create, :update, :destroy] do
         collection do
           get :suggested

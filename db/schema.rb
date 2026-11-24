@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_11_20_110000) do
+ActiveRecord::Schema[7.0].define(version: 2026_11_24_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -237,6 +237,26 @@ ActiveRecord::Schema[7.0].define(version: 2026_11_20_110000) do
     t.string "jti", null: false
     t.datetime "exp", null: false
     t.index ["jti"], name: "index_jwt_denylist_on_jti"
+  end
+
+  create_table "landscape_organization_invitations", force: :cascade do |t|
+    t.bigint "landscape_id", null: false
+    t.bigint "inviting_organization_id", null: false
+    t.bigint "invited_organization_id", null: false
+    t.bigint "invited_by_id", null: false
+    t.string "status", default: "pending", null: false
+    t.bigint "responded_by_id"
+    t.datetime "responded_at"
+    t.datetime "site_data_acknowledged_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invited_by_id"], name: "index_landscape_organization_invitations_on_invited_by_id"
+    t.index ["invited_organization_id", "status"], name: "index_landscape_org_invitations_on_invited_org_and_status"
+    t.index ["invited_organization_id"], name: "index_landscape_org_invitations_on_invited_org"
+    t.index ["inviting_organization_id"], name: "index_landscape_org_invitations_on_inviting_org"
+    t.index ["landscape_id", "invited_organization_id"], name: "index_landscape_org_invitations_one_pending", unique: true, where: "((status)::text = 'pending'::text)"
+    t.index ["landscape_id"], name: "index_landscape_organization_invitations_on_landscape_id"
+    t.index ["responded_by_id"], name: "index_landscape_organization_invitations_on_responded_by_id"
   end
 
   create_table "landscapes", force: :cascade do |t|
@@ -585,6 +605,11 @@ ActiveRecord::Schema[7.0].define(version: 2026_11_20_110000) do
   add_foreign_key "flood_protections", "locations"
   add_foreign_key "habitat_extents", "locations"
   add_foreign_key "international_statuses", "locations"
+  add_foreign_key "landscape_organization_invitations", "landscapes"
+  add_foreign_key "landscape_organization_invitations", "organizations", column: "invited_organization_id"
+  add_foreign_key "landscape_organization_invitations", "organizations", column: "inviting_organization_id"
+  add_foreign_key "landscape_organization_invitations", "users", column: "invited_by_id"
+  add_foreign_key "landscape_organization_invitations", "users", column: "responded_by_id", on_delete: :nullify
   add_foreign_key "landscapes_organizations", "landscapes"
   add_foreign_key "landscapes_organizations", "organizations"
   add_foreign_key "location_alert_snapshots", "user_locations"
